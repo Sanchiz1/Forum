@@ -1,12 +1,14 @@
 using Forum.Data.Repositories;
 using Forum.Data.Repositories.Implementations;
 using Forum.Data.Repositories.Interfaces;
+using Forum.Helpers;
 using Forum.Services.Implementations;
 using Forum.Services.Interfaces;
 using GraphQL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
 using System.Text;
 using TimeTracker.GraphQL.Schemas;
 
@@ -19,7 +21,8 @@ builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<ITokenRepository, TokenRepository>();
 builder.Services.AddSingleton<ITokenFactory, TokenFactory>();
-
+builder.Services.AddSingleton<ITokenValidator, TokenValidator>();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(x =>

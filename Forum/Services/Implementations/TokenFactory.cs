@@ -15,11 +15,9 @@ namespace Forum.Services.Implementations
         public const int AccessTokenExpiration = 60;
 
         private readonly IConfiguration _configuration;
-        public readonly ITokenRepository _tokenRepository;
-        public TokenFactory( ITokenRepository tokenRepository, IConfiguration configuration)
+        public TokenFactory(IConfiguration configuration)
         {
             _configuration = configuration;
-            _tokenRepository = tokenRepository;
         }
         public Token GetRefreshToken(int userId)
         {

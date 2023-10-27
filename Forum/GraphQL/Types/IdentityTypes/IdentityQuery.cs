@@ -4,7 +4,10 @@ using Forum.Models;
 using Forum.Services.Interfaces;
 using GraphQL;
 using GraphQL.Types;
+using GraphQL.Validation;
 using Microsoft.AspNetCore.WebUtilities;
+using System.ComponentModel.DataAnnotations;
+
 namespace TimeTracker.GraphQL.Types.IdentityTypes
 {
     public class IdentityQuery : ObjectGraphType
@@ -13,14 +16,23 @@ namespace TimeTracker.GraphQL.Types.IdentityTypes
         private readonly IUserRepository _userRepository;
         private readonly ITokenRepository _tokenRepository;
         private readonly ITokenFactory _tokenFactory;
+        private readonly ITokenValidator _tokenValidator;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-
-        public IdentityQuery(IConfiguration configuration, IUserRepository userRepository, ITokenRepository tokenRepository, ITokenFactory tokenFactory)
+        public IdentityQuery(
+            IConfiguration configuration,
+            IUserRepository userRepository,
+            ITokenRepository tokenRepository,
+            ITokenFactory tokenFactory,
+            ITokenValidator tokenValidator,
+            IHttpContextAccessor httpContextAccessor)
         {
             _configuration = configuration;
             _userRepository = userRepository;
             _tokenRepository = tokenRepository;
             _tokenFactory = tokenFactory;
+            _tokenValidator = tokenValidator;
+            _httpContextAccessor = httpContextAccessor;
 
             Field<LoginOutputGraphType>("login")
                 .Argument<NonNullGraphType<CredentialsInputGraphType>>("login")
@@ -31,14 +43,18 @@ namespace TimeTracker.GraphQL.Types.IdentityTypes
                 var config = context.RequestServices.GetService<IConfiguration>();
 
                 var user = userRepository.GetUserByCredentials(UserLogData.LoginOrEmail, UserLogData.Password);
+
+
                 if (user == null)
                 {
-                    throw new Exception("User does not exist");
+                    context.Errors.Add(new ExecutionError("Wrong username or password, try again"));
+                    return null;
                 }
 
                 var encodedJwt = _tokenFactory.GetAccessToken(user.Id);
 
                 var refreshToken = _tokenFactory.GetRefreshToken(user.Id);
+                _tokenRepository.DeleteAllRefreshTokens(user.Id);
                 _tokenRepository.CreateRefreshToken(refreshToken, user.Id);
 
                 var response = new LoginOutput()
@@ -50,13 +66,47 @@ namespace TimeTracker.GraphQL.Types.IdentityTypes
 
                 return response;
             });
-            
+
+            Field<LoginOutputGraphType>("refreshToken").
+                Resolve((context) =>
+                {
+                    var refreshToken = _httpContextAccessor.HttpContext!.Request.Headers.First(at => at.Key == "refresh_token").Value[0]!;
+
+                    if (refreshToken == null)
+                    {
+                        return ExpiredSessionError(context);
+                    }
+
+                    try
+                    {
+                        _tokenValidator.ValidateRefreshToken(refreshToken);
+                    }
+                    catch (ValidationException ex)
+                    {
+                        tokenRepository.DeleteRefreshToken(refreshToken);
+                        context.Errors.Add(new ExecutionError(ex.Message));
+                        return null;
+                    }
+
+                    int userId = int.Parse(_tokenValidator.ReadJwtToken(refreshToken).Claims.First(c => c.Type == "UserId").Value);
+
+                    var newAccessToken = tokenFactory.GetAccessToken(userId);
+                    var newRefreshToken = tokenFactory.GetRefreshToken(userId);
+
+                    _tokenRepository.UpdateRefreshToken(refreshToken, newRefreshToken, userId);
+
+                    return new LoginOutput()
+                    {
+                        access_token = newAccessToken,
+                        user_id = userId,
+                        refresh_token=newRefreshToken,
+                    };
+                });
 
             Field<StringGraphType>("logout").
               Resolve((context) =>
               {
-                  HttpContext httpContext = context.RequestServices!.GetService<IHttpContextAccessor>()!.HttpContext!;
-                  var refreshToken = httpContext.Request.Headers.First(at => at.Key == "refresh_token").Value[0]!;
+                  var refreshToken = _httpContextAccessor.HttpContext!.Request.Headers.First(at => at.Key == "refresh_token").Value[0]!;
 
                   _tokenRepository.DeleteRefreshToken(refreshToken);
 
@@ -69,7 +119,7 @@ namespace TimeTracker.GraphQL.Types.IdentityTypes
             context.Errors.Add(new ExecutionError("User does not auth"));
             return new LoginOutput()
             {
-                access_token = new("",new DateTime(),new DateTime()),
+                access_token = new("", new DateTime(), new DateTime()),
                 user_id = 0,
                 refresh_token = new("Your session was expired. Please, login again", new DateTime(), new DateTime()),
             };

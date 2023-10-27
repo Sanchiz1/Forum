@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Forum.Data.Repositories.Interfaces;
+using Forum.Helpers;
 using Forum.Models;
 using System;
 
@@ -27,7 +28,7 @@ namespace Forum.Data.Repositories.Implementations
             string query = $"SELECT * FROM Users WHERE Id = @id";
             using var connection = _dapperContext.CreateConnection();
 
-            var user = connection.Query<User>(query, new { id }).First();
+            var user = connection.Query<User>(query, new { id }).FirstOrDefault();
             return user;
         }
         public User GetUserByUsername(string username)
@@ -35,7 +36,7 @@ namespace Forum.Data.Repositories.Implementations
             string query = $"SELECT * FROM Users WHERE Username = @username";
             using var connection = _dapperContext.CreateConnection();
 
-            var user = connection.Query<User>(query, new { username }).First();
+            var user = connection.Query<User>(query, new { username }).FirstOrDefault();
             return user;
         }
         public User GetUserByEmail(string email)
@@ -43,23 +44,39 @@ namespace Forum.Data.Repositories.Implementations
             string query = $"SELECT * FROM Users WHERE Email = @email";
             using var connection = _dapperContext.CreateConnection();
 
-            var user = connection.Query<User>(query, new { email }).First();
+            var user = connection.Query<User>(query, new { email }).FirstOrDefault();
             return user;
         }
-        public User GetUserByCredentials(string username, string password)
+        public User GetUserByCredentials(string loginOremail, string password)
         {
-            string query = $"SELECT * FROM Users WHERE Username = @username AND Password = @password";
             using var connection = _dapperContext.CreateConnection();
+            var salt = connection.Query<string>($"SELECT Salt FROM Users WHERE Username = @loginOremail OR Email = @loginOremail",
+                new { loginOremail, password }).FirstOrDefault();
 
-            var user = connection.Query<User>(query, new { username, password }).First();
+            if (salt == null) return null;
+            string hashedPasssword = PasswordHashHelper.ComputeHash(password, salt);
+
+            var user = connection.Query<User>($"SELECT * FROM Users WHERE (Username = @loginOremail OR Email = @loginOremail) AND Password = @hashedPasssword",
+                new { loginOremail, hashedPasssword }).FirstOrDefault();
+
             return user;
         }
-        public void CreateUser(User user)
+        public void CreateUser(UserInput user)
         {
-            string query = $"INSERT INTO Users (Username, Email, Bio, Password) VALUES (@Username, @Email, @Bio, @Password)";
-            using var connection = _dapperContext.CreateConnection();
+            try
+            {
 
-            connection.Execute(query, new { user });
+                string salt = PasswordHashHelper.GenerateSalt();
+                string hashedPassword = PasswordHashHelper.ComputeHash(user.Password, salt);
+                string query = $"INSERT INTO Users (Username, Email, Bio, Password, Salt) VALUES (@Username, @Email, @Bio, @hashedPassword, @salt)";
+                using var connection = _dapperContext.CreateConnection();
+
+                connection.Execute(query, new { user.Username, user.Email, user.Bio, hashedPassword, salt });
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
         public void UpdateUser(User user)
         {

@@ -11,8 +11,14 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { ajaxForLogin } from '../API/login';
+import { LoginRequest } from '../../API/loginRequests';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Credentials } from "../../Types/Credentials"
+import { useDispatch } from 'react-redux';
+import { getUserAccount } from '../../Redux/Epics/AccountEpics';
+import { ReturnErrorMessage } from '../../Helpers/ErrorHandleHelper';
+import { Alert, Collapse, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 function Copyright(props: any) {
   return (
@@ -26,31 +32,62 @@ function Copyright(props: any) {
     </Typography>
   );
 }
-const defaultTheme = createTheme({
-  palette: {
-    mode: 'dark',
-  },
-});
 
 export default function SignIn() {
+  const dispatch = useDispatch();
+  const navigator = useNavigate();
+  const { state } = useLocation();
 
+  const [error, setError] = React.useState<String>('');
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    ajaxForLogin({
-      "login": {
-      loginOrEmail: data.get('email'),
-      password: data.get('password'),
-    }}).subscribe({
-      next(value) {
-        console.log(value)
+    let credentials: Credentials = {
+      loginOrEmail: data.get('email')!.toString(),
+      password: data.get('password')!.toString()
+    }
+    if(credentials.loginOrEmail == '' || credentials.password == ''){
+      setError('Fill all fields');
+      return;
+    }
+    LoginRequest(credentials).subscribe({
+      next() {
+        dispatch(getUserAccount());
+        if(state == null){
+            navigator('/');
+            return;
+        }
+        navigator(state);
+      },
+      error(err) {
+        const message = ReturnErrorMessage(['Wrong username or password, try again'], err.message);
+        setError(message);
       },
     });
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <>
+      <Collapse in={error != ''}>
+        <Alert
+          severity="error"
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              onClick={() => {
+                setError('');
+              }}
+            >
+              <CloseIcon  />
+            </IconButton>
+          }
+          sx={{ mb: 2, fontSize: 15 }}
+        >
+          {error}
+        </Alert>
+      </Collapse>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -73,9 +110,9 @@ export default function SignIn() {
               required
               fullWidth
               id="email"
-              label="Email Address"
+              label="Username or email address"
               name="email"
-              autoComplete="email"
+              autoComplete="off"
               autoFocus
             />
             <TextField
@@ -86,11 +123,7 @@ export default function SignIn() {
               label="Password"
               type="password"
               id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
+              autoComplete="off"
             />
             <Button
               type="submit"
@@ -107,7 +140,7 @@ export default function SignIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link variant="body2" onClick={() => navigator("/Sign-up", { state: state })} sx={{cursor:'pointer'}}>
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
@@ -116,6 +149,6 @@ export default function SignIn() {
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
-    </ThemeProvider>
+    </>
   );
 }

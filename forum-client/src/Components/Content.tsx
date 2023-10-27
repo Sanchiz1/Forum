@@ -1,47 +1,37 @@
-import React, { useEffect } from 'react';
-import { createBrowserRouter, RouterProvider, Outlet, redirect } from 'react-router-dom';
-import { getTokenOrNavigate, setCookie } from '../API/login';
-import SignIn from './Sign-in';
+import { createBrowserRouter, RouterProvider, Outlet, redirect, useLocation, useNavigate } from 'react-router-dom';
+import SignIn from './Sign/Sign-in';
 import Main from './Main';
 import Header from './Navbar';
-
-const sections = [
-    { title: 'Technology', url: '#' },
-    { title: 'Design', url: '#' },
-    { title: 'Culture', url: '#' },
-    { title: 'Business', url: '#' },
-    { title: 'Politics', url: '#' },
-    { title: 'Opinion', url: '#' },
-    { title: 'Science', url: '#' },
-    { title: 'Health', url: '#' },
-    { title: 'Style', url: '#' },
-    { title: 'Travel', url: '#' },
-  ];
+import UserPage from './User/UserPage';
+import SignUp from './Sign/Sign-up';
 
 const router = () => createBrowserRouter([
     {
-        element: <Header title="Blog" sections={sections} />,
-        //loader: async () => getTokenOrNavigate(),
+        element: <Header />,
         children: [
             {
                 path: "/",
-                element: <Main></Main>
+                element: <Main />
             },
+            {
+                path: "/user/:Username",
+                element: <UserPage />
+            }
         ]
     },
     {
-        path: "/Login",
+        path: "/Sign-in",
         element: <SignIn />,
-        //loader: async () => getTokenOrNavigate(true),
+    },
+    {
+        path: "/Sign-up",
+        element: <SignUp />,
     }
 ])
 
 
 function AppContent() {
-    useEffect(() => {
-        setCookie({ name: "refresh_sent", value: "false" })
-    }, [])
-
+    
     return (
         <div className='Content container-fluid p-0 h-100'>
             <RouterProvider router={router()} />

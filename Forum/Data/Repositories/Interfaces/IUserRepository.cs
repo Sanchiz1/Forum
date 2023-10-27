@@ -9,7 +9,7 @@ namespace Forum.Data.Repositories.Interfaces
         public User GetUserByUsername(string username);
         public User GetUserByEmail(string email);
         public User GetUserByCredentials(string username, string password);
-        public void CreateUser(User user);
+        public void CreateUser(UserInput user);
         public void UpdateUser(User user);
         public void DeleteUser(int id);
     }
