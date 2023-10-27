@@ -20,7 +20,7 @@ namespace Forum.GraphQL.Types.UserTypes
                 {
                     UserInput user = context.GetArgument<UserInput>("User");
 
-                    if (!UserValidateHelper.ValidateUserInput(user))
+                    if (!UserValidateHelper.ValidateUserCreateInput(user))
                     {
                         context.Errors.Add(new ExecutionError("Invalid input"));
                         return null;
@@ -41,6 +41,51 @@ namespace Forum.GraphQL.Types.UserTypes
                     repo.CreateUser(user);
                     return "Account created successfully";
                 });
+
+            Field<StringGraphType>("updateUser")
+                .Argument<NonNullGraphType<UserInputGraphType>>("User")
+                .ResolveAsync(async context =>
+                {
+                    UserInput user = context.GetArgument<UserInput>("User");
+
+                    var userId = AccountHelper.GetUserIdFromClaims(context.User!);
+
+                    if (!UserValidateHelper.ValidateUserUpdateInput(user))
+                    {
+                        context.Errors.Add(new ExecutionError("Invalid input"));
+                        return null;
+                    }
+                    try { 
+                    var checkUsernameUser = repo.GetUserByUsername(user.Username);
+                    var checkEmailUser = repo.GetUserByEmail(user.Email);
+
+                    if (checkUsernameUser != null)
+                    {
+                        if(checkUsernameUser.Id != userId)
+                        {
+                            context.Errors.Add(new ExecutionError("User with this username already exists"));
+                            return null;
+                        }
+                    }
+
+                    if (checkEmailUser != null)
+                    {
+                        if(checkEmailUser.Id != userId)
+                        {
+                            context.Errors.Add(new ExecutionError("User with this email already exists"));
+                            return null;
+                        }
+                    }
+
+                    repo.UpdateUser(user, userId);
+                    return "Account updated successfully";
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
+                    return null;
+                }).AuthorizeWithPolicy("Authorized");
         }
     }
 }

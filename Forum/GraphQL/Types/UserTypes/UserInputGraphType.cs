@@ -10,7 +10,7 @@ namespace Forum.GraphQL.Types.UserTypes
             Field(i => i.Username, type: typeof(StringGraphType));
             Field(i => i.Email, type: typeof(StringGraphType));
             Field(i => i.Bio, type: typeof(StringGraphType), nullable: true);
-            Field(i => i.Password, type: typeof(StringGraphType));
+            Field(i => i.Password, type: typeof(StringGraphType), nullable: true);
         }
     }
 }

@@ -79,7 +79,8 @@ export default function SignUp() {
                 enqueueSnackbar(value, {variant: 'success', anchorOrigin: {
                     vertical: 'top',
                     horizontal: 'center'
-                  }});
+                  },
+                  autoHideDuration: 1500});
                 navigator("/Sign-in", { state: state })
             },
             error(err) {

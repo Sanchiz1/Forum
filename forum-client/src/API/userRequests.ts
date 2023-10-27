@@ -149,3 +149,40 @@ export function createUserRequest(UserInput: UserInput) {
         })
     );
 }
+
+interface GraphqlUpdateUser {
+    user: {
+        user: string
+    }
+}
+
+export function updateUserRequest(UserInput: UserInput) {
+    return GetAjaxObservable<GraphqlUpdateUser>(`
+        mutation($User: UserInput!){
+            user{
+              user:updateUser(user: $User)
+            }
+          }`,
+        {
+            "User": {
+                "username": UserInput.username,
+                "email": UserInput.email,
+                "bio": UserInput.bio
+            }
+        }
+    ).pipe(
+        map((value) => {
+
+            if (value.response.errors) {
+
+                throw new Error(value.response.errors[0].message);
+            }
+
+            return value.response.data.user.user;
+
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}

@@ -63,24 +63,19 @@ namespace Forum.Data.Repositories.Implementations
         }
         public void CreateUser(UserInput user)
         {
-            try
-            {
+            string salt = PasswordHashHelper.GenerateSalt();
+            string hashedPassword = PasswordHashHelper.ComputeHash(user.Password, salt);
+            string query = $"INSERT INTO Users (Username, Email, Bio, Password, Salt) VALUES (@Username, @Email, @Bio, @hashedPassword, @salt)";
+            using var connection = _dapperContext.CreateConnection();
 
-                string salt = PasswordHashHelper.GenerateSalt();
-                string hashedPassword = PasswordHashHelper.ComputeHash(user.Password, salt);
-                string query = $"INSERT INTO Users (Username, Email, Bio, Password, Salt) VALUES (@Username, @Email, @Bio, @hashedPassword, @salt)";
-                using var connection = _dapperContext.CreateConnection();
-
-                connection.Execute(query, new { user.Username, user.Email, user.Bio, hashedPassword, salt });
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
+            connection.Execute(query, new { user.Username, user.Email, user.Bio, hashedPassword, salt });
         }
-        public void UpdateUser(User user)
+        public void UpdateUser(UserInput user, int userId)
         {
-            throw new NotImplementedException("Not implemented");
+            string query = $"UPDATE Users SET Username = @Username, Email = @Email, Bio = @Bio WHERE Id = @userId";
+            using var connection = _dapperContext.CreateConnection();
+
+            connection.Execute(query, new { user.Username, user.Email, user.Bio, userId });
         }
         public void DeleteUser(int id)
         {
