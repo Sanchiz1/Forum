@@ -155,7 +155,7 @@ export default function UserPage() {
                           {
                             user.bio ?
                               <>
-                                <Typography variant="subtitle1" color="text.secondary" component="p" sx={{ mt: 2 }}>
+                                <Typography variant="subtitle1" color="text.secondary" component="p" sx={{ mt: 2, whiteSpace: 'pre-line', overflowWrap: 'break-word'}}>
                                   {user.bio}
                                 </Typography>
                               </>

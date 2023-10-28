@@ -4,8 +4,12 @@ import Main from './Main';
 import Header from './Navbar';
 import UserPage from './User/UserPage';
 import SignUp from './Sign/Sign-up';
+import { isSigned } from '../API/loginRequests';
+import CreatePost from './Posts/CreatePost';
+import { useDispatch } from 'react-redux';
+import { setLogInError } from '../Redux/Reducers/AccountReducer';
 
-const router = () => createBrowserRouter([
+const router = (Action: () => void) => createBrowserRouter([
     {
         element: <Header />,
         children: [
@@ -16,6 +20,11 @@ const router = () => createBrowserRouter([
             {
                 path: "/user/:Username",
                 element: <UserPage />
+            },
+            {
+                path: "/createPost",
+                element: <CreatePost />,
+                loader: async () => CheckAndNavigate(Action),
             }
         ]
     },
@@ -30,13 +39,27 @@ const router = () => createBrowserRouter([
 ])
 
 
-function AppContent() {
-    
+export default function AppContent() {
+    const dispatch = useDispatch();
+
+    const setSignError = () => {
+        dispatch(setLogInError('Not signed in'));
+    }
+
     return (
         <div className='Content container-fluid p-0 h-100'>
-            <RouterProvider router={router()} />
+            <RouterProvider router={router(setSignError)} />
         </div>
     );
 }
 
-export default AppContent;
+
+
+function CheckAndNavigate(Action: () => void) {
+
+    if (!isSigned()) { 
+        Action();
+        return redirect("/") };
+    return null;
+}
+
