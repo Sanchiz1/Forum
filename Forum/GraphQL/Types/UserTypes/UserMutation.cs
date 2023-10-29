@@ -1,6 +1,6 @@
 ﻿using Forum.Data.Repositories.Interfaces;
 using Forum.Helpers;
-using Forum.Models;
+using Forum.Models.User;
 using GraphQL;
 using GraphQL.Types;
 

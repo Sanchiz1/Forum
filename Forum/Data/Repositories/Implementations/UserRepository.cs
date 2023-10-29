@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using Forum.Data.Repositories.Interfaces;
 using Forum.Helpers;
-using Forum.Models;
+using Forum.Models.User;
 using System;
 
 namespace Forum.Data.Repositories.Implementations

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace Forum.Models
+namespace Forum.Models.Identity
 {
     public class Credentials
     {

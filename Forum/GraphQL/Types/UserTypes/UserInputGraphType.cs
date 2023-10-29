@@ -1,4 +1,4 @@
-﻿using Forum.Models;
+﻿using Forum.Models.User;
 using GraphQL.Types;
 
 namespace Forum.GraphQL.Types.UserTypes

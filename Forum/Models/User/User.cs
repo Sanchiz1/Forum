@@ -1,4 +1,4 @@
-﻿namespace Forum.Models
+﻿namespace Forum.Models.User
 {
     public class User
     {

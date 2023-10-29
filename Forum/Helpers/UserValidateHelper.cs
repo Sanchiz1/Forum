@@ -1,4 +1,4 @@
-﻿using Forum.Models;
+﻿using Forum.Models.User;
 using System.Text.RegularExpressions;
 
 namespace Forum.Helpers

@@ -40,6 +40,9 @@ namespace Forum.GraphQL.Types
                     var user = repo.GetUserById(userId);
                     return user;
                 }).AuthorizeWithPolicy("Authorized");
+
+            Field<PostQuery>("posts")
+                .Resolve(context => new { });
         }
     }
 }

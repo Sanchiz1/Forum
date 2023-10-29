@@ -1,11 +1,11 @@
 ﻿using Forum.Data.Repositories.Interfaces;
-using Forum.Models;
 using Forum.Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Forum.Models.Identity;
 
 namespace Forum.Services.Implementations
 {

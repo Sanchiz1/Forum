@@ -1,4 +1,4 @@
-﻿using Forum.Models;
+﻿using Forum.Models.User;
 
 namespace Forum.Data.Repositories.Interfaces
 {

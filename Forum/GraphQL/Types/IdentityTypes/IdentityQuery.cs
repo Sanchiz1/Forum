@@ -1,6 +1,6 @@
 ﻿using Forum.Data.Repositories.Interfaces;
 using Forum.GraphQL.Types.IdentityTypes;
-using Forum.Models;
+using Forum.Models.Identity;
 using Forum.Services.Interfaces;
 using GraphQL;
 using GraphQL.Types;

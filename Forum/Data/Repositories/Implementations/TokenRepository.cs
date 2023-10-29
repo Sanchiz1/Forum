@@ -1,6 +1,6 @@
 ﻿using Dapper;
 using Forum.Data.Repositories.Interfaces;
-using Forum.Models;
+using Forum.Models.Identity;
 
 namespace Forum.Data.Repositories.Implementations
 {
