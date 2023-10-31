@@ -1,4 +1,5 @@
 ﻿using Forum.Data.Repositories.Interfaces;
+using Forum.GraphQL.Types.PostTypes;
 using Forum.GraphQL.Types.UserTypes;
 using Forum.Helpers;
 using Forum.Models;
@@ -12,6 +13,8 @@ namespace Forum.GraphQL.Types
         public MainMutation()
         {
             Field<UserMutation>("user")
+            .Resolve(context => new { });
+            Field<PostMutation>("post")
             .Resolve(context => new { });
         }
     }

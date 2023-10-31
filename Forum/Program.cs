@@ -18,7 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
 builder.Services.AddSingleton<DapperContext>();
-builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<IUserRepository,UserRepository>();
 builder.Services.AddSingleton<IPostRepository, PostRepository>();
 builder.Services.AddSingleton<ITokenRepository, TokenRepository>();
 builder.Services.AddSingleton<ITokenFactory, TokenFactory>();

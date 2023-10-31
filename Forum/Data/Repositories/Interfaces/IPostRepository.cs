@@ -5,5 +5,7 @@ namespace Forum.Data.Repositories.Interfaces
     public interface IPostRepository
     {
         public List<Post> GetPosts();
+        public Post GetPostById(int id);
+        public void CreatePost(PostInput post);
     }
 }

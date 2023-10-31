@@ -8,6 +8,7 @@ import { isSigned } from '../API/loginRequests';
 import CreatePost from './Posts/CreatePost';
 import { useDispatch } from 'react-redux';
 import { setLogInError } from '../Redux/Reducers/AccountReducer';
+import PostPage from './Posts/PostPage';
 
 const router = (Action: () => void) => createBrowserRouter([
     {
@@ -20,6 +21,10 @@ const router = (Action: () => void) => createBrowserRouter([
             {
                 path: "/user/:Username",
                 element: <UserPage />
+            },
+            {
+                path: "/post/:PostId",
+                element: <PostPage />
             },
             {
                 path: "/createPost",

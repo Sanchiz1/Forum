@@ -13,6 +13,7 @@ namespace Forum.GraphQL.Types.UserTypes
             Field(i => i.Text, type: typeof(StringGraphType));
             Field(i => i.Date, type: typeof(DateTimeGraphType));
             Field(i => i.User_Id, type: typeof(IntGraphType));
+            Field(i => i.User_Username, type: typeof(StringGraphType));
         }
     }
 }

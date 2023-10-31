@@ -55,18 +55,18 @@ export default function Main() {
                 width: 1,
               }}>
                 <ButtonWithCheck variant='outlined' ActionWithCheck={() => {
-                  if(isSigned()){
+                  if (isSigned()) {
                     navigator('/CreatePost');
                   }
-                  else{
+                  else {
                     dispatch(setLogInError('Not signed in'));
                   }
                 }}></ButtonWithCheck>
               </Paper>
             </Grid>
             {
-              posts?.map((post) => 
-                <PostElement post={post} key={post.id}></PostElement>
+              posts?.map((post) =>
+                <PostElement post={post} key={post.id.toString()} customClickEvent={(event: React.MouseEvent<HTMLDivElement>) => navigator('/post/' + post.id)}></PostElement>
               )
             }
           </Grid>

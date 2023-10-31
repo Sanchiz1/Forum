@@ -204,6 +204,7 @@ export default function UserPage() {
                                     name="bio"
                                     multiline
                                     rows={4}
+                                    inputProps={{maxLength: 100}}
                                     defaultValue={Account.bio}
                                     error={bioError != ''}
                                     onFocus={() => SetBioError('')}

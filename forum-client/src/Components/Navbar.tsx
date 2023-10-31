@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import { Outlet, useLocation, useNavigate, Link as RouterLink } from 'react-router-dom';
-import { LogoutRequest, RefreshTokenRequest, isSigned } from '../API/loginRequests';
+import { LogoutRequest, isSigned } from '../API/loginRequests';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -11,8 +11,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import Tooltip from '@mui/material/Tooltip';
-import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -20,13 +18,13 @@ import { AppBar, Container } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../Redux/store';
 import { Backdrop, CircularProgress } from '@mui/material';
-import { setLogInError } from '../Redux/Reducers/AccountReducer';
+import { getAccount, setLogInError } from '../Redux/Reducers/AccountReducer';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Link from '@mui/material/Link';
 import { getUserAccount } from '../Redux/Epics/AccountEpics';
 import { setCookie } from '../Helpers/CookieHelper';
-import Alert from '@mui/material/Alert'
+import { User } from '../Types/User';
 
 export default function Header() {
   const dispatch = useDispatch();
@@ -116,7 +114,7 @@ export default function Header() {
           </CardContent>
         </Card>
       </Backdrop>
-      <AppBar position="static">
+      <AppBar position="sticky">
         <Toolbar>
           <Link component={RouterLink} variant="h5" to={'/'}
             sx={{ flex: 1, textDecoration: 'none', color: 'text.secondary' }}>
@@ -190,7 +188,7 @@ export default function Header() {
               </ListItemIcon>
               Settings
             </MenuItem>
-            <MenuItem onClick={() => { LogoutRequest().subscribe(() => { navigator(location) }); handleClose() }}>
+            <MenuItem onClick={() => { LogoutRequest().subscribe(() => { dispatch(getAccount({} as User)); navigator(location) }); handleClose() }}>
               <ListItemIcon>
                 <Logout fontSize="small" />
               </ListItemIcon>

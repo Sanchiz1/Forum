@@ -13,8 +13,17 @@ namespace Forum.GraphQL.Types
         public PostQuery(IPostRepository Repo)
         {
             repo = Repo;
+
             Field<ListGraphType<PostGraphType>>("posts")
                 .ResolveAsync(async context => repo.GetPosts());
+
+            Field<PostGraphType>("post")
+                .Argument<NonNullGraphType<IntGraphType>>("id")
+                .ResolveAsync(async context =>
+                {
+                    int id = context.GetArgument<int>("id");
+                    return repo.GetPostById(id);
+                });
         }
     }
 }
