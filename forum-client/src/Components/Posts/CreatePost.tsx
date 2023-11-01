@@ -103,7 +103,6 @@ export default function CreatePost() {
 
                                 <Box component="form" onSubmit={handlePostSubmit} noValidate sx={{ mt: 1 }}>
                                     <TextField
-                                        margin="normal"
                                         id="outlined-multiline-flexible"
                                         label="Title"
                                         name="title"

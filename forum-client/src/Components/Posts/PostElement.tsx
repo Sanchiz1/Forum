@@ -50,7 +50,8 @@ export default function PostElement(props: Props) {
         <Divider />
         <br />
         <Typography variant="subtitle1" color="text.disabled" component="p" sx={{
-          maxHeight: '75px', overflow: 'hidden',
+          maxHeight: '150px', overflow: 'hidden', 
+          whiteSpace: 'pre-line',
           textOverflow: 'ellipsis',
           content: 'none',
           position: 'relative',
@@ -61,7 +62,7 @@ export default function PostElement(props: Props) {
             position: 'absolute',
             left: 0,
             top: 0,
-            background: 'linear-gradient(transparent 45px, #1E1E1E)'
+            background: 'linear-gradient(transparent 70px, #1E1E1E)'
           }
         }}>
           {props.post.text}

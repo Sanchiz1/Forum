@@ -117,7 +117,7 @@ export default function Header() {
       <AppBar position="sticky">
         <Toolbar>
           <Link component={RouterLink} variant="h5" to={'/'}
-            sx={{ flex: 1, textDecoration: 'none', color: 'text.secondary' }}>
+            sx={{ mr: 'auto', textDecoration: 'none', color: 'text.secondary' }}>
             Forum
           </Link>
           <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>

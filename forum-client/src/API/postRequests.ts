@@ -8,9 +8,9 @@ import { Post, PostInput } from "../Types/Post";
 
 const url = "https://localhost:7295/graphql";
 
-interface GraphqlPosts{
-    data:{
-        posts:{
+interface GraphqlPosts {
+    data: {
+        posts: {
             posts: Post[]
         }
     }
@@ -86,10 +86,43 @@ export function creaatePostRequest(PostInput: PostInput) {
     );
 }
 
+interface GraphqlUpdatePost {
+    post: {
+        updatePost: string
+    }
+}
 
-interface GraphqlPost{
-    data:{
-        posts:{
+export function updatePostRequest(text: String, id : Number) {
+    return GetAjaxObservable<GraphqlUpdatePost>(`
+        mutation($text: String!, $id: Int!){
+            post{
+              updatePost(text: $text, id: $id)
+            }
+          }`,
+        {
+            "text": text,
+            "id": id
+        }
+    ).pipe(
+        map((value) => {
+
+            if (value.response.errors) {
+
+                throw new Error(value.response.errors[0].message);
+            }
+
+            return value.response.data.post.updatePost;
+
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}
+
+interface GraphqlPost {
+    data: {
+        posts: {
             post: Post
         }
     }
@@ -117,7 +150,7 @@ export function requestPostById(id: Number) {
               }
             }`
             ,
-            variables:{
+            variables: {
                 "id": id
             }
         }),

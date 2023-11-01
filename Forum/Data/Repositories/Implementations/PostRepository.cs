@@ -38,5 +38,12 @@ namespace Forum.Data.Repositories.Implementations
 
             connection.Execute(query, post);
         }
+        public void UpdatePost(string text, int id)
+        {
+            string query = $"UPDATE Posts set Text = @text WHERE Id = @id";
+            using var connection = _dapperContext.CreateConnection();
+
+            connection.Execute(query, new {text, id});
+        }
     }
 }

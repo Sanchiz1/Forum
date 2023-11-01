@@ -56,7 +56,7 @@ export default function UserPage() {
       error(err) {
       },
     })
-  }, [Username])
+  }, [])
 
 
 
@@ -65,6 +65,7 @@ export default function UserPage() {
   const [emailError, SetEmailError] = useState('');
   const [bioError, SetBioError] = useState('');
   const [error, setError] = useState<String>('');
+
   const handleSubmitEdit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);

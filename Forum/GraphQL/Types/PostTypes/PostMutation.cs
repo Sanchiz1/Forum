@@ -31,6 +31,25 @@ namespace Forum.GraphQL.Types.PostTypes
                     repo.CreatePost(post);
                     return "Post created successfully";
                 }).AuthorizeWithPolicy("Authorized");
+
+            Field<StringGraphType>("updatePost")
+                .Argument<StringGraphType>("Text")
+                .Argument<NonNullGraphType<IntGraphType>>("Id")
+                .ResolveAsync(async context =>
+                {
+                    string text = context.GetArgument<string>("Text");
+                    int id = context.GetArgument<int>("Id");
+
+                    Post post = repo.GetPostById(id);
+                    if (post.User_Id != AccountHelper.GetUserIdFromClaims(context.User))
+                    {
+                        context.Errors.Add(new ExecutionError("Cannot edit someone else's post"));
+                        return null;
+                    }
+
+                    repo.UpdatePost(text, id);
+                    return "Post updated successfully";
+                }).AuthorizeWithPolicy("Authorized");
         }
     }
 }
