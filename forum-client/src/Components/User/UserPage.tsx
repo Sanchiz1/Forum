@@ -56,7 +56,7 @@ export default function UserPage() {
       error(err) {
       },
     })
-  }, [])
+  }, [Username])
 
 
 

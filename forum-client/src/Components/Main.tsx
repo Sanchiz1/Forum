@@ -7,7 +7,7 @@ import { getUserAccount } from '../Redux/Epics/AccountEpics';
 import { RootState } from '../Redux/store';
 import ButtonWithCheck from './ButtonWithCheck/ButtonWithCheck';
 import { isSigned } from '../API/loginRequests';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { setLogInError } from '../Redux/Reducers/AccountReducer';
 import { useEffect, useState } from 'react';
 import { requestPosts } from '../API/postRequests';
@@ -18,6 +18,7 @@ export default function Main() {
   const [posts, setPosts] = useState<Post[]>()
   const dispatch = useDispatch();
   const navigator = useNavigate()
+  const { state } = useLocation()
 
   useEffect(() => {
     requestPosts().subscribe({
@@ -40,7 +41,6 @@ export default function Main() {
               ? theme.palette.grey[100]
               : theme.palette.grey[900],
           flexGrow: 1,
-          height: '100vh',
           overflow: 'auto',
           display: 'flex'
         }}
@@ -66,7 +66,7 @@ export default function Main() {
             </Grid>
             {
               posts?.map((post) =>
-                <PostElement post={post} key={post.id.toString()} customClickEvent={(event: React.MouseEvent<HTMLDivElement>) => navigator('/post/' + post.id)}></PostElement>
+                <PostElement post={post} key={post.id.toString()} customClickEvent={(event: React.MouseEvent<HTMLDivElement>) => navigator('/post/' + post.id, { state: state })}></PostElement>
               )
             }
           </Grid>

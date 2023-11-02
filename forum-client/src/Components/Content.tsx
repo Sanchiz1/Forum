@@ -52,9 +52,8 @@ export default function AppContent() {
     }
 
     return (
-        <div className='Content container-fluid p-0 h-100'>
-            <RouterProvider router={router(setSignError)} />
-        </div>
+        <RouterProvider router={router(setSignError)} />
+
     );
 }
 
@@ -62,9 +61,10 @@ export default function AppContent() {
 
 function CheckAndNavigate(Action: () => void) {
 
-    if (!isSigned()) { 
+    if (!isSigned()) {
         Action();
-        return redirect("/") };
+        return redirect("/")
+    };
     return null;
 }
 

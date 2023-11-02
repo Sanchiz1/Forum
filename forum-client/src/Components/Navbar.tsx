@@ -114,7 +114,7 @@ export default function Header() {
           </CardContent>
         </Card>
       </Backdrop>
-      <AppBar position="sticky">
+      <AppBar position='sticky'>
         <Toolbar>
           <Link component={RouterLink} variant="h5" to={'/'}
             sx={{ mr: 'auto', textDecoration: 'none', color: 'text.secondary' }}>

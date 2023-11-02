@@ -54,7 +54,6 @@ namespace TimeTracker.GraphQL.Types.IdentityTypes
                 var encodedJwt = _tokenFactory.GetAccessToken(user.Id);
 
                 var refreshToken = _tokenFactory.GetRefreshToken(user.Id);
-                _tokenRepository.DeleteAllRefreshTokens(user.Id);
                 _tokenRepository.CreateRefreshToken(refreshToken, user.Id);
 
                 var response = new LoginOutput()

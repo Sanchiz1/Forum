@@ -120,6 +120,41 @@ export function updatePostRequest(text: String, id : Number) {
     );
 }
 
+
+interface GraphqlDeletePost {
+    post: {
+        deletePost: string
+    }
+}
+
+export function deletePostRequest( id : Number) {
+    return GetAjaxObservable<GraphqlDeletePost>(`
+        mutation($id: Int!){
+            post{
+              deletePost( id: $id)
+            }
+          }`,
+        {
+            "id": id
+        }
+    ).pipe(
+        map((value) => {
+
+            if (value.response.errors) {
+
+                throw new Error(value.response.errors[0].message);
+            }
+
+            return value.response.data.post.deletePost;
+
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}
+
+
 interface GraphqlPost {
     data: {
         posts: {

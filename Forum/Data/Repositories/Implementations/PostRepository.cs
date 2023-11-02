@@ -43,7 +43,14 @@ namespace Forum.Data.Repositories.Implementations
             string query = $"UPDATE Posts set Text = @text WHERE Id = @id";
             using var connection = _dapperContext.CreateConnection();
 
-            connection.Execute(query, new {text, id});
+            connection.Execute(query, new { text, id });
+        }
+        public void DeletePost(int id)
+        {
+            string query = $"Delete FROM Posts WHERE Id = @id";
+            using var connection = _dapperContext.CreateConnection();
+
+            connection.Execute(query, new { id });
         }
     }
 }

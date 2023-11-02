@@ -8,5 +8,6 @@ namespace Forum.Data.Repositories.Interfaces
         public Post GetPostById(int id);
         public void CreatePost(PostInput post);
         public void UpdatePost(string text, int id);
+        public void DeletePost(int id);
     }
 }

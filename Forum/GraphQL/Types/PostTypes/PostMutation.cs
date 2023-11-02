@@ -50,6 +50,23 @@ namespace Forum.GraphQL.Types.PostTypes
                     repo.UpdatePost(text, id);
                     return "Post updated successfully";
                 }).AuthorizeWithPolicy("Authorized");
+
+            Field<StringGraphType>("deletePost")
+                .Argument<NonNullGraphType<IntGraphType>>("Id")
+                .ResolveAsync(async context =>
+                {
+                    int id = context.GetArgument<int>("Id");
+
+                    Post post = repo.GetPostById(id);
+                    if (post.User_Id != AccountHelper.GetUserIdFromClaims(context.User))
+                    {
+                        context.Errors.Add(new ExecutionError("Cannot edit someone else's post"));
+                        return null;
+                    }
+
+                    repo.DeletePost(id);
+                    return "Post deleted successfully";
+                }).AuthorizeWithPolicy("Authorized");
         }
     }
 }

@@ -7,16 +7,17 @@ import Typography from '@mui/material/Typography';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { getUserAccount } from '../../Redux/Epics/AccountEpics';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { RootState } from '../../Redux/store';
-import { Backdrop, Badge, CircularProgress, Container, CssBaseline, IconButton, LinearProgress, Toolbar, Collapse, TextField, Alert, Link, MenuItem, Button } from '@mui/material';
+import { Backdrop, Badge, CircularProgress, Container, CssBaseline, IconButton, LinearProgress, Toolbar, Collapse, TextField, Alert, Link, MenuItem, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link as RouterLink } from 'react-router-dom';
 import { Post } from '../../Types/Post';
-import { requestPostById, updatePostRequest } from '../../API/postRequests';
+import { deletePostRequest, requestPostById, updatePostRequest } from '../../API/postRequests';
 import { GetLocalDate, timeSince } from '../../Helpers/TimeHelper';
 import EditIcon from '@mui/icons-material/Edit';
 import Divider from '@mui/material/Divider';
+import DeleteIcon from '@mui/icons-material/Delete';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
@@ -36,6 +37,7 @@ export default function PostPage() {
     const [post, setPost] = useState<Post>();
     const [postExists, setPostExists] = useState(true);
     let { PostId } = useParams();
+    const { state } = useLocation();
     const dispatch = useDispatch();
     const navigator = useNavigate();
 
@@ -90,6 +92,33 @@ export default function PostPage() {
                 setError('');
                 setOpenEdit(false);
                 navigator("/post/" + post?.id!);
+            },
+            error(err) {
+                setError(err.message)
+            },
+        })
+    }
+
+
+    // delete
+    const [openDelete, setOpenDelete] = useState(false);
+    const handleSubmitDelete = () => {
+        deletePostRequest(post?.id!).subscribe({
+            next(value) {
+                enqueueSnackbar(value, {
+                    variant: 'success', anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'center'
+                    },
+                    autoHideDuration: 1500
+                });
+                setError('');
+                setOpenDelete(false);
+                if(state == null){
+                    navigator('/');
+                    return;
+                }
+                navigator(state);
             },
             error(err) {
                 setError(err.message)
@@ -171,18 +200,9 @@ export default function PostPage() {
                                                                 <EditIcon />
                                                                 Edit
                                                             </MenuItem>
-                                                            <MenuItem onClick={handleCloseMenu} disableRipple>
-                                                                <FileCopyIcon />
-                                                                Duplicate
-                                                            </MenuItem>
-                                                            <Divider sx={{ my: 0.5 }} />
-                                                            <MenuItem onClick={handleCloseMenu} disableRipple>
-                                                                <ArchiveIcon />
-                                                                Archive
-                                                            </MenuItem>
-                                                            <MenuItem onClick={handleCloseMenu} disableRipple>
-                                                                <MoreHorizIcon />
-                                                                More
+                                                            <MenuItem onClick={() => { setOpenDelete(true); handleCloseMenu(); }} disableRipple>
+                                                                <DeleteIcon />
+                                                                Delete
                                                             </MenuItem>
                                                         </StyledMenu>
                                                     </> : <></>}
@@ -221,13 +241,23 @@ export default function PostPage() {
                                                                 {error}
                                                             </Alert>
                                                         </Collapse>
-                                                        <Button
-                                                            type="submit"
-                                                            fullWidth
-                                                            variant="outlined"
-                                                        >
-                                                            Submit
-                                                        </Button>
+                                                        <Box sx={{ my: 1, display: 'flex' }}>
+
+                                                            <Button
+                                                                color='secondary'
+                                                                sx={{ ml: 'auto', mr: 1 }}
+                                                                onClick={() => setOpenEdit(false)}
+                                                                variant="outlined"
+                                                            >
+                                                                Cancel
+                                                            </Button>
+                                                            <Button
+                                                                type="submit"
+                                                                variant="outlined"
+                                                            >
+                                                                Submit
+                                                            </Button>
+                                                        </Box>
                                                     </Box>
                                                     :
                                                     <Typography variant="subtitle1" color="text.disabled" component="p" sx={{ mt: 2, whiteSpace: 'pre-line', overflowWrap: 'break-word' }}>
@@ -237,6 +267,22 @@ export default function PostPage() {
                                             </Paper>
                                         </Grid>
                                     </Grid>
+                                    <Dialog
+                                        open={openDelete}
+                                        onClose={() => setOpenDelete(false)}
+                                        aria-labelledby="alert-dialog-title"
+                                        aria-describedby="alert-dialog-description"
+                                    >
+                                        <DialogTitle id="alert-dialog-title">
+                                            {"Are You sure you want to delete this post?"}
+                                        </DialogTitle>
+                                        <DialogActions>
+                                            <Button onClick={() => setOpenDelete(false)}>Cancel</Button>
+                                            <Button onClick={() => handleSubmitDelete()} autoFocus>
+                                                Delete
+                                            </Button>
+                                        </DialogActions>
+                                    </Dialog>
                                 </Container>
                             </Box>
                         </Box>
