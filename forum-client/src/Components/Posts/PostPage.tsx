@@ -114,7 +114,7 @@ export default function PostPage() {
                 });
                 setError('');
                 setOpenDelete(false);
-                if(state == null){
+                if (state == null) {
                     navigator('/');
                     return;
                 }
@@ -141,7 +141,7 @@ export default function PostPage() {
                                             ? theme.palette.grey[100]
                                             : theme.palette.grey[900],
                                     flexGrow: 1,
-                                    height: '100vh',
+                                    minHeight: '100vh',
                                     overflow: 'auto',
                                     display: 'flex'
                                 }}
@@ -160,8 +160,8 @@ export default function PostPage() {
                                                     flexDirection: 'row',
                                                     alignItems: 'center'
                                                 }}>
-                                                    <Link variant="subtitle1" component={RouterLink} to={'/user/' + post.user_Username} color="primary" sx={{
-                                                        mr: 1, textDecoration: 'none', cursor: 'pointer', color: 'white',
+                                                    <Link variant="caption" onClick={(e) => e.stopPropagation()} component={RouterLink} to={'/user/' + post.user_Username} color="primary" sx={{
+                                                        mr: 0.5, textDecoration: 'none', cursor: 'pointer', color: 'white',
                                                         ":hover": {
                                                             textDecoration: 'underline'
                                                         }
@@ -169,10 +169,10 @@ export default function PostPage() {
                                                     } >
                                                         {post.user_Username}
                                                     </Link>
-                                                    <Typography variant="subtitle2" color="text.disabled" component="p" sx={{ fontSize: 5, mr: 0.2 }}>
+                                                    <Typography variant="caption" color="text.disabled" component="p" sx={{ fontSize: 3, mr: 0.5 }}>
                                                         {'\u2B24'}
                                                     </Typography>
-                                                    <Typography variant="subtitle2" color="text.disabled" component="p">
+                                                    <Typography variant="caption" color="text.disabled" component="p">
                                                         {timeSince(GetLocalDate(new Date(post.date)))}
                                                     </Typography>
                                                     {post.user_Id == Account.id ? <>
@@ -207,11 +207,10 @@ export default function PostPage() {
                                                         </StyledMenu>
                                                     </> : <></>}
                                                 </Grid>
-                                                <Typography variant="subtitle1" color="text.disabled" component="p">
+                                                <Typography variant="subtitle1" component="p">
                                                     {post.title}
                                                 </Typography>
-                                                <Divider />
-                                                <br />
+                                                <Divider sx={{ mb: 1 }} />
                                                 {openEdit ?
                                                     <Box component="form" onSubmit={handleSubmitEdit} noValidate sx={{ mt: 1 }}>
                                                         <TextField
@@ -260,7 +259,7 @@ export default function PostPage() {
                                                         </Box>
                                                     </Box>
                                                     :
-                                                    <Typography variant="subtitle1" color="text.disabled" component="p" sx={{ mt: 2, whiteSpace: 'pre-line', overflowWrap: 'break-word' }}>
+                                                    <Typography variant="subtitle1" component="p" sx={{ mt: 2, whiteSpace: 'pre-line', overflowWrap: 'break-word' }}>
                                                         {post.text}
                                                     </Typography>
                                                 }

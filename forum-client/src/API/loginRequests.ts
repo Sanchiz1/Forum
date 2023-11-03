@@ -248,7 +248,6 @@ export function GetAjaxObservable<T>(query: string, variables: {}, authorized = 
       refreshObservable = new Observable<string>((subscriber) => {
         const sub = timer(10, 20).subscribe({
           next: () => {
-            console.log("waiting");
             let refreshSentString = getCookie("refresh_sent");
             let isTokenSent: boolean = refreshSentString ? JSON.parse(refreshSentString) : refreshSentString
             if (!isTokenSent) {

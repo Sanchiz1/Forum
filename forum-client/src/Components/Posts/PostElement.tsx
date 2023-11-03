@@ -20,7 +20,7 @@ export default function PostElement(props: Props) {
       <Paper sx={{
         p: 1,
         width: 1,
-        ":hover":{
+        ":hover": {
           boxShadow: 5
         }
       }}>
@@ -29,28 +29,28 @@ export default function PostElement(props: Props) {
           flexDirection: 'row',
           alignItems: 'center'
         }}>
-          <Link variant="subtitle1" onClick={(e) => e.stopPropagation()} component={RouterLink} to={'/user/' + props.post.user_Username} color="primary" sx={{mr: 1, textDecoration: 'none', cursor: 'pointer', color: 'white', 
-          ":hover": {
-            textDecoration: 'underline'
+          <Link variant="caption" onClick={(e) => e.stopPropagation()} component={RouterLink} to={'/user/' + props.post.user_Username} color="primary" sx={{
+            mr: 0.5, textDecoration: 'none', cursor: 'pointer', color: 'white',
+            ":hover": {
+              textDecoration: 'underline'
+            }
           }
-          }
-        } >
+          } >
             {props.post.user_Username}
           </Link>
-          <Typography variant="subtitle2" color="text.disabled" component="p" sx={{fontSize: 5, mr: 0.2}}>
+          <Typography variant="caption" color="text.disabled" component="p" sx={{ fontSize: 3, mr: 0.5 }}>
             {'\u2B24'}
           </Typography>
-          <Typography variant="subtitle2" color="text.disabled" component="p">
-          {timeSince(GetLocalDate(new Date(props.post.date)))}
+          <Typography variant="caption" color="text.disabled" component="p">
+            {timeSince(GetLocalDate(new Date(props.post.date)))}
           </Typography>
         </Grid>
-        <Typography variant="subtitle1" color="text.disabled" component="p">
+        <Typography variant="subtitle1" component="p">
           {props.post.title}
         </Typography>
-        <Divider />
-        <br />
-        <Typography variant="subtitle1" color="text.disabled" component="p" sx={{
-          maxHeight: '150px', overflow: 'hidden', 
+        <Divider sx={{ mb: 1 }} />
+        <Typography variant="subtitle1" component="p" sx={{
+          maxHeight: '150px', overflow: 'hidden',
           whiteSpace: 'pre-line',
           textOverflow: 'ellipsis',
           content: 'none',

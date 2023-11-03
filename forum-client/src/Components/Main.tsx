@@ -1,7 +1,7 @@
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import { Box, Button, Container, CssBaseline, Paper } from '@mui/material';
+import { Box, Button, Container, CssBaseline, Paper, Skeleton } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserAccount } from '../Redux/Epics/AccountEpics';
 import { RootState } from '../Redux/store';
@@ -15,6 +15,8 @@ import { Post } from '../Types/Post';
 import PostElement from './Posts/PostElement';
 
 export default function Main() {
+  const next = 10
+  const [offset, setOffset] = useState(0)
   const [posts, setPosts] = useState<Post[]>()
   const dispatch = useDispatch();
   const navigator = useNavigate()
@@ -30,6 +32,18 @@ export default function Main() {
 
   const Account = useSelector((state: RootState) => state.account.Account);
 
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  function handleScroll() {
+    if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
+    console.log('Fetch more list items!');
+  }
+
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -41,6 +55,7 @@ export default function Main() {
               ? theme.palette.grey[100]
               : theme.palette.grey[900],
           flexGrow: 1,
+          minHeight: '100vh',
           overflow: 'auto',
           display: 'flex'
         }}
@@ -69,6 +84,20 @@ export default function Main() {
                 <PostElement post={post} key={post.id.toString()} customClickEvent={(event: React.MouseEvent<HTMLDivElement>) => navigator('/post/' + post.id, { state: state })}></PostElement>
               )
             }
+            <Grid item xs={12} md={12} lg={12}>
+              <Paper sx={{
+                p: 1,
+                width: 1,
+                ":hover": {
+                  boxShadow: 5
+                }
+              }}>
+                <Skeleton width="10%" animation="wave"  sx={{ fontSize: '10px' }} />
+                <Skeleton width="30%" animation="wave"/>
+                <Divider />
+                <Skeleton animation="wave" height={40}/>
+              </Paper>
+            </Grid>
           </Grid>
         </Container>
       </Box>
