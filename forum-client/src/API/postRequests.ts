@@ -49,13 +49,51 @@ export function requestPosts() {
     );
 }
 
+export function requestPagedPosts(offset: Number, next: Number, order: String) {
+    return ajax<GraphqlPosts>({
+        url: url,
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        },
+        body: JSON.stringify({
+            query: `query($Offset: Int!, $Next: Int!, $Order: String!){
+              posts{
+                posts:pagedPosts(offset: $Offset, next: $Next, order: $Order){
+                    id,
+                    title,
+                    text,
+                    date,
+                    user_Id,
+                    user_Username
+                }
+              }
+            }`,
+            variables: {
+                "Offset": offset,
+                "Next": next,
+                "Order": order
+            }
+        }),
+        withCredentials: true,
+    }).pipe(
+        map((value) => {
+            return value.response.data.posts.posts;
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}
+
 interface GraphqlCreatePost {
     post: {
         createPost: string
     }
 }
 
-export function creaatePostRequest(PostInput: PostInput) {
+export function createPostRequest(PostInput: PostInput) {
     return GetAjaxObservable<GraphqlCreatePost>(`
         mutation($Post: PostInput!){
             post{

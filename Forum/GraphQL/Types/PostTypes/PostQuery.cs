@@ -26,7 +26,7 @@ namespace Forum.GraphQL.Types
                     int offset = context.GetArgument<int>("offset");
                     int next = context.GetArgument<int>("next");
                     string order = context.GetArgument<string>("order");
-                    return repo.GetPagedSortedPosts(offset, next, order);
+                    return repo.GetPagedSortedPosts(next, offset, order);
                 });
 
             Field<PostGraphType>("post")

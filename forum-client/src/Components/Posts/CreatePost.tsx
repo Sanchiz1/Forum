@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../Redux/store';
 import { useState, useEffect } from 'react';
-import { creaatePostRequest } from '../../API/postRequests';
+import { createPostRequest } from '../../API/postRequests';
 import { PostInput } from '../../Types/Post';
 import { enqueueSnackbar } from 'notistack';
 
@@ -51,7 +51,7 @@ export default function CreatePost() {
             text: text,
             user_Id: Account.id
         }
-        creaatePostRequest(postInput).subscribe({
+        createPostRequest(postInput).subscribe({
             next(value) {
                 enqueueSnackbar(value, {
                     variant: 'success', anchorOrigin: {

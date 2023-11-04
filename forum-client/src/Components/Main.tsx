@@ -9,29 +9,56 @@ import ButtonWithCheck from './ButtonWithCheck/ButtonWithCheck';
 import { isSigned } from '../API/loginRequests';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { setLogInError } from '../Redux/Reducers/AccountReducer';
-import { useEffect, useState } from 'react';
-import { requestPosts } from '../API/postRequests';
+import { useEffect, useRef, useState } from 'react';
+import { requestPagedPosts, requestPosts } from '../API/postRequests';
 import { Post } from '../Types/Post';
 import PostElement from './Posts/PostElement';
 
 export default function Main() {
-  const next = 10
-  const [offset, setOffset] = useState(0)
-  const [posts, setPosts] = useState<Post[]>()
+  const next = 2;
+  const [offset, setOffset] = useState(0);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [hasMore, setHasMore] = useState(true);
+
+  const elementRef = useRef(null);
+
   const dispatch = useDispatch();
   const navigator = useNavigate()
   const { state } = useLocation()
 
+
+  const onIntersection = (entries: any) => {
+    const firstEntry = entries[0];
+    if(firstEntry.isIntersecting && hasMore){
+      requestPagedPosts(offset, next, "Date").subscribe({
+        next(value) {
+          setPosts([...posts, ...value])
+          setOffset(offset + next)
+        },
+        error(err) {
+          
+        },
+      })
+    }
+  }
+
   useEffect(() => {
-    requestPosts().subscribe({
-      next(value) {
-        setPosts(value)
-      },
-    })
-  }, [])
+    const observer = new IntersectionObserver(onIntersection)
+
+    if(observer && elementRef.current){
+      observer.observe(elementRef.current)
+    }
+
+    return () => {
+      if(observer){
+        observer.disconnect()
+      }
+    }
+  }, posts)
+
 
   const Account = useSelector((state: RootState) => state.account.Account);
-
+  
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll);
@@ -40,7 +67,7 @@ export default function Main() {
 
   function handleScroll() {
     if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
-    console.log('Fetch more list items!');
+    setOffset(offset + next);
   }
 
 

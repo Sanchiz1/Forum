@@ -25,10 +25,10 @@ namespace Forum.Data.Repositories.Implementations
         }
         public List<Post> GetPagedSortedPosts(int next, int offset, string order = "Date")
         {
-            string query = $"SELECT Posts.Id, Title, Text, Date, User_Id, users.Username as User_Username FROM Posts INNER JOIN Users ON Users.Id = Posts.User_Id ORDER BY @order OFFSET @offset ROWS FETCH NEXT @next ROWS ONLY";
+            string query = $"SELECT Posts.Id, Title, Text, Date, User_Id, users.Username as User_Username FROM Posts INNER JOIN Users ON Users.Id = Posts.User_Id ORDER BY {order} OFFSET @offset ROWS FETCH NEXT @next ROWS ONLY";
             using var connection = _dapperContext.CreateConnection();
 
-            var posts = connection.Query<Post>(query, new { next, offset, order}).ToList();
+            var posts = connection.Query<Post>(query, new { next, offset }).ToList();
             return posts;
         }
         public Post GetPostById(int id)
