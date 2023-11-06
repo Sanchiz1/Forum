@@ -24,6 +24,9 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { StyledMenu } from '../StyledMenu';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { enqueueSnackbar } from 'notistack';
+import { Reply } from '../../Types/Reply';
+import { requestReplies } from '../../API/replyRequests';
+import ReplyElement from '../Replies/ReplyElement';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -35,6 +38,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function PostPage() {
     const [post, setPost] = useState<Post>();
+    const [replies, setReplies] = useState<Reply[]>();
     const [postExists, setPostExists] = useState(true);
     let { PostId } = useParams();
     const { state } = useLocation();
@@ -50,6 +54,13 @@ export default function PostPage() {
                 if (post === null) {
                     setPostExists(false);
                 }
+            },
+            error(err) {
+            },
+        })
+        requestReplies(parseInt(PostId!)).subscribe({
+            next(reply) {
+                setReplies(reply);
             },
             error(err) {
             },
@@ -265,6 +276,16 @@ export default function PostPage() {
                                                 }
                                             </Paper>
                                         </Grid>
+                                        {
+                                            replies?.length === 0 ? <></> :
+                                                <>
+                                                    {
+                                                        replies?.map((reply, index) =>
+                                                            <ReplyElement reply={reply} key={index}></ReplyElement>
+                                                        )
+                                                    }
+                                                </>
+                                        }
                                     </Grid>
                                     <Dialog
                                         open={openDelete}

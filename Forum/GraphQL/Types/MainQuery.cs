@@ -1,4 +1,6 @@
 ﻿using Forum.Data.Repositories.Interfaces;
+using Forum.GraphQL.Types.PostTypes;
+using Forum.GraphQL.Types.ReplyTypes;
 using Forum.GraphQL.Types.UserTypes;
 using Forum.Helpers;
 using Forum.Models;
@@ -42,6 +44,10 @@ namespace Forum.GraphQL.Types
                 }).AuthorizeWithPolicy("Authorized");
 
             Field<PostQuery>("posts")
+                .Resolve(context => new { });
+
+
+            Field<ReplyQuery>("replies")
                 .Resolve(context => new { });
         }
     }

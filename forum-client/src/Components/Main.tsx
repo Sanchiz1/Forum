@@ -35,7 +35,7 @@ export default function Main() {
   useEffect(() => {
     requestPagedPosts(offset, next, "Date", userTimestamp).subscribe({
       next(value) {
-        if(value.length == 0) {
+        if (value.length == 0) {
           setHasMore(false);
           return;
         }
@@ -99,18 +99,33 @@ export default function Main() {
               )
             }
             <Grid item xs={12} md={12} lg={12}>
-              <Paper sx={{
-                p: 1,
-                width: 1,
-                ":hover": {
-                  boxShadow: 5
-                }
-              }}>
-                <Skeleton width="10%" animation="wave" sx={{ fontSize: '10px' }} />
-                <Skeleton width="30%" animation="wave" />
-                <Divider />
-                <Skeleton animation="wave" height={40} />
-              </Paper>
+              {
+                hasMore ?
+                  <Paper sx={{
+                    p: 1,
+                    width: 1,
+                    ":hover": {
+                      boxShadow: 5
+                    }
+                  }}>
+                    <Skeleton width="10%" animation="wave" sx={{ fontSize: '10px' }} />
+                    <Skeleton width="30%" animation="wave" />
+                    <Divider />
+                    <Skeleton animation="wave" height={40} />
+                  </Paper>
+                  :
+                  <Paper sx={{
+                    p: 1,
+                    width: 1,
+                    ":hover": {
+                      boxShadow: 5
+                    }
+                  }}>
+                    <Typography>
+                      You scrolled to the end...
+                    </Typography>
+                  </Paper>
+              }
             </Grid>
           </Grid>
         </Container>

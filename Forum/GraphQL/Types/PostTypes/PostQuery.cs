@@ -5,7 +5,7 @@ using Forum.Models;
 using GraphQL;
 using GraphQL.Types;
 
-namespace Forum.GraphQL.Types
+namespace Forum.GraphQL.Types.PostTypes
 {
     public class PostQuery : ObjectGraphType
     {

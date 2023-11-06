@@ -17,7 +17,8 @@ namespace Forum.Data.Repositories.Implementations
         }
         public List<Post> GetPosts()
         {
-            string query = $"SELECT Posts.Id, Title, Text, Date, User_Id, users.Username as User_Username FROM Posts INNER JOIN Users ON Users.Id = Posts.User_Id";
+            string query = $"SELECT Posts.Id, Title, Text, Date, User_Id, users.Username as User_Username" +
+                $" FROM Posts INNER JOIN Users ON Users.Id = Posts.User_Id";
             using var connection = _dapperContext.CreateConnection();
 
             var posts = connection.Query<Post>(query).ToList();
@@ -25,7 +26,8 @@ namespace Forum.Data.Repositories.Implementations
         }
         public List<Post> GetPagedSortedPosts(int next, int offset, DateTime user_timestamp, string order = "Date")
         {
-            string query = $"SELECT Posts.Id, Title, Text, Date, User_Id, users.Username as User_Username FROM Posts INNER JOIN Users ON Users.Id = Posts.User_Id WHERE Date < @user_timestamp ORDER BY {order} DESC OFFSET @offset ROWS FETCH NEXT @next ROWS ONLY";
+            string query = $"SELECT Posts.Id, Title, Text, Date, User_Id, users.Username as User_Username" +
+                $" FROM Posts INNER JOIN Users ON Users.Id = Posts.User_Id WHERE Date < @user_timestamp ORDER BY {order} DESC OFFSET @offset ROWS FETCH NEXT @next ROWS ONLY";
             using var connection = _dapperContext.CreateConnection();
 
             var posts = connection.Query<Post>(query, new { next, offset, user_timestamp }).ToList();
@@ -33,7 +35,8 @@ namespace Forum.Data.Repositories.Implementations
         }
         public Post GetPostById(int id)
         {
-            string query = $"SELECT Posts.Id, Title, Text, Date, User_Id, users.Username as User_Username FROM Posts INNER JOIN Users ON Users.Id = Posts.User_Id WHERE Posts.Id = @id";
+            string query = $"SELECT Posts.Id, Title, Text, Date, User_Id, users.Username as User_Username" +
+                $" FROM Posts INNER JOIN Users ON Users.Id = Posts.User_Id WHERE Posts.Id = @id";
             using var connection = _dapperContext.CreateConnection();
 
             var post = connection.Query<Post>(query, new { id }).First();

@@ -1,0 +1,12 @@
+﻿namespace Forum.Models.Replies
+{
+    public class ReplyInput
+    {
+        public string Text { get; set; }
+        public int Post_Id { get; set; }
+        public int Reply_Id { get; set; }
+        public int User_Id { get; set; }
+        public string User_Username { get; set; }
+        public ReplyInput() { }
+    }
+}
