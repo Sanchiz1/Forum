@@ -21,12 +21,14 @@ namespace Forum.GraphQL.Types
                 .Argument<NonNullGraphType<IntGraphType>>("offset")
                 .Argument<NonNullGraphType<IntGraphType>>("next")
                 .Argument<NonNullGraphType<StringGraphType>>("order")
+                .Argument<NonNullGraphType<DateTimeGraphType>>("user_timestamp")
                 .Resolve(context =>
                 {
                     int offset = context.GetArgument<int>("offset");
                     int next = context.GetArgument<int>("next");
                     string order = context.GetArgument<string>("order");
-                    return repo.GetPagedSortedPosts(next, offset, order);
+                    DateTime user_timestamp = context.GetArgument<DateTime>("user_timestamp");
+                    return repo.GetPagedSortedPosts(next, offset, user_timestamp, order);
                 });
 
             Field<PostGraphType>("post")

@@ -15,7 +15,8 @@ import { Post } from '../Types/Post';
 import PostElement from './Posts/PostElement';
 
 export default function Main() {
-  const next = 2;
+  const next = 4;
+  const [userTimestamp, setUserTimestamp] = useState(new Date());
   const [offset, setOffset] = useState(0);
   const [posts, setPosts] = useState<Post[]>([]);
   const [hasMore, setHasMore] = useState(true);
@@ -26,47 +27,33 @@ export default function Main() {
   const navigator = useNavigate()
   const { state } = useLocation()
 
-
-  const onIntersection = (entries: any) => {
-    const firstEntry = entries[0];
-    if(firstEntry.isIntersecting && hasMore){
-      requestPagedPosts(offset, next, "Date").subscribe({
-        next(value) {
-          setPosts([...posts, ...value])
-          setOffset(offset + next)
-        },
-        error(err) {
-          
-        },
-      })
-    }
-  }
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(onIntersection)
-
-    if(observer && elementRef.current){
-      observer.observe(elementRef.current)
-    }
-
-    return () => {
-      if(observer){
-        observer.disconnect()
-      }
-    }
-  }, posts)
-
-
   const Account = useSelector((state: RootState) => state.account.Account);
-  
 
   useEffect(() => {
+    setUserTimestamp(new Date())
+  }, []);
+  useEffect(() => {
+    requestPagedPosts(offset, next, "Date", userTimestamp).subscribe({
+      next(value) {
+        if(value.length == 0) {
+          setHasMore(false);
+          return;
+        }
+        setPosts([...posts, ...value])
+        if (document.documentElement.offsetHeight - window.innerHeight < 100) {
+          setOffset(offset + next);
+        }
+      },
+      error(err) {
+
+      },
+    })
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [offset]);
 
   function handleScroll() {
-    if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
+    if (window.innerHeight + document.documentElement.scrollTop <= document.documentElement.scrollHeight - 10 || !hasMore) return;
     setOffset(offset + next);
   }
 
@@ -107,8 +94,8 @@ export default function Main() {
               </Paper>
             </Grid>
             {
-              posts?.map((post) =>
-                <PostElement post={post} key={post.id.toString()} customClickEvent={(event: React.MouseEvent<HTMLDivElement>) => navigator('/post/' + post.id, { state: state })}></PostElement>
+              posts?.map((post, index) =>
+                <PostElement post={post} key={index} customClickEvent={(event: React.MouseEvent<HTMLDivElement>) => navigator('/post/' + post.id, { state: state })}></PostElement>
               )
             }
             <Grid item xs={12} md={12} lg={12}>
@@ -119,10 +106,10 @@ export default function Main() {
                   boxShadow: 5
                 }
               }}>
-                <Skeleton width="10%" animation="wave"  sx={{ fontSize: '10px' }} />
-                <Skeleton width="30%" animation="wave"/>
+                <Skeleton width="10%" animation="wave" sx={{ fontSize: '10px' }} />
+                <Skeleton width="30%" animation="wave" />
                 <Divider />
-                <Skeleton animation="wave" height={40}/>
+                <Skeleton animation="wave" height={40} />
               </Paper>
             </Grid>
           </Grid>

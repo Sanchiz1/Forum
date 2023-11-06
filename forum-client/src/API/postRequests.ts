@@ -49,7 +49,7 @@ export function requestPosts() {
     );
 }
 
-export function requestPagedPosts(offset: Number, next: Number, order: String) {
+export function requestPagedPosts(offset: Number, next: Number, order: String, user_timestamp: Date) {
     return ajax<GraphqlPosts>({
         url: url,
         method: "POST",
@@ -58,9 +58,9 @@ export function requestPagedPosts(offset: Number, next: Number, order: String) {
             Accept: "application/json",
         },
         body: JSON.stringify({
-            query: `query($Offset: Int!, $Next: Int!, $Order: String!){
+            query: `query($Offset: Int!, $Next: Int!, $Order: String!, $User_timestamp: DateTime!){
               posts{
-                posts:pagedPosts(offset: $Offset, next: $Next, order: $Order){
+                posts:pagedPosts(offset: $Offset, next: $Next, order: $Order, user_timestamp: $User_timestamp){
                     id,
                     title,
                     text,
@@ -73,7 +73,8 @@ export function requestPagedPosts(offset: Number, next: Number, order: String) {
             variables: {
                 "Offset": offset,
                 "Next": next,
-                "Order": order
+                "Order": order,
+                "User_timestamp": user_timestamp.toISOString()
             }
         }),
         withCredentials: true,
