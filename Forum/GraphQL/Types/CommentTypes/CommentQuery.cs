@@ -1,32 +1,30 @@
 ﻿using Forum.Data.Repositories.Interfaces;
-using Forum.GraphQL.Types.UserTypes;
-using GraphQL.Types;
 using GraphQL;
-using Forum.GraphQL.Types.CommentTypes;
+using GraphQL.Types;
 
-namespace Forum.GraphQL.Types.ReplyTypes
+namespace Forum.GraphQL.Types.CommentTypes
 {
-    public class ReplyQuery : ObjectGraphType
+    public class CommentQuery : ObjectGraphType
     {
-        private readonly IReplyRepository repo;
-        public ReplyQuery(IReplyRepository Repo)
+        private readonly ICommentRepository repo;
+        public CommentQuery(ICommentRepository Repo)
         {
             repo = Repo;
 
-            Field<ListGraphType<ReplyGraphType>>("replies")
-                .Argument<NonNullGraphType<IntGraphType>>("comment_id")
+            Field<ListGraphType<CommentGraphType>>("comments")
+                .Argument<NonNullGraphType<IntGraphType>>("post_id")
                 .Argument<NonNullGraphType<IntGraphType>>("offset")
                 .Argument<NonNullGraphType<IntGraphType>>("next")
                 .Argument<NonNullGraphType<StringGraphType>>("order")
                 .Argument<NonNullGraphType<DateTimeGraphType>>("user_timestamp")
                 .Resolve(context =>
                 {
-                    int comment_id = context.GetArgument<int>("comment_id");
+                    int post_id = context.GetArgument<int>("post_id");
                     int offset = context.GetArgument<int>("offset");
                     int next = context.GetArgument<int>("next");
                     string order = context.GetArgument<string>("order");
                     DateTime user_timestamp = context.GetArgument<DateTime>("user_timestamp");
-                    return repo.GetReplies(comment_id, next, offset, user_timestamp, order);
+                    return repo.GetComments(post_id, next, offset, user_timestamp, order);
                 });
         }
     }

@@ -20,6 +20,7 @@ builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddSingleton<IUserRepository,UserRepository>();
 builder.Services.AddSingleton<IPostRepository, PostRepository>();
+builder.Services.AddSingleton<ICommentRepository, CommentRepository>();
 builder.Services.AddSingleton<IReplyRepository, ReplyRepository>();
 builder.Services.AddSingleton<ITokenRepository, TokenRepository>();
 builder.Services.AddSingleton<ITokenFactory, TokenFactory>();

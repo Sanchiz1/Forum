@@ -9,10 +9,9 @@ namespace Forum.GraphQL.Types.ReplyTypes
         public ReplyInputGraphType()
         {
             Field(i => i.Text, type: typeof(StringGraphType));
-            Field(i => i.Post_Id, type: typeof(IntGraphType));
+            Field(i => i.Comment_Id, type: typeof(IntGraphType));
             Field(i => i.Reply_Id, type: typeof(IntGraphType));
             Field(i => i.User_Id, type: typeof(IntGraphType));
-            Field(i => i.User_Username, type: typeof(StringGraphType));
         }
     }
 }

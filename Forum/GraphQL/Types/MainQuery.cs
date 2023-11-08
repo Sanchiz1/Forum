@@ -1,4 +1,5 @@
 ﻿using Forum.Data.Repositories.Interfaces;
+using Forum.GraphQL.Types.CommentTypes;
 using Forum.GraphQL.Types.PostTypes;
 using Forum.GraphQL.Types.ReplyTypes;
 using Forum.GraphQL.Types.UserTypes;
@@ -46,6 +47,9 @@ namespace Forum.GraphQL.Types
             Field<PostQuery>("posts")
                 .Resolve(context => new { });
 
+
+            Field<CommentQuery>("comments")
+                .Resolve(context => new { });
 
             Field<ReplyQuery>("replies")
                 .Resolve(context => new { });

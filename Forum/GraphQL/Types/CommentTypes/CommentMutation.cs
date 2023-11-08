@@ -1,38 +1,37 @@
 ﻿using Forum.Data.Repositories.Interfaces;
 using Forum.GraphQL.Types.UserTypes;
 using Forum.Helpers;
-using Forum.Models.Posts;
-using Forum.Models.User;
+using Forum.Models.Comments;
 using GraphQL;
 using GraphQL.Types;
 
-namespace Forum.GraphQL.Types.PostTypes
+namespace Forum.GraphQL.Types.CommentTypes
 {
-    public class PostMutation : ObjectGraphType
+    public class CommentMutation : ObjectGraphType
     {
-        private readonly IPostRepository repo;
+        private readonly ICommentRepository repo;
 
-        public PostMutation(IPostRepository Repo)
+        public CommentMutation(ICommentRepository Repo)
         {
             repo = Repo;
 
-            Field<StringGraphType>("createPost")
-                .Argument<NonNullGraphType<PostInputGraphType>>("Post")
+            Field<StringGraphType>("createComment")
+                .Argument<NonNullGraphType<CommentInputGraphType>>("Comment")
                 .ResolveAsync(async context =>
                 {
-                    PostInput post = context.GetArgument<PostInput>("Post");
+                    CommentInput comment = context.GetArgument<CommentInput>("Comment");
 
-                    if (post.Title.Length == 0)
+                    if (comment.Text.Length == 0)
                     {
                         context.Errors.Add(new ExecutionError("Invalid input"));
                         return null;
                     }
 
-                    repo.CreatePost(post);
-                    return "Post created successfully";
+                    repo.CreateComment(comment);
+                    return "Comment created successfully";
                 });
 
-            Field<StringGraphType>("updatePost")
+            Field<StringGraphType>("updateComment")
                 .Argument<StringGraphType>("Text")
                 .Argument<NonNullGraphType<IntGraphType>>("Id")
                 .ResolveAsync(async context =>
@@ -40,32 +39,32 @@ namespace Forum.GraphQL.Types.PostTypes
                     string text = context.GetArgument<string>("Text");
                     int id = context.GetArgument<int>("Id");
 
-                    Post post = repo.GetPostById(id);
+                    Comment post = repo.GetCommentById(id);
                     if (post.User_Id != AccountHelper.GetUserIdFromClaims(context.User))
                     {
-                        context.Errors.Add(new ExecutionError("Cannot edit someone else's post"));
+                        context.Errors.Add(new ExecutionError("Cannot edit someone else's comment"));
                         return null;
                     }
 
-                    repo.UpdatePost(text, id);
-                    return "Post updated successfully";
+                    repo.UpdateComment(text, id);
+                    return "Comment updated successfully";
                 });
 
-            Field<StringGraphType>("deletePost")
+            Field<StringGraphType>("deleteComment")
                 .Argument<NonNullGraphType<IntGraphType>>("Id")
                 .ResolveAsync(async context =>
                 {
                     int id = context.GetArgument<int>("Id");
 
-                    Post post = repo.GetPostById(id);
+                    Comment post = repo.GetCommentById(id);
                     if (post.User_Id != AccountHelper.GetUserIdFromClaims(context.User))
                     {
-                        context.Errors.Add(new ExecutionError("Cannot delete someone else's post"));
+                        context.Errors.Add(new ExecutionError("Cannot delete someone else's comment"));
                         return null;
                     }
 
-                    repo.DeletePost(id);
-                    return "Post deleted successfully";
+                    repo.DeleteComment(id);
+                    return "Comment deleted successfully";
                 });
         }
     }
