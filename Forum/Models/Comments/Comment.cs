@@ -1,14 +1,13 @@
-﻿namespace Forum.Models.Replies
+﻿namespace Forum.Models.Comments
 {
-    public class Reply
+    public class Comment
     {
         public int Id { get; set; }
         public string Text { get; set; }
         public DateTime Date { get; set; }
-        public int Comment_Id { get; set; }
-        public int Reply_Id { get; set; }
+        public int Post_Id { get; set; }
         public int User_Id { get; set; }
         public string User_Username { get; set; }
-        public Reply() { }
+        public Comment() { }
     }
 }

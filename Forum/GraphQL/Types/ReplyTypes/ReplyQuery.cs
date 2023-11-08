@@ -17,14 +17,7 @@ namespace Forum.GraphQL.Types.ReplyTypes
                 .Resolve(context =>
                 {
                     int post_Id = context.GetArgument<int>("post_Id");
-                    return repo.GetPostReplies(post_Id);
-                });
-            Field<ListGraphType<ReplyGraphType>>("replyReplies")
-                .Argument<NonNullGraphType<IntGraphType>>("reply_Id")
-                .Resolve(context =>
-                {
-                    int reply_Id = context.GetArgument<int>("reply_Id");
-                    return repo.GetReplyReplies(reply_Id);
+                    return null;
                 });
         }
     }
