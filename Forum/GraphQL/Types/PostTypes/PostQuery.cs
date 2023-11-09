@@ -15,7 +15,11 @@ namespace Forum.GraphQL.Types.PostTypes
             repo = Repo;
 
             Field<ListGraphType<PostGraphType>>("posts")
-                .Resolve(context => repo.GetPosts());
+                .Resolve(context =>
+                {
+                    var userId = AccountHelper.GetUserIdFromClaims(context.User!);
+                    return repo.GetPosts(userId);
+                });
 
             Field<ListGraphType<PostGraphType>>("pagedPosts")
                 .Argument<NonNullGraphType<IntGraphType>>("offset")
@@ -28,7 +32,8 @@ namespace Forum.GraphQL.Types.PostTypes
                     int next = context.GetArgument<int>("next");
                     string order = context.GetArgument<string>("order");
                     DateTime user_timestamp = context.GetArgument<DateTime>("user_timestamp");
-                    return repo.GetPagedSortedPosts(next, offset, user_timestamp, order);
+                    var userId = AccountHelper.GetUserIdFromClaims(context.User!);
+                    return repo.GetPagedSortedPosts(next, offset, user_timestamp, order, userId);
                 });
 
             Field<PostGraphType>("post")
@@ -36,6 +41,7 @@ namespace Forum.GraphQL.Types.PostTypes
                 .Resolve(context =>
                 {
                     int id = context.GetArgument<int>("id");
+                    var userId = AccountHelper.GetUserIdFromClaims(context.User!);
                     return repo.GetPostById(id);
                 });
         }

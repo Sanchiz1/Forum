@@ -13,6 +13,9 @@ namespace Forum.GraphQL.Types.CommentTypes
             Field(i => i.Post_Id, type: typeof(IntGraphType));
             Field(i => i.User_Id, type: typeof(IntGraphType));
             Field(i => i.User_Username, type: typeof(StringGraphType));
+            Field(i => i.Likes, type: typeof(IntGraphType));
+            Field(i => i.Replies, type: typeof(IntGraphType));
+            Field(i => i.Liked, type: typeof(BooleanGraphType));
         }
     }
 }

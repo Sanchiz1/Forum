@@ -6,7 +6,9 @@ namespace Forum.Helpers
     {
         public static int GetUserIdFromClaims(ClaimsPrincipal user)
         {
-            var id = int.Parse(user.Claims.FirstOrDefault(c => c.Type == "UserId")!.Value);
+            var id_calim = user.Claims.FirstOrDefault(c => c.Type == "UserId");
+            if (id_calim == null) return 0;
+            var id = int.Parse(id_calim.Value);
             return id;
         }
     }
