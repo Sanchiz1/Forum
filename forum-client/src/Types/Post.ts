@@ -5,6 +5,9 @@ export interface Post{
     date: Date,
     user_Id: Number
     user_Username: string,
+    likes: Number,
+    comments: Number,
+    liked: boolean
 }
 
 export interface PostInput {

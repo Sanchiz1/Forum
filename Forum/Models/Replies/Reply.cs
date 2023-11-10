@@ -10,6 +10,8 @@
         public int User_Id { get; set; }
         public string User_Username { get; set; }
         public string? Reply_Username { get; set; }
+        public int Likes { get; set; }
+        public bool Liked { get; set; }
         public Reply() { }
     }
 }

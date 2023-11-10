@@ -10,9 +10,10 @@ import { isSigned } from '../API/loginRequests';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { setLogInError } from '../Redux/Reducers/AccountReducer';
 import { useEffect, useRef, useState } from 'react';
-import { requestPagedPosts, requestPosts } from '../API/postRequests';
+import { requestPagedPosts } from '../API/postRequests';
 import { Post } from '../Types/Post';
 import PostElement from './Posts/PostElement';
+import { User } from '../Types/User';
 
 export default function Main() {
   const next = 4;
@@ -27,7 +28,7 @@ export default function Main() {
   const navigator = useNavigate()
   const { state } = useLocation()
 
-  const Account = useSelector((state: RootState) => state.account.Account);
+  const Account: User = useSelector((state: RootState) => state.account.Account);
 
   useEffect(() => {
     setUserTimestamp(new Date())
@@ -83,14 +84,7 @@ export default function Main() {
                 p: 1,
                 width: 1,
               }}>
-                <ButtonWithCheck variant='outlined' ActionWithCheck={() => {
-                  if (isSigned()) {
-                    navigator('/CreatePost');
-                  }
-                  else {
-                    dispatch(setLogInError('Not signed in'));
-                  }
-                }}></ButtonWithCheck>
+                <ButtonWithCheck variant='outlined' ActionWithCheck={() => { navigator('/CreatePost'); }}>Create Post</ButtonWithCheck>
               </Paper>
             </Grid>
             {

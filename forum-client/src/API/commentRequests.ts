@@ -1,19 +1,19 @@
 import { ajax } from "rxjs/internal/ajax/ajax";
 import { catchError, map } from "rxjs";
-import { Reply } from "../Types/Reply";
+import { Comment } from "../Types/Comment";
 
 const url = "https://localhost:7295/graphql";
 
-interface GraphqlReply {
+interface GraphqlComments {
     data: {
-        replies: {
-            replies: Reply[]
+        comments: {
+            comments: Comment[]
         }
     }
 }
 
-export function requestReplies(comment_id: Number, offset: Number, next: Number, order: String, user_timestamp: Date) {
-    return ajax<GraphqlReply>({
+export function requestComments(post_Id: Number, offset: Number, next: Number, order: String, user_timestamp: Date) {
+    return ajax<GraphqlComments>({
         url: url,
         method: "POST",
         headers: {
@@ -22,24 +22,23 @@ export function requestReplies(comment_id: Number, offset: Number, next: Number,
         },
         body: JSON.stringify({
             query: `
-            query($Comment_id: Int!, $Offset: Int!, $Next: Int!, $Order: String!, $User_timestamp: DateTime!){
-                replies{
-                    replies(comment_id: $Comment_id, offset: $Offset, next: $Next, order: $Order, user_timestamp: $User_timestamp){
+            query($Post_Id: Int!, $Offset: Int!, $Next: Int!, $Order: String!, $User_timestamp: DateTime!){
+                comments{
+                    comments(post_id: $Post_Id, offset: $Offset, next: $Next, order: $Order, user_timestamp: $User_timestamp){
                         id
                         text
                         date
-                        comment_Id
-                        reply_Id
+                        post_Id
                         user_Id
                         user_Username
-                        reply_Username
                         likes
+                        replies
                         liked
                     }
                 }
             }`,
             variables: {
-                "Comment_id": comment_id,
+                "Post_Id": post_Id,
                 "Offset": offset,
                 "Next": next,
                 "Order": order,
@@ -49,7 +48,7 @@ export function requestReplies(comment_id: Number, offset: Number, next: Number,
         withCredentials: true,
     }).pipe(
         map((value) => {
-            return value.response.data.replies.replies;
+            return value.response.data.comments.comments;
         }),
         catchError((error) => {
             throw error

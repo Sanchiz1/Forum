@@ -9,7 +9,13 @@ import { getUserAccount } from '../../Redux/Epics/AccountEpics';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { RootState } from '../../Redux/store';
-import { Backdrop, Badge, CircularProgress, Container, CssBaseline, IconButton, LinearProgress, Toolbar, Collapse, TextField, Alert, Link, MenuItem, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
+import {
+    FormControl, Select, Stack, Container, CssBaseline, IconButton, LinearProgress,
+    Toolbar, Collapse, TextField, Alert, Link, MenuItem, Button, Dialog, DialogTitle, DialogActions
+} from '@mui/material';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link as RouterLink } from 'react-router-dom';
 import { Post } from '../../Types/Post';
@@ -26,7 +32,14 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { enqueueSnackbar } from 'notistack';
 import { Reply } from '../../Types/Reply';
 import { requestReplies } from '../../API/replyRequests';
-import ReplyElement from '../Replies/ReplyElement';
+import ReplyElement from '../Comments/ReplyElement';
+import { requestComments } from '../../API/commentRequests';
+import { Comment } from '../../Types/Comment';
+import CommentElement from '../Comments/CommentElement';
+import { BootstrapInput } from '../BootstrapInput';
+import { isSigned } from '../../API/loginRequests';
+import { setLogInError } from '../../Redux/Reducers/AccountReducer';
+import { User } from '../../Types/User';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -37,30 +50,42 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 export default function PostPage() {
+
     const [post, setPost] = useState<Post>();
-    const [replies, setReplies] = useState<Reply[]>();
+    const [liked, SetLiked] = useState(false);
+    const [likes, setLikes] = useState(0);
+    const [comments, setComments] = useState<Comment[]>();
     const [postExists, setPostExists] = useState(true);
+
+    const next = 4;
+    const [userTimestamp, setUserTimestamp] = useState(new Date());
+    const [offset, setOffset] = useState(0);
+    const [order, setOrder] = useState("Date");
+
     let { PostId } = useParams();
     const { state } = useLocation();
     const dispatch = useDispatch();
     const navigator = useNavigate();
 
-    const Account = useSelector((state: RootState) => state.account.Account);
+    const Account : User = useSelector((state: RootState) => state.account.Account);
 
     useEffect(() => {
         requestPostById(parseInt(PostId!)).subscribe({
             next(post) {
-                setPost(post);
                 if (post === null) {
                     setPostExists(false);
+                    return;
                 }
+                setPost(post);
+                SetLiked(post.liked);
+                setLikes(post.likes.valueOf());
             },
             error(err) {
             },
         })
-        requestReplies(parseInt(PostId!)).subscribe({
-            next(reply) {
-                setReplies(reply);
+        requestComments(parseInt(PostId!), offset, next, order, userTimestamp).subscribe({
+            next(comments) {
+                setComments(comments);
             },
             error(err) {
             },
@@ -194,7 +219,7 @@ export default function PostPage() {
                                                             aria-expanded={open ? 'true' : undefined}
                                                             aria-haspopup="true"
                                                             onClick={handleClickMenu}
-                                                            sx={{ ml: 'auto' }}
+                                                            sx={{ ml: 'auto', p: 0.5 }}
                                                         >
                                                             <MoreVertIcon />
                                                         </IconButton>
@@ -274,18 +299,79 @@ export default function PostPage() {
                                                         {post.text}
                                                     </Typography>
                                                 }
+                                                <Stack
+                                                    direction="row"
+                                                    divider={<Divider orientation="vertical" flexItem />}
+                                                    spacing={1}
+                                                >
+                                                    <Grid>
+                                                        <Typography variant="caption" color="text.disabled" component="p" sx={{ fontSize: '16px', display: 'flex', alignItems: 'center' }}>
+                                                            <IconButton sx={{ p: 0.5, color: 'inherit' }} onClick={(e) => { e.stopPropagation(); setLikes(liked ? likes - 1 : likes + 1); SetLiked(!liked) }}>
+                                                                {liked ? <FavoriteIcon></FavoriteIcon> : <FavoriteBorderIcon></FavoriteBorderIcon>}
+                                                            </IconButton>
+                                                            {likes.toString()}
+                                                        </Typography>
+                                                    </Grid>
+                                                </Stack>
                                             </Paper>
                                         </Grid>
-                                        {
-                                            replies?.length === 0 ? <></> :
-                                                <>
-                                                    {
-                                                        replies?.map((reply, index) =>
-                                                            <ReplyElement reply={reply} key={index}></ReplyElement>
-                                                        )
-                                                    }
-                                                </>
-                                        }
+                                        <Grid item xs={12} md={12} lg={12}>
+                                            <Paper sx={{
+                                                p: 1,
+                                                width: 1
+                                            }}>
+                                                <Grid sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'row',
+                                                    alignItems: 'stretch',
+                                                    py: 0,
+                                                }}>
+                                                    <Typography variant="caption" sx={{ mr: 1, fontSize: '18px', display: 'flex', alignItems: 'center' }}>
+                                                        {post.comments.toString()} Comments
+                                                    </Typography>
+                                                    <Typography variant="caption" sx={{ fontSize: '15px', display: 'flex', alignItems: 'center' }}>
+                                                        <Select
+                                                            value={order}
+                                                            onChange={(e) => setOrder(e.target.value)}
+                                                            input={<BootstrapInput sx={{ height: 1, display: 'flex' }} />}
+                                                        >
+                                                            <MenuItem value={"Likes"}>Top</MenuItem>
+                                                            <MenuItem value={"Date"}>New</MenuItem>
+                                                        </Select>
+                                                    </Typography>
+                                                </Grid>
+                                                <Box component="form" noValidate sx={{ m: 0 }}>
+                                                    <TextField
+                                                        variant="standard"
+                                                        placeholder='Add a comment'
+                                                        name="comment"
+                                                        required
+                                                        fullWidth
+                                                        multiline
+                                                        minRows={1}
+                                                        sx={{ mb: 2 }}
+                                                        onFocus={(e) => {
+                                                            if (!isSigned()) {
+                                                                e.currentTarget?.blur();
+                                                                dispatch(setLogInError('Not signed in'));
+                                                            }
+                                                        }
+                                                        }
+                                                    />
+                                                </Box>
+                                                {
+                                                    comments?.length === 0 ? <></> :
+                                                        <>
+                                                            {
+
+                                                                comments?.map((comment, index) =>
+                                                                    <CommentElement comment={comment} key={index}></CommentElement>
+                                                                )
+                                                            }
+                                                        </>
+                                                }
+                                            </Paper>
+                                        </Grid>
                                     </Grid>
                                     <Dialog
                                         open={openDelete}
@@ -313,7 +399,7 @@ export default function PostPage() {
                     }
                 </>
                 :
-                <></>
+                <>Post not found</>
             }
         </>
     );

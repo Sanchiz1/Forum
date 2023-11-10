@@ -16,39 +16,6 @@ interface GraphqlPosts {
     }
 }
 
-export function requestPosts() {
-    return ajax<GraphqlPosts>({
-        url: url,
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-        },
-        body: JSON.stringify({
-            query: `query{
-              posts{
-                posts{
-                    id,
-                    title,
-                    text,
-                    date,
-                    user_Id,
-                    user_Username
-                }
-              }
-            }`
-        }),
-        withCredentials: true,
-    }).pipe(
-        map((value) => {
-            return value.response.data.posts.posts;
-        }),
-        catchError((error) => {
-            throw error
-        })
-    );
-}
-
 export function requestPagedPosts(offset: Number, next: Number, order: String, user_timestamp: Date) {
     return ajax<GraphqlPosts>({
         url: url,
@@ -61,12 +28,15 @@ export function requestPagedPosts(offset: Number, next: Number, order: String, u
             query: `query($Offset: Int!, $Next: Int!, $Order: String!, $User_timestamp: DateTime!){
               posts{
                 posts:pagedPosts(offset: $Offset, next: $Next, order: $Order, user_timestamp: $User_timestamp){
-                    id,
-                    title,
-                    text,
-                    date,
-                    user_Id,
+                    id
+                    title
+                    text
+                    date
+                    user_Id
                     user_Username
+                    likes
+                    comments
+                    liked
                 }
               }
             }`,
@@ -214,12 +184,15 @@ export function requestPostById(id: Number) {
             query: `query($id: Int!){
               posts{
                 post(id: $id){
-                    id,
-                    title,
-                    text,
-                    date,
-                    user_Id,
+                    id
+                    title
+                    text
+                    date
+                    user_Id
                     user_Username
+                    likes
+                    comments
+                    liked
                 }
               }
             }`

@@ -17,14 +17,14 @@ const defaultTheme = createTheme({
     secondary: {
       main: '#9e9e9e',
     }
-  },
+  }
 });
 root.render(
   <Provider store={store}>
     <ThemeProvider theme={defaultTheme}>
       <CssBaseline enableColorScheme />
       <SnackbarProvider>
-        <App />
+        <App/>
       </SnackbarProvider>
     </ThemeProvider>
   </Provider>

@@ -1,11 +1,15 @@
+import React, { useState } from 'react'
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { Box, Button, Container, CssBaseline, Paper, Link } from '@mui/material';
+import { Paper, Link, Stack, IconButton, Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { Post } from '../../Types/Post';
 import { GetLocalDate, timeSince } from '../../Helpers/TimeHelper';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 
 interface Props {
   post: Post;
@@ -13,6 +17,8 @@ interface Props {
 }
 
 export default function PostElement(props: Props) {
+  const [liked, SetLiked] = useState(props.post.liked);
+  const [likes, setLikes] = useState(props.post.likes.valueOf());
   const navigate = useNavigate();
 
   return (
@@ -67,6 +73,28 @@ export default function PostElement(props: Props) {
         }}>
           {props.post.text}
         </Typography>
+        <Stack
+          direction="row"
+          spacing={1}
+        >
+          <Grid lg={1} md={2} xs={3} item>
+            <Typography variant="caption" color="text.disabled" component="p" sx={{ fontSize: '16px', display: 'flex', alignItems: 'center' }}>
+              <IconButton sx={{ p: 0.5, color: 'inherit' }} onClick={(e) => { e.stopPropagation(); setLikes(liked ? likes - 1 : likes + 1); SetLiked(!liked) }}>
+                {liked ? <FavoriteIcon></FavoriteIcon> : <FavoriteBorderIcon></FavoriteBorderIcon>}
+              </IconButton>
+              {likes.toString()}
+            </Typography>
+          </Grid>
+
+          <Grid lg={1} md={2} sm={3} xs={5} item>
+            <Typography variant="caption" color="text.disabled" component="p" sx={{ fontSize: '16px', display: 'flex', alignItems: 'center' }}>
+              <IconButton sx={{ p: 0.5, color: 'inherit' }}>
+                <ChatBubbleOutlineIcon></ChatBubbleOutlineIcon>
+              </IconButton>
+              {props.post.comments.toString()}
+            </Typography>
+          </Grid>
+        </Stack>
       </Paper>
     </Grid>
   )

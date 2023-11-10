@@ -21,7 +21,6 @@ namespace Forum.Data.Repositories.Implementations
             string query = $"SELECT Replies.Id, Replies.Text, Replies.Date, Replies.User_Id, Replies.Comment_Id, Replies.Reply_Id, " +
                     $" users.Username as User_Username, ReplyToUsers.Username as Reply_Username, " +
                     $" Count(DISTINCT Reply_Likes.User_Id) as Likes, " +
-                    $" Count(DISTINCT Replies.Id) as Replies, " +
                     $" CASE WHEN EXISTS (SELECT * FROM Reply_Likes WHERE Reply_Likes.Reply_Id = Replies.Id AND User_Id = @user_id) then 1 ELSE 0 END AS Liked " +
                     $"FROM Replies " +
                     $" INNER JOIN Users ON Users.Id = Replies.User_Id " +
