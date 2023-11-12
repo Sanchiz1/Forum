@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Users.Queries
 {
-    public record GetUserByIdQuery : IRequest<User>
+    public class GetUserByIdQuery : IRequest<User>
     {
         public int User_Id { get; set; }
     }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Comments.Commands
 {
-    public record UpdateCommentCommand : IRequest
+    public class UpdateCommentCommand : IRequest
     {
         public int Id { get; set; }
         public string Text { get; set; }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Identity.Queries
 {
-    public record LogoutQuery : IRequest
+    public class LogoutQuery : IRequest
     {
         public string Username_Or_Email { get; set; }
         public string Hashed_Password { get; set; }

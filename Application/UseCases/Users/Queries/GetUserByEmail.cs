@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Users.Queries
 {
-    public record GetUserByEmailQuery : IRequest<User>
+    public class GetUserByEmailQuery : IRequest<User>
     {
         public string Email { get; set; }
     }

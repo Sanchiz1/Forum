@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Replies.Queries
 {
-    public record GetRepliesQuery : IRequest<List<Reply>>
+    public class GetRepliesQuery : IRequest<List<Reply>>
     {
         public int Comment_Id { get; set; }
         public int Next { get; set; }

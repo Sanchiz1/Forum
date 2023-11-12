@@ -60,9 +60,10 @@ namespace Forum.Data.Repositories.Implementations
         }
         public void CreateComment(CommentInput comment)
         {
+            string query = $"INSERT INTO Comments (Text, User_Id, Post_Id) VALUES(@Text, @User_Id, @Post_Id)";
+
             try
             {
-                string query = $"INSERT INTO Comments (Text, User_Id, Post_Id) VALUES(@Text, @User_Id, @Post_Id)";
                 using var connection = _dapperContext.CreateConnection();
 
                 connection.Execute(query, comment);

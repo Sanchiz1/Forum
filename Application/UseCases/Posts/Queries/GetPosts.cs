@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Posts.Queries
 {
-    public record GetPostsQuery : IRequest<List<Post>>
+    public class GetPostsQuery : IRequest<List<Post>>
     {
         public int Next { get; set; }
         public int Offset { get; set; }

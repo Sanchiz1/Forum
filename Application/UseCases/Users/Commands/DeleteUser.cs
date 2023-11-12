@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Users.Commands
 {
-    public record DeleteUserCommand : IRequest
+    public class DeleteUserCommand : IRequest
     {
         public int User_Id { get; set; }
     }

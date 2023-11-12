@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Comments.Commands
 {
-    public record LikeCommentCommand : IRequest
+    public class LikeCommentCommand : IRequest
     {
         public int Comment_Id { get; set; }
         public int User_Id { get; set; }

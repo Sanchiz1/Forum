@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Replies.Queries
 {
-    public record GetReplyByIdQuery : IRequest<Reply>
+    public class GetReplyByIdQuery : IRequest<Reply>
     {
         public int Id { get; set; }
     }

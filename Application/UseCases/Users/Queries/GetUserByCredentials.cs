@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Users.Queries
 {
-    public record GetUserByCredentialsQuery : IRequest<User>
+    public class GetUserByCredentialsQuery : IRequest<User>
     {
         public string Username_Or_Email { get; set; }
-        public string Hashed_Password { get; set; }
+        public string Password { get; set; }
     }
     public class GetUserByCredentialsQueryHandler : IRequestHandler<GetUserByCredentialsQuery, User>
     {

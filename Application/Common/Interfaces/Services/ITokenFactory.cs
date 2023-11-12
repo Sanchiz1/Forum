@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.Common.Interfaces.Services
 {
-    internal interface ITokenFactory
+    public interface ITokenFactory
     {
         Task<Token> GetRefreshToken(int userId);
         Task<Token> GetAccessToken(int userId);

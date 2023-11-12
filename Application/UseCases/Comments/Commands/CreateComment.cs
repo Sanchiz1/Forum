@@ -1,20 +1,11 @@
 ﻿using MediatR;
 using System.Threading.Tasks;
 using System.Threading;
-using System;
-using Application.Common.Interfaces;
-using System.Runtime;
-using System.Runtime.CompilerServices;
-using Application;
-using Application.UseCases;
-using Application.UseCases.Comments;
-using Application.UseCases.Comments.Commands;
-using Application.UseCases.Comments.Commands;
 using Application.Common.Interfaces.Repositories;
 
 namespace Application.UseCases.Comments.Commands
 {
-    public record CreateCommentCommand : IRequest
+    public class CreateCommentCommand : IRequest
     {
         public string Text { get; set; }
         public int Post_Id { get; set; }

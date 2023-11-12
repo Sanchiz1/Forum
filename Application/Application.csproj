@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{85C36558-B525-4572-AE12-F41CF665F4B7}</ProjectGuid>
+    <ProjectGuid>{F3A6994D-6198-4D76-A553-80605E8AF8C6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Application</RootNamespace>
@@ -20,7 +20,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>0</WarningLevel>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,52 +37,52 @@
     <Reference Include="MediatR.Contracts, Version=2.0.1.0, Culture=neutral, PublicKeyToken=bb9a41a5e8aaa7e2, processorArchitecture=MSIL">
       <HintPath>..\packages\MediatR.Contracts.2.0.1\lib\netstandard2.0\MediatR.Contracts.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.6.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=6.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.6.0.0\lib\net461\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=7.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.7.0.0\lib\net462\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.Abstractions">
+    <Reference Include="Microsoft.IdentityModel.Abstractions, Version=7.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.IdentityModel.Abstractions.7.0.3\lib\net472\Microsoft.IdentityModel.Abstractions.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.JsonWebTokens">
+    <Reference Include="Microsoft.IdentityModel.JsonWebTokens, Version=7.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.IdentityModel.JsonWebTokens.7.0.3\lib\net472\Microsoft.IdentityModel.JsonWebTokens.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.Logging">
+    <Reference Include="Microsoft.IdentityModel.Logging, Version=7.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.IdentityModel.Logging.7.0.3\lib\net472\Microsoft.IdentityModel.Logging.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.IdentityModel.Tokens">
+    <Reference Include="Microsoft.IdentityModel.Tokens, Version=7.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.IdentityModel.Tokens.7.0.3\lib\net472\Microsoft.IdentityModel.Tokens.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Buffers">
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="System.IdentityModel.Tokens.Jwt">
+    <Reference Include="System.IdentityModel.Tokens.Jwt, Version=7.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.7.0.3\lib\net472\System.IdentityModel.Tokens.Jwt.dll</HintPath>
     </Reference>
-    <Reference Include="System.Memory">
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
     </Reference>
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors">
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.7.1\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
-    <Reference Include="System.Text.Encodings.Web">
-      <HintPath>..\packages\System.Text.Encodings.Web.4.7.2\lib\net461\System.Text.Encodings.Web.dll</HintPath>
+    <Reference Include="System.Text.Encodings.Web, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.7.0.0\lib\net462\System.Text.Encodings.Web.dll</HintPath>
     </Reference>
-    <Reference Include="System.Text.Json">
-      <HintPath>..\packages\System.Text.Json.4.7.2\lib\net461\System.Text.Json.dll</HintPath>
+    <Reference Include="System.Text.Json, Version=7.0.0.3, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Json.7.0.3\lib\net462\System.Text.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="System.ValueTuple">
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
@@ -93,18 +93,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Interfaces\Repositories\ICommentRepository.cs" />
+    <Compile Include="Common\Interfaces\Repositories\IPostRepository.cs" />
+    <Compile Include="Common\Interfaces\Repositories\IReplyRepository.cs" />
+    <Compile Include="Common\Interfaces\Repositories\ITokenRepository.cs" />
+    <Compile Include="Common\Interfaces\Repositories\IUserRepository.cs" />
+    <Compile Include="Common\Interfaces\Services\IDbContext.cs" />
     <Compile Include="Common\Interfaces\Services\IIdentityService.cs" />
     <Compile Include="Common\Interfaces\Services\ITokenFactory.cs" />
     <Compile Include="Common\Interfaces\Services\ITokenValidator.cs" />
     <Compile Include="Common\Models\LoginResponse.cs" />
     <Compile Include="Common\Models\Result.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UseCases\Comments\Commands\CreateComment.cs" />
-    <Compile Include="Common\Interfaces\Repositories\ICommentRepository.cs" />
-    <Compile Include="Common\Interfaces\Repositories\IPostRepository.cs" />
-    <Compile Include="Common\Interfaces\Services\IProviderFactory.cs" />
-    <Compile Include="Common\Interfaces\Repositories\IReplyRepository.cs" />
-    <Compile Include="Common\Interfaces\Repositories\ITokenRepository.cs" />
-    <Compile Include="Common\Interfaces\Repositories\IUserRepository.cs" />
     <Compile Include="UseCases\Comments\Commands\DeleteComment.cs" />
     <Compile Include="UseCases\Comments\Commands\LikeComment.cs" />
     <Compile Include="UseCases\Comments\Commands\UpdateComment.cs" />
@@ -113,37 +114,35 @@
     <Compile Include="UseCases\Identity\Queries\Login.cs" />
     <Compile Include="UseCases\Identity\Queries\Logout.cs" />
     <Compile Include="UseCases\Identity\Queries\RefreshToken.cs" />
+    <Compile Include="UseCases\Posts\Commands\CreatePost.cs" />
     <Compile Include="UseCases\Posts\Commands\DeletePost.cs" />
     <Compile Include="UseCases\Posts\Commands\LikePost.cs" />
     <Compile Include="UseCases\Posts\Commands\UpdatePost.cs" />
-    <Compile Include="UseCases\Posts\Commands\CreatePost.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UseCases\Posts\Queries\GetPostById.cs" />
     <Compile Include="UseCases\Posts\Queries\GetPosts.cs" />
-    <Compile Include="UseCases\Replies\Commands\UpdateReply.cs" />
-    <Compile Include="UseCases\Replies\Commands\LikeReply.cs" />
-    <Compile Include="UseCases\Replies\Commands\DeleteReply.cs" />
     <Compile Include="UseCases\Replies\Commands\CreateReply.cs" />
+    <Compile Include="UseCases\Replies\Commands\DeleteReply.cs" />
+    <Compile Include="UseCases\Replies\Commands\LikeReply.cs" />
+    <Compile Include="UseCases\Replies\Commands\UpdateReply.cs" />
     <Compile Include="UseCases\Replies\Queries\GetReplies.cs" />
     <Compile Include="UseCases\Replies\Queries\GetReplyById.cs" />
     <Compile Include="UseCases\Users\Commands\CreateUser.cs" />
     <Compile Include="UseCases\Users\Commands\DeleteUser.cs" />
     <Compile Include="UseCases\Users\Commands\UpdateUser.cs" />
     <Compile Include="UseCases\Users\Queries\GetUserByCredentials.cs" />
-    <Compile Include="UseCases\Users\Queries\GetUserByUsername.cs" />
     <Compile Include="UseCases\Users\Queries\GetUserByEmail.cs" />
     <Compile Include="UseCases\Users\Queries\GetUserById.cs" />
+    <Compile Include="UseCases\Users\Queries\GetUserByUsername.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Domain\Domain.csproj">
+      <Project>{eb47ed92-e0e2-4609-b901-ef8df0cc2f68}</Project>
+      <Name>Domain</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Domain\Domain.csproj" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-	<PropertyGroup>
-		<TargetFramework>net472</TargetFramework>
-		<LangVersion>9.0</LangVersion>
-	</PropertyGroup>
-
 </Project>

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Comments.Queries
 {
-    public record LoginQuery : IRequest<LoginResponse>
+    public class LoginQuery : IRequest<LoginResponse>
     {
         public string Username_Or_Email { get; set; }
         public string Hashed_Password { get; set; }

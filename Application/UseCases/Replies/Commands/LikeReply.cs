@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Replies.Commands
 {
-    public record LikeReplyCommand : IRequest
+    public class LikeReplyCommand : IRequest
     {
-        public int Post_Id { get; set; }
+        public int Reply_Id { get; set; }
         public int User_Id { get; set; }
     }
     public class LikeReplyCommandHandler : IRequestHandler<LikeReplyCommand>

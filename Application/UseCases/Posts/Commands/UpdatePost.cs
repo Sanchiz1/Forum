@@ -14,7 +14,7 @@ using Application.Common.Interfaces.Repositories;
 
 namespace Application.UseCases.Posts.Commands
 {
-    public record UpdatePostCommand : IRequest
+    public class UpdatePostCommand : IRequest
     {
         public int Id { get; set; }
         public string Text { get; set; }

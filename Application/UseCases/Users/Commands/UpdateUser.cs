@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Users.Commands
 {
-    public record UpdateUserCommand : IRequest
+    public class UpdateUserCommand : IRequest
     {
         public string Username { get; set; }
         public string Email { get; set; }

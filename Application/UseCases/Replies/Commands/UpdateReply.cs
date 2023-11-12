@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Replies.Commands
 {
-    public record UpdateReplyCommand : IRequest
+    public class UpdateReplyCommand : IRequest
     {
         public int Id { get; set; }
         public string Text { get; set; }

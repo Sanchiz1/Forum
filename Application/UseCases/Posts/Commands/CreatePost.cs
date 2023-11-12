@@ -2,19 +2,11 @@
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-using Application.Common.Interfaces;
-using System.Runtime;
-using System.Runtime.CompilerServices;
-using Application;
-using Application.UseCases;
-using Application.UseCases.Posts;
-using Application.UseCases.Posts.Commands;
-using Application.UseCases.Posts.Commands;
 using Application.Common.Interfaces.Repositories;
 
 namespace Application.UseCases.Posts.Commands
 {
-    public record CreatePostCommand : IRequest
+    public class CreatePostCommand : IRequest
     {
         public string Text { get; set; }
         public int Post_Id { get; set; }

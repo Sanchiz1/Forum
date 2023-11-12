@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Identity.Queries
 {
-    public record RefreshTokenQuery : IRequest<LoginResponse>
+    public class RefreshTokenQuery : IRequest<LoginResponse>
     {
         public string Token { get; set; }
     }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Comments.Queries
 {
-    public record GetCommentByIdQuery : IRequest<Comment>
+    public class GetCommentByIdQuery : IRequest<Comment>
     {
         public int Id { get; set; }
     }

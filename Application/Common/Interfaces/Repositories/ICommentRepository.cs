@@ -16,7 +16,7 @@ namespace Application.Common.Interfaces.Repositories
     {
         Task<List<Comment>> GetCommentsAsync(GetCommentsQuery getCommentsQuery);
         Task<Comment> GetCommentByIdAsync(GetCommentByIdQuery getCommentByIdQuery);
-        Task CreateCommentAsync(CreateCommentCommand comment);
+        Task CreateCommentAsync(CreateCommentCommand createCommentCommand);
         Task UpdateCommentAsync(UpdateCommentCommand updateCommentCommand);
         Task DeleteCommentAsync(DeleteCommentCommand deleteCommentCommand);
         Task LikeCommentAsync(LikeCommentCommand likeCommentCommand);
