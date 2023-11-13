@@ -1,4 +1,5 @@
-﻿using Application.UseCases.Comments.Commands;
+﻿using Application.Common.Interfaces.Repositories;
+using Application.UseCases.Comments.Commands;
 using Application.UseCases.Comments.Queries;
 using Dapper;
 using Domain.Entities;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Repositories
 {
-    public class TokenRepository
+    public class TokenRepository : ITokenRepository
     {
         private readonly DapperContext _dapperContext;
         private readonly ILogger _logger;

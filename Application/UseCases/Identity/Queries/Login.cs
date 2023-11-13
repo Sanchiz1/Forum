@@ -16,7 +16,7 @@ namespace Application.UseCases.Comments.Queries
     public class LoginQuery : IRequest<LoginResponse>
     {
         public string Username_Or_Email { get; set; }
-        public string Hashed_Password { get; set; }
+        public string Password { get; set; }
     }
     public class LoginQueryHandler : IRequestHandler<LoginQuery, LoginResponse>
     {

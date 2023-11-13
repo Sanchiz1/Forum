@@ -30,7 +30,7 @@ namespace Infrastructure.Data.Repositories
         {
             User result = null;
 
-            string query = $"SELECT * FROM Users WHERE Id = @id";
+            string query = $"SELECT * FROM Users WHERE Id = @User_Id";
 
             try
             {

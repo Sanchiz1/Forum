@@ -10,12 +10,12 @@ namespace Infrastructure.Services
 {
     public class TokenFactory : ITokenFactory
     {
-        public Task<Token> GetAccessToken(int userId)
+        public Task<Token> GetAccessTokenAsync(int userId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Token> GetRefreshToken(int userId)
+        public Task<Token> GetRefreshTokenAsync(int userId)
         {
             throw new NotImplementedException();
         }
