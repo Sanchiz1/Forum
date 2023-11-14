@@ -8,8 +8,8 @@ namespace Application.UseCases.Posts.Commands
 {
     public class CreatePostCommand : IRequest
     {
+        public string Title { get; set; }
         public string Text { get; set; }
-        public int Post_Id { get; set; }
         public int User_Id { get; set; }
     }
     public class CreatePostCommandHandler : IRequestHandler<CreatePostCommand>

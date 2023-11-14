@@ -32,15 +32,15 @@ namespace Infrastructure.Data.Repositories
                     $" users.Username as User_Username," +
                     $" Count(DISTINCT Post_Likes.User_Id) as Likes," +
                     $" Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                    $" CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @user_id) then 1 ELSE 0 END AS Liked" +
+                    $" CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) then 1 ELSE 0 END AS Liked" +
                     $" FROM Posts " +
                     $"  INNER JOIN Users ON Users.Id = Posts.User_Id" +
                     $"  LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id " +
                     $"  LEFT JOIN Comments ON Comments.Post_Id = Posts.Id " +
                     $"  LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id" +
-                    $" WHERE Posts.Date < @user_timestamp" +
+                    $" WHERE Posts.Date < @User_Timestamp" +
                     $" GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date, Posts.User_Id, users.Username" +
-                    $" ORDER BY Posts.Date DESC OFFSET @offset ROWS FETCH NEXT @next ROWS ONLY";
+                    $" ORDER BY Posts.Date DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
 
             try
             {
@@ -67,13 +67,13 @@ namespace Infrastructure.Data.Repositories
                     $" users.Username as User_Username," +
                     $" Count(DISTINCT Post_Likes.User_Id) as Likes," +
                     $" Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                    $" CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @user_id) then 1 ELSE 0 END AS Liked" +
+                    $" CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) then 1 ELSE 0 END AS Liked" +
                     $"  FROM Posts " +
                     $"  INNER JOIN Users ON Users.Id = Posts.User_Id" +
                     $"  LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id " +
                     $"  LEFT JOIN Comments ON Comments.Post_Id = Posts.Id " +
                     $"  LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id" +
-                    $" WHERE Posts.Id = @id" +
+                    $" WHERE Posts.Id = @Id" +
                     $" GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date, Posts.User_Id, users.Username";
 
             try
@@ -116,7 +116,7 @@ namespace Infrastructure.Data.Repositories
         }
         public async Task UpdatePostAsync(UpdatePostCommand updatePostCommand)
         {
-            string query = $"UPDATE Posts set Text = @text WHERE Id = @id";
+            string query = $"UPDATE Posts set Text = @Text WHERE Id = @Id";
 
             try
             {
@@ -136,7 +136,7 @@ namespace Infrastructure.Data.Repositories
         }
         public async Task DeletePostAsync(DeletePostCommand deletePostCommand)
         {
-            string query = $"Delete FROM Posts WHERE Id = @id";
+            string query = $"Delete FROM Posts WHERE Id = @Id";
 
             try
             {

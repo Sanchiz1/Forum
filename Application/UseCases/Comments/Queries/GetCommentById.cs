@@ -13,6 +13,7 @@ namespace Application.UseCases.Comments.Queries
     public class GetCommentByIdQuery : IRequest<Comment>
     {
         public int Id { get; set; }
+        public int User_id { get; set; } = 0;
     }
     public class GetCommentByIdQueryHandler : IRequestHandler<GetCommentByIdQuery, Comment>
     {

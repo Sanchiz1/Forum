@@ -13,7 +13,7 @@ namespace Application.UseCases.Posts.Queries
     public class GetPostByIdQuery : IRequest<Post>
     {
         public int Id { get; set; }
-        public int User_id = 0;
+        public int User_id { get; set; } = 0;
     }
     public class GetPostByIdQueryHandler : IRequestHandler<GetPostByIdQuery, Post>
     {

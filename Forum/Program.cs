@@ -1,16 +1,8 @@
 using Application;
-using Forum.Data.Repositories;
-using Forum.Data.Repositories.Implementations;
-using Forum.Data.Repositories.Interfaces;
-using Forum.Helpers;
-using Forum.Services.Implementations;
-using Forum.Services.Interfaces;
 using GraphQL;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.IdentityModel.Tokens;
-using System.Diagnostics;
 using System.Text;
 using TimeTracker.GraphQL.Schemas;
 
@@ -20,17 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<ILogger>(svc => svc.GetRequiredService<ILogger<ApplicationLogs>>());
-/*
+
 builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices(builder.Configuration);*/
-builder.Services.AddSingleton<DapperContext>();
-builder.Services.AddSingleton<IUserRepository,UserRepository>();
-builder.Services.AddSingleton<IPostRepository, PostRepository>();
-builder.Services.AddSingleton<ICommentRepository, CommentRepository>();
-builder.Services.AddSingleton<IReplyRepository, ReplyRepository>();
-builder.Services.AddSingleton<ITokenRepository, TokenRepository>();
-builder.Services.AddSingleton<ITokenFactory, TokenFactory>();
-builder.Services.AddSingleton<ITokenValidator, TokenValidator>();
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(x =>

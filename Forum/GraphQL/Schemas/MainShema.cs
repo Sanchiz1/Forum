@@ -1,4 +1,5 @@
-﻿using Forum.GraphQL.Types;
+﻿using Forum.GraphQL.Mutations;
+using Forum.GraphQL.Queries;
 using GraphQL;
 using GraphQL.Types;
 

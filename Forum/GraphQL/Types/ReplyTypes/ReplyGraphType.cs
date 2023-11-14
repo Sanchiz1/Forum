@@ -1,5 +1,4 @@
-﻿using Forum.Models.Posts;
-using Forum.Models.Replies;
+﻿using Domain.Entities;
 using GraphQL.Types;
 
 namespace Forum.GraphQL.Types.ReplyTypes

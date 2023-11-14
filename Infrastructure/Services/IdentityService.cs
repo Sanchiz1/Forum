@@ -47,13 +47,7 @@ namespace Infrastructure.Services
             var user = await _mediator.Send(new GetUserByCredentialsQuery { Username_Or_Email =  loginQuery.Username_Or_Email, Password = loginQuery.Password });
 
 
-            if (user == null)
-            {
-                return new LoginErrorResponse()
-                {
-                    ErrorMessage = "Wrong username or password, try again"
-                };
-            }
+            if (user == null) throw new Exception("Wrong username or password, try again");
 
             var encodedJwt = await _tokenFactory.GetAccessTokenAsync(user.Id);
 
@@ -61,7 +55,7 @@ namespace Infrastructure.Services
 
             await _tokenRepository.CreateRefreshTokenAsync(refreshToken, user.Id);
 
-            return new LoginSuccesResponse()
+            return new LoginResponse()
             {
                 Access_Token = encodedJwt,
                 User_Id = user.Id,
@@ -72,10 +66,7 @@ namespace Infrastructure.Services
         {
             if (refreshTokenQuery.Token == null || await _tokenValidator.ValidateRefreshToken(refreshTokenQuery.Token))
             {
-                return new LoginErrorResponse()
-                {
-                    ErrorMessage = "InvalidToken"
-                };
+                throw new Exception("Invalid Token");
             }
 
             int userId = int.Parse(_tokenValidator.ReadJwtToken(refreshTokenQuery.Token).Result.Claims.First(c => c.Type == "UserId").Value);
@@ -85,7 +76,7 @@ namespace Infrastructure.Services
 
             await _tokenRepository.UpdateRefreshTokenAsync(refreshTokenQuery.Token, newRefreshToken, userId);
 
-            return new LoginSuccesResponse()
+            return new LoginResponse()
             {
                 Access_Token = newAccessToken,
                 User_Id = userId,

@@ -1,14 +1,6 @@
-﻿using Forum.Data.Repositories.Interfaces;
-using Forum.GraphQL.Types.CommentTypes;
-using Forum.GraphQL.Types.PostTypes;
-using Forum.GraphQL.Types.ReplyTypes;
-using Forum.GraphQL.Types.UserTypes;
-using Forum.Helpers;
-using Forum.Models;
-using GraphQL;
-using GraphQL.Types;
+﻿using GraphQL.Types;
 
-namespace Forum.GraphQL.Types
+namespace Forum.GraphQL.Mutations
 {
     public class MainMutation : ObjectGraphType
     {

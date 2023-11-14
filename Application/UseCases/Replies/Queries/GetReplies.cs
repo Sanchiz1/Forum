@@ -15,9 +15,9 @@ namespace Application.UseCases.Replies.Queries
         public int Comment_Id { get; set; }
         public int Next { get; set; }
         public int Offset { get; set; }
-        public DateTime User_timestamp { get; set; }
-        public string Order = "Date";
-        public int User_id = 0;
+        public DateTime User_Timestamp { get; set; }
+        public string Order { get; set; } = "Date";
+        public int User_Id { get; set; } = 0;
     }
     public class GetRepliesQueryHandler : IRequestHandler<GetRepliesQuery, List<Reply>>
     {
