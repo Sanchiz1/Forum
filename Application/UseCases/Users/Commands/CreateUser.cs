@@ -1,12 +1,7 @@
-﻿using Application.Common.Interfaces.Repositories;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces.Repositories;
 using Application.UseCases.Users.Queries;
-using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,12 +27,12 @@ namespace Application.UseCases.Users.Commands
         {
             if (await _context.GetUserByUsernameAsync(new GetUserByUsernameQuery() { Username = request.Username}) != null)
             {
-                throw new Exception("User with this username already exists");
+                throw new UserAlreadyExistsException("User with this username already exists");
             }
 
             if (await _context.GetUserByEmailAsync(new GetUserByEmailQuery() { Email = request.Username }) != null)
             {
-                throw new Exception("User with this email already exists");
+                throw new UserAlreadyExistsException("User with this email already exists");
             }
 
             await _context.CreateUserAsync(request);

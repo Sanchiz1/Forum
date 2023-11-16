@@ -9,7 +9,7 @@ namespace Application.Common.Interfaces.Services
 {
     public interface ITokenFactory
     {
-        Task<Token> GetRefreshTokenAsync(int userId);
-        Task<Token> GetAccessTokenAsync(int userId);
+        Token GetRefreshToken(int userId);
+        Token GetAccessToken(int userId);
     }
 }

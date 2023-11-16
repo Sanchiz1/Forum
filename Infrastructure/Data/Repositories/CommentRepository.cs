@@ -31,14 +31,14 @@ namespace Infrastructure.Data.Repositories
                 $"users.Username as User_Username, " +
                 $"Count(DISTINCT Comment_Likes.User_Id) as Likes, " +
                 $"Count(DISTINCT Replies.Id) as Replies, " +
-                $"CASE WHEN EXISTS (SELECT * FROM Comment_Likes WHERE Comment_Likes.Comment_Id = Comments.Id AND User_Id = @user_id) then 1 ELSE 0 END AS Liked " +
+                $"CASE WHEN EXISTS (SELECT * FROM Comment_Likes WHERE Comment_Likes.Comment_Id = Comments.Id AND User_Id = @User_Id) then 1 ELSE 0 END AS Liked " +
                 $"FROM Comments " +
                 $"INNER JOIN Users ON Users.Id = Comments.User_Id " +
                 $"LEFT JOIN Comment_Likes ON Comment_Likes.Comment_Id = Comments.Id " +
                 $"LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id " +
                 $"WHERE Comments.Date < @user_timestamp AND Comments.Post_Id = @post_id " +
                 $"GROUP BY Comments.Id, Comments.Text, Comments.Date, Comments.User_Id, users.Username " +
-                $"ORDER BY Date DESC OFFSET @offset ROWS FETCH NEXT @next ROWS ONLY";
+                $"ORDER BY {getCommentsQuery.Order} DESC OFFSET @offset ROWS FETCH NEXT @next ROWS ONLY";
 
             try
             {
@@ -62,8 +62,17 @@ namespace Infrastructure.Data.Repositories
         {
             Comment result = null;
 
-            string query = $"SELECT Comments.Id, Text, Date, User_Id, Post_Id, users.Username as User_Username" +
-                   $" FROM Comments INNER JOIN Users ON Users.Id = Comments.User_Id WHERE Comments.Id = @Id";
+            string query = "SELECT Comments.Id, Comments.Text, Comments.Date, Comments.User_Id, " +
+                $"users.Username as User_Username, " +
+                $"Count(DISTINCT Comment_Likes.User_Id) as Likes, " +
+                $"Count(DISTINCT Replies.Id) as Replies, " +
+                $"CASE WHEN EXISTS (SELECT * FROM Comment_Likes WHERE Comment_Likes.Comment_Id = Comments.Id AND User_Id = @User_Id) then 1 ELSE 0 END AS Liked " +
+                $"FROM Comments " +
+                $"INNER JOIN Users ON Users.Id = Comments.User_Id " +
+                $"LEFT JOIN Comment_Likes ON Comment_Likes.Comment_Id = Comments.Id " +
+                $"LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id " +
+                $"WHERE Comments.Id = @Id " +
+                $"GROUP BY Comments.Id, Comments.Text, Comments.Date, Comments.User_Id, users.Username";
 
             try
             {

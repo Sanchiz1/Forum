@@ -40,7 +40,7 @@ namespace Infrastructure.Data.Repositories
                     $"  LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id" +
                     $" WHERE Posts.Date < @User_Timestamp" +
                     $" GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date, Posts.User_Id, users.Username" +
-                    $" ORDER BY Posts.Date DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
+                    $" ORDER BY {getPostsQuery.Order} DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
 
             try
             {

@@ -19,6 +19,7 @@ import { getUserAccount } from '../../Redux/Epics/AccountEpics';
 import { ReturnErrorMessage } from '../../Helpers/ErrorHandleHelper';
 import { Alert, Collapse, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { setGlobalError } from '../../Redux/Reducers/AccountReducer';
 
 function Copyright(props: any) {
   return (
@@ -48,7 +49,7 @@ export default function SignIn() {
       password: data.get('password')!.toString()
     }
     if(credentials.loginOrEmail == '' || credentials.password == ''){
-      setError('Fill all fields');
+      dispatch(setGlobalError('Fill all fields'));
       return;
     }
     LoginRequest(credentials).subscribe({
@@ -62,32 +63,13 @@ export default function SignIn() {
       },
       error(err) {
         const message = ReturnErrorMessage(['Wrong username or password, try again'], err.message);
-        setError(message);
+        dispatch(setGlobalError(message));
       },
     });
   };
 
   return (
     <>
-      <Collapse in={error != ''}>
-        <Alert
-          severity="error"
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              onClick={() => {
-                setError('');
-              }}
-            >
-              <CloseIcon  />
-            </IconButton>
-          }
-          sx={{ mb: 2, fontSize: 15 }}
-        >
-          {error}
-        </Alert>
-      </Collapse>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box

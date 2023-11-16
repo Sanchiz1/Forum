@@ -17,6 +17,11 @@ const defaultTheme = createTheme({
     secondary: {
       main: '#9e9e9e',
     }
+  },
+  typography: {
+    button: {
+      textTransform: 'capitalize',
+    }
   }
 });
 root.render(

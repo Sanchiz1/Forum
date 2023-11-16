@@ -18,7 +18,7 @@ namespace Forum.GraphQL.Types.PostTypes
     {
         public GetPostByIdInputGraphType()
         {
-            Field(p => p.User_id, type: typeof(IntGraphType));
+            Field(p => p.Id, type: typeof(IntGraphType));
         }
     }
     public class CreatePostInputGraphType : InputObjectGraphType<CreatePostCommand>

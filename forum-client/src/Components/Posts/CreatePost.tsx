@@ -55,13 +55,13 @@ export default function CreatePost() {
             next(value) {
                 enqueueSnackbar(value, {
                     variant: 'success', anchorOrigin: {
-                      vertical: 'top',
-                      horizontal: 'center'
+                        vertical: 'top',
+                        horizontal: 'center'
                     },
                     autoHideDuration: 1500
-                  });
-                  setError('');
-                  navigator("/");
+                });
+                setError('');
+                navigator("/");
             },
             error(err) {
                 setError(err.message)
@@ -126,24 +126,24 @@ export default function CreatePost() {
                                         helperText={textError}
                                     />
                                     <Collapse in={error != ''}>
-                                    <Alert
-                                      severity="error"
-                                      action={
-                                        <IconButton
-                                          aria-label="close"
-                                          color="inherit"
-                                          onClick={() => {
-                                            setError('');
-                                          }}
+                                        <Alert
+                                            severity="error"
+                                            action={
+                                                <IconButton
+                                                    aria-label="close"
+                                                    color="inherit"
+                                                    onClick={() => {
+                                                        setError('');
+                                                    }}
+                                                >
+                                                    <CloseIcon />
+                                                </IconButton>
+                                            }
+                                            sx={{ mb: 2, fontSize: 15 }}
                                         >
-                                          <CloseIcon />
-                                        </IconButton>
-                                      }
-                                      sx={{ mb: 2, fontSize: 15 }}
-                                    >
-                                      {error}
-                                    </Alert>
-                                  </Collapse>
+                                            {error}
+                                        </Alert>
+                                    </Collapse>
                                     <Button
                                         type="submit"
                                         fullWidth

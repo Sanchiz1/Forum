@@ -29,12 +29,15 @@ export function requestUsers(variables: {}) {
 }
 
 interface GraphqlUser {
-    user: User
+    users: {
+        user: User
+    }
 }
 
 export function requestUserById(id: Number) {
-    return GetAjaxObservable<GraphqlUser>(`query($id: Int!){
-        user:userById(id: $id){
+    return GetAjaxObservable<GraphqlUser>(`
+    query($Input:  GetRepliesInput!){
+        user:userById(input: $Input){
           id
           username
           email
@@ -42,11 +45,13 @@ export function requestUserById(id: Number) {
           registered_At
       }
     }`, {
-        "id": id
+        "Input": {
+            "id": id
+        }
     }
     ).pipe(
         map(res => {
-            return res.response.data.user;
+            return res.response.data.users.user;
         }),
         catchError((error) => {
             throw error;
@@ -55,21 +60,26 @@ export function requestUserById(id: Number) {
 }
 
 export function requestUserByUsername(usernaame: string) {
-    return GetAjaxObservable<GraphqlUser>(`query($usernaame: String!){
-        user:userByUsername(username: $usernaame){
-          id
-          username
-          email
-          bio
-          registered_At
-      }
+    return GetAjaxObservable<GraphqlUser>(`
+    query($Input:  GetUserByUsernameInput!){
+        users{
+            user:userByUsername(input: $Input){
+            id
+            username
+            email
+            bio
+            registered_At
+            }
+        }
     }`, {
-        "usernaame": usernaame
+        "Input": {
+            "username": usernaame
+        }
     },
         false
     ).pipe(
         map(res => {
-            return res.response.data.user;
+            return res.response.data.users.user;
         }),
         catchError((error) => {
             throw error;
@@ -79,16 +89,18 @@ export function requestUserByUsername(usernaame: string) {
 
 export function requestAccount() {
     return GetAjaxObservable<GraphqlUser>(`query{
-        user:account{
-          id
-          username
-          email
-          bio
-          registered_At
+        users{
+            user:account{
+                id
+                username
+                email
+                bio
+                registered_At
+        }
       }
     }`, {}).pipe(
         map(res => {
-            return res.response.data.user;
+            return res.response.data.users.user;
         }),
         catchError((error) => {
             throw error;
@@ -119,13 +131,13 @@ export function createUserRequest(UserInput: UserInput) {
         },
         body: JSON.stringify({
             query: `
-        mutation($User: UserInput!){
+        mutation($Input: CreateUserInput!){
             user{
-              createUser(user: $User)
+              createUser(input: $Input)
             }
           }`,
             variables: {
-                "User": {
+                "Input": {
                     "username": UserInput.username,
                     "email": UserInput.email,
                     "password": UserInput.password
@@ -158,13 +170,13 @@ interface GraphqlUpdateUser {
 
 export function updateUserRequest(UserInput: UserInput) {
     return GetAjaxObservable<GraphqlUpdateUser>(`
-        mutation($User: UserInput!){
+        mutation($Input: UpdateUserInput!){
             user{
-              user:updateUser(user: $User)
+              user:updateUser(input: $Input)
             }
           }`,
         {
-            "User": {
+            "Input": {
                 "username": UserInput.username,
                 "email": UserInput.email,
                 "bio": UserInput.bio

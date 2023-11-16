@@ -111,6 +111,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Exceptions\FailedLoginException.cs" />
+    <Compile Include="Common\Exceptions\InvalidTokenException.cs" />
+    <Compile Include="Common\Exceptions\UserAlreadyExistsException.cs" />
     <Compile Include="Common\Interfaces\Repositories\ICommentRepository.cs" />
     <Compile Include="Common\Interfaces\Repositories\IPostRepository.cs" />
     <Compile Include="Common\Interfaces\Repositories\IReplyRepository.cs" />

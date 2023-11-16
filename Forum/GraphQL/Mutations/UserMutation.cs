@@ -1,5 +1,7 @@
-﻿using Application.UseCases.Users.Commands;
+﻿using Application.Common.Exceptions;
+using Application.UseCases.Users.Commands;
 using Forum.GraphQL.Types.UserTypes;
+using Forum.Helpers;
 using GraphQL;
 using GraphQL.Types;
 using MediatR;
@@ -20,7 +22,21 @@ namespace Forum.GraphQL.Mutations
                 {
                     CreateUserCommand createUserCommand = context.GetArgument<CreateUserCommand>("input");
 
-                    await _mediator.Send(createUserCommand);
+                    try
+                    {
+                        await _mediator.Send(createUserCommand);
+                    }
+                    catch (UserAlreadyExistsException ex)
+                    {
+                        context.Errors.Add(new ExecutionError(ex.Message));
+                        return null;
+                    }
+                    catch
+                    {
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
+
                     return "Account created successfully";
                 });
 
@@ -28,9 +44,29 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<UpdateUserInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    UpdateUserCommand updateUserCommand = context.GetArgument<UpdateUserCommand>("input");
+                    UpdateUserCommand updateUserCommand = new UpdateUserCommand()
+                    {
+                        User_Id = AccountHelper.GetUserIdFromClaims(context.User!),
+                        Username = context.GetArgument<UpdateUserCommand>("input").Username,
+                        Email = context.GetArgument<UpdateUserCommand>("input").Email,
+                        Bio = context.GetArgument<UpdateUserCommand>("input").Bio,
+                    };
 
-                    await _mediator.Send(updateUserCommand);
+                    try
+                    {
+                        await _mediator.Send(updateUserCommand);
+                    }
+                    catch (UserAlreadyExistsException ex)
+                    {
+                        context.Errors.Add(new ExecutionError(ex.Message));
+                        return null;
+                    }
+                    catch
+                    {
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
+
                     return "Account updated successfully";
                 }).AuthorizeWithPolicy("Authorized");
         }

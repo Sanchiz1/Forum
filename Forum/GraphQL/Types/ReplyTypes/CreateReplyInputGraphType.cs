@@ -8,6 +8,7 @@ namespace Forum.GraphQL.Types.ReplyTypes
     {
         public GetRepliesInputGraphType()
         {
+            Field(p => p.Comment_Id, type: typeof(IntGraphType));
             Field(p => p.Next, type: typeof(IntGraphType));
             Field(p => p.Offset, type: typeof(IntGraphType));
             Field(p => p.User_Timestamp, type: typeof(DateTimeGraphType));

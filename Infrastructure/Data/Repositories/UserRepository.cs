@@ -1,6 +1,4 @@
 ﻿using Application.Common.Interfaces.Repositories;
-using Application.UseCases.Comments.Commands;
-using Application.UseCases.Comments.Queries;
 using Application.UseCases.Users.Commands;
 using Application.UseCases.Users.Queries;
 using Dapper;
@@ -35,7 +33,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<User>(query, getUserByIdQuery)).First();
+                result = (await connection.QueryAsync<User>(query, getUserByIdQuery)).FirstOrDefault();
             }
             catch (SqlException ex)
             {
@@ -54,12 +52,12 @@ namespace Infrastructure.Data.Repositories
         {
             User result = null;
 
-            string query = $"SELECT * FROM Users WHERE Username = @username";
+            string query = $"SELECT * FROM Users WHERE Username = @Username";
 
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<User>(query, getUserByEmailQuery)).First();
+                result = (await connection.QueryAsync<User>(query, getUserByEmailQuery)).FirstOrDefault();
             }
             catch (SqlException ex)
             {
@@ -78,12 +76,12 @@ namespace Infrastructure.Data.Repositories
         {
             User result = null;
 
-            string query = $"SELECT * FROM Users WHERE Email = @email";
+            string query = $"SELECT * FROM Users WHERE Email = @Email";
 
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<User>(query, getUserByEmailQuery)).First();
+                result = (await connection.QueryAsync<User>(query, getUserByEmailQuery)).FirstOrDefault();
             }
             catch (SqlException ex)
             {
@@ -102,29 +100,29 @@ namespace Infrastructure.Data.Repositories
         {
             User result = null;
 
-            string query = $"SELECT * FROM Users WHERE (Username = @loginOremail OR Email = @loginOremail) AND Password = @hashedPasssword";
+            string query = $"SELECT * FROM Users WHERE (Username = @Username_Or_Email OR Email = @Username_Or_Email) AND Password = @Password";
 
             try
             {
                 using var connection = _dapperContext.CreateConnection();
 
-                var salt = connection.Query<string>($"SELECT Salt FROM Users WHERE Username = @loginOremail OR Email = @loginOremail",
+                var salt = connection.Query<string>($"SELECT Salt FROM Users WHERE Username = @Username_Or_Email OR Email = @Password",
                 getUserByCredentialsQuery).FirstOrDefault();
 
                 if (salt == null) return null;
 
                 getUserByCredentialsQuery.Password = PasswordHashHelper.ComputeHash(getUserByCredentialsQuery.Password, salt);
 
-                result = (await connection.QueryAsync<User>(query, getUserByCredentialsQuery)).First();
+                result = (await connection.QueryAsync<User>(query, getUserByCredentialsQuery)).FirstOrDefault();
             }
             catch (SqlException ex)
             {
-                _logger.LogError(ex, "Getting comment by id");
+                _logger.LogError(ex, "Getting user by credentials");
                 throw;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Getting comment by id");
+                _logger.LogError(ex, "Getting comment by credentials");
                 throw;
             }
 
@@ -155,7 +153,7 @@ namespace Infrastructure.Data.Repositories
         }
         public async Task UpdateUserAsync(UpdateUserCommand updateUserCommand)
         {
-            string query = $"UPDATE Users SET Username = @Username, Email = @Email, Bio = @Bio WHERE Id = @userId";
+            string query = $"UPDATE Users SET Username = @Username, Email = @Email, Bio = @Bio WHERE Id = @User_Id";
 
             try
             {
@@ -175,7 +173,7 @@ namespace Infrastructure.Data.Repositories
         }
         public async Task DeleteUserAsync(DeleteUserCommand deleteUserCommand)
         {
-            string query = $"DELETE FROM Users WHERE Id = @id";
+            string query = $"DELETE FROM Users WHERE Id = @User_Id";
 
             try
             {

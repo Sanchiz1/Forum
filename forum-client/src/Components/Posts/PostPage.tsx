@@ -27,19 +27,21 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { StyledMenu } from '../StyledMenu';
+import { StyledMenu } from '../UtilComponents/StyledMenu';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { enqueueSnackbar } from 'notistack';
 import { Reply } from '../../Types/Reply';
 import { requestReplies } from '../../API/replyRequests';
 import ReplyElement from '../Comments/ReplyElement';
-import { requestComments } from '../../API/commentRequests';
-import { Comment } from '../../Types/Comment';
+import { createCommentRequest, requestComments } from '../../API/commentRequests';
+import { Comment, CommentInput } from '../../Types/Comment';
 import CommentElement from '../Comments/CommentElement';
-import { BootstrapInput } from '../BootstrapInput';
+import { BootstrapInput } from '../UtilComponents/BootstrapInput';
 import { isSigned } from '../../API/loginRequests';
-import { setLogInError } from '../../Redux/Reducers/AccountReducer';
+import { setGlobalError, setLogInError } from '../../Redux/Reducers/AccountReducer';
 import { User } from '../../Types/User';
+import CommentInputElement from '../UtilComponents/CommentInputElement';
+import CommentsSection from './CommentsSection';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -54,8 +56,10 @@ export default function PostPage() {
     const [post, setPost] = useState<Post>();
     const [liked, SetLiked] = useState(false);
     const [likes, setLikes] = useState(0);
-    const [comments, setComments] = useState<Comment[]>();
+    const [comments, setComments] = useState<Comment[]>([]);
     const [postExists, setPostExists] = useState(true);
+
+    const [hasMore, setHasMore] = useState(true);
 
     const next = 4;
     const [userTimestamp, setUserTimestamp] = useState(new Date());
@@ -67,8 +71,26 @@ export default function PostPage() {
     const dispatch = useDispatch();
     const navigator = useNavigate();
 
-    const Account : User = useSelector((state: RootState) => state.account.Account);
+    const Account: User = useSelector((state: RootState) => state.account.Account);
 
+
+    const fetchComments = () => {
+        requestComments(parseInt(PostId!), offset, next, order, userTimestamp).subscribe({
+            next(value) {
+                if (value.length == 0) {
+                    setHasMore(false);
+                    return;
+                  }
+                setComments([...comments, ...value]);
+                if (document.documentElement.offsetHeight - window.innerHeight < 100) {
+                  setOffset(offset + next);
+                }
+            },
+            error(err) {
+                dispatch(setGlobalError(err));
+            },
+        })
+    }
     useEffect(() => {
         requestPostById(parseInt(PostId!)).subscribe({
             next(post) {
@@ -81,17 +103,22 @@ export default function PostPage() {
                 setLikes(post.likes.valueOf());
             },
             error(err) {
-            },
-        })
-        requestComments(parseInt(PostId!), offset, next, order, userTimestamp).subscribe({
-            next(comments) {
-                setComments(comments);
-            },
-            error(err) {
+                dispatch(setGlobalError(err));
             },
         })
     }, [PostId])
 
+    useEffect(() => {
+        fetchComments()
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [offset])
+
+
+    function handleScroll() {
+        if (window.innerHeight + document.documentElement.scrollTop <= document.documentElement.scrollHeight - 10 || !hasMore) return;
+        setOffset(offset + next);
+    }
 
 
     //menu
@@ -161,6 +188,7 @@ export default function PostPage() {
             },
         })
     }
+
 
     return (
         <>
@@ -257,27 +285,7 @@ export default function PostPage() {
                                                             multiline
                                                             defaultValue={post.text}
                                                         />
-                                                        <Collapse in={error != ''}>
-                                                            <Alert
-                                                                severity="error"
-                                                                action={
-                                                                    <IconButton
-                                                                        aria-label="close"
-                                                                        color="inherit"
-                                                                        onClick={() => {
-                                                                            setError('');
-                                                                        }}
-                                                                    >
-                                                                        <CloseIcon />
-                                                                    </IconButton>
-                                                                }
-                                                                sx={{ mb: 2, fontSize: 15 }}
-                                                            >
-                                                                {error}
-                                                            </Alert>
-                                                        </Collapse>
                                                         <Box sx={{ my: 1, display: 'flex' }}>
-
                                                             <Button
                                                                 color='secondary'
                                                                 sx={{ ml: 'auto', mr: 1 }}
@@ -315,63 +323,7 @@ export default function PostPage() {
                                                 </Stack>
                                             </Paper>
                                         </Grid>
-                                        <Grid item xs={12} md={12} lg={12}>
-                                            <Paper sx={{
-                                                p: 1,
-                                                width: 1
-                                            }}>
-                                                <Grid sx={{
-                                                    display: 'flex',
-                                                    flexDirection: 'row',
-                                                    alignItems: 'stretch',
-                                                    py: 0,
-                                                }}>
-                                                    <Typography variant="caption" sx={{ mr: 1, fontSize: '18px', display: 'flex', alignItems: 'center' }}>
-                                                        {post.comments.toString()} Comments
-                                                    </Typography>
-                                                    <Typography variant="caption" sx={{ fontSize: '15px', display: 'flex', alignItems: 'center' }}>
-                                                        <Select
-                                                            value={order}
-                                                            onChange={(e) => setOrder(e.target.value)}
-                                                            input={<BootstrapInput sx={{ height: 1, display: 'flex' }} />}
-                                                        >
-                                                            <MenuItem value={"Likes"}>Top</MenuItem>
-                                                            <MenuItem value={"Date"}>New</MenuItem>
-                                                        </Select>
-                                                    </Typography>
-                                                </Grid>
-                                                <Box component="form" noValidate sx={{ m: 0 }}>
-                                                    <TextField
-                                                        variant="standard"
-                                                        placeholder='Add a comment'
-                                                        name="comment"
-                                                        required
-                                                        fullWidth
-                                                        multiline
-                                                        minRows={1}
-                                                        sx={{ mb: 2 }}
-                                                        onFocus={(e) => {
-                                                            if (!isSigned()) {
-                                                                e.currentTarget?.blur();
-                                                                dispatch(setLogInError('Not signed in'));
-                                                            }
-                                                        }
-                                                        }
-                                                    />
-                                                </Box>
-                                                {
-                                                    comments?.length === 0 ? <></> :
-                                                        <>
-                                                            {
-
-                                                                comments?.map((comment, index) =>
-                                                                    <CommentElement comment={comment} key={index}></CommentElement>
-                                                                )
-                                                            }
-                                                        </>
-                                                }
-                                            </Paper>
-                                        </Grid>
+                                        <CommentsSection Post={post}></CommentsSection>
                                     </Grid>
                                     <Dialog
                                         open={openDelete}

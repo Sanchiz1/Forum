@@ -17,6 +17,7 @@ namespace Forum.GraphQL.Types.CommentTypes
     {
         public GetCommentsInputGraphType()
         {
+            Field(p => p.Post_Id, type: typeof(IntGraphType));
             Field(p => p.Next, type: typeof(IntGraphType));
             Field(p => p.Offset, type: typeof(IntGraphType));
             Field(p => p.User_Timestamp, type: typeof(DateTimeGraphType));

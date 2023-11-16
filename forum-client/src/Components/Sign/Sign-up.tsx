@@ -18,6 +18,8 @@ import { createUserRequest } from '../../API/userRequests';
 import { Alert, Collapse, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { SnackbarProvider, VariantType, enqueueSnackbar, useSnackbar } from 'notistack';
+import { useDispatch } from 'react-redux';
+import { setGlobalError } from '../../Redux/Reducers/AccountReducer';
 
 const validUsernamePattern = /^[a-zA-Z0-9_.]+$/;
 const validEmailPattern = /^(?=.{0,64}$)[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -41,6 +43,7 @@ const defaultTheme = createTheme();
 
 export default function SignUp() {
     const navigator = useNavigate();
+    const dispatch = useDispatch();
     const { state } = useLocation();
     const [usernameError, SetUsernameError] = React.useState('');
     const [emailError, SetEmailError] = React.useState('');
@@ -84,7 +87,7 @@ export default function SignUp() {
                 navigator("/Sign-in", { state: state })
             },
             error(err) {
-                setError(err.message)
+                dispatch(setGlobalError(err));
             },
         })
     };
@@ -161,25 +164,6 @@ export default function SignUp() {
                     >
                         Sign Up
                     </Button>
-                    <Collapse in={error != ''}>
-                        <Alert
-                            severity="error"
-                            action={
-                                <IconButton
-                                    aria-label="close"
-                                    color="inherit"
-                                    onClick={() => {
-                                        setError('');
-                                    }}
-                                >
-                                    <CloseIcon />
-                                </IconButton>
-                            }
-                            sx={{ mb: 2, fontSize: 15 }}
-                        >
-                            {error}
-                        </Alert>
-                    </Collapse>
                     <Grid container justifyContent="flex-end">
                         <Grid item>
                             <Link variant="body2" onClick={() => navigator("/Sign-in", { state: state })} sx={{ cursor: 'pointer' }}>

@@ -40,7 +40,7 @@ namespace Infrastructure.Data.Repositories
                     $"WHERE Replies.Date < @user_timestamp AND Replies.Comment_Id = @comment_id " +
                     $"GROUP BY Replies.Id, Replies.Text, Replies.Date, Replies.Comment_Id, Replies.User_Id, users.Username, " +
                     $" ReplyToUsers.Username, ReplyToReplies.User_Id, Replies.Reply_Id " +
-                    $"ORDER BY Date DESC OFFSET @offset ROWS FETCH NEXT @next ROWS ONLY";
+                    $"ORDER BY Date ASC OFFSET @offset ROWS FETCH NEXT @next ROWS ONLY";
 
             try
             {

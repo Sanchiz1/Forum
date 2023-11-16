@@ -20,10 +20,9 @@ export type TokenType = {
 export type LoginType = {
   data: {
     login: {
-      user_id: string,
-      redirect_url: string,
-      access_token: TokenType,
-      refresh_token: TokenType,
+      user_Id: string,
+      access_Token: TokenType,
+      refresh_Token: TokenType,
     }
   }
   errors: [
@@ -43,15 +42,15 @@ export function LoginRequest(credentials: Credentials) {
       Accept: "application/json",
     },
     body: JSON.stringify({
-      query: `query($login:CredentialsInput!){
-          login(login:$login){
-            access_token {
+      query: `query($Input: LoginInput!){
+          login(input: $Input){
+            access_Token {
               issued_at
               value
               expires_at
             }
-            user_id
-            refresh_token {
+            user_Id
+            refresh_Token {
               issued_at
               value
               expires_at
@@ -59,8 +58,8 @@ export function LoginRequest(credentials: Credentials) {
           }
         }`,
       variables: {
-        "login": {
-          "loginOrEmail": credentials.loginOrEmail,
+        "Input": {
+          "username_Or_Email": credentials.loginOrEmail,
           "password": credentials.password
         }
       }
@@ -70,7 +69,6 @@ export function LoginRequest(credentials: Credentials) {
     map((value) => {
 
       if (value.response.errors) {
-
         throw new Error(value.response.errors[0].message);
       }
       let fullResponse = value.response;
@@ -78,20 +76,20 @@ export function LoginRequest(credentials: Credentials) {
 
       setCookie({
         name: "access_token",
-        value: JSON.stringify(response.access_token),
-        expires_second: (new Date(response.access_token.expires_at).getTime() - new Date(response.access_token.issued_at).getTime()) / 1000,
+        value: JSON.stringify(response.access_Token),
+        expires_second: (new Date(response.access_Token.expires_at).getTime() - new Date(response.access_Token.issued_at).getTime()) / 1000,
         path: "/"
       });
       setCookie({
         name: "user_id",
-        value: response.user_id,
-        expires_second: (new Date(response.access_token.expires_at).getTime() - new Date(response.access_token.issued_at).getTime()) / 1000,
+        value: response.user_Id,
+        expires_second: (new Date(response.access_Token.expires_at).getTime() - new Date(response.access_Token.issued_at).getTime()) / 1000,
         path: "/"
       });
       setCookie({
         name: "refresh_token",
-        value: JSON.stringify(response.refresh_token),
-        expires_second: (new Date(response.refresh_token.expires_at).getTime() - new Date(response.refresh_token.issued_at).getTime()) / 1000,
+        value: JSON.stringify(response.refresh_Token),
+        expires_second: (new Date(response.refresh_Token.expires_at).getTime() - new Date(response.refresh_Token.issued_at).getTime()) / 1000,
         path: "/"
       });
     }),
@@ -113,20 +111,20 @@ export function RefreshTokenRequest(variables: {}) {
     },
     body: JSON.stringify({
       query: `query{
-          login:refreshToken{
-            access_token {
-              issued_at
-              value
-              expires_at
-            }
-            refresh_token {
-              issued_at
-              value
-              expires_at
-            }
-            user_id
+        login: refreshToken{
+          access_Token {
+            issued_at
+            value
+            expires_at
           }
-        }`,
+          user_Id
+          refresh_Token {
+            issued_at
+            value
+            expires_at
+          }
+        }
+      }`,
       variables
     }),
     withCredentials: true,
@@ -141,20 +139,20 @@ export function RefreshTokenRequest(variables: {}) {
       let response = value.response.data.login;
       setCookie({
         name: "access_token",
-        value: JSON.stringify(response.access_token),
-        expires_second: (new Date(response.access_token.expires_at).getTime() - new Date(response.access_token.issued_at).getTime()) / 1000,
+        value: JSON.stringify(response.access_Token),
+        expires_second: (new Date(response.access_Token.expires_at).getTime() - new Date(response.access_Token.issued_at).getTime()) / 1000,
         path: "/"
       });
       setCookie({
         name: "user_id",
-        value: response.user_id,
-        expires_second: (new Date(response.access_token.expires_at).getTime() - new Date(response.access_token.issued_at).getTime()) / 1000,
+        value: response.user_Id,
+        expires_second: (new Date(response.access_Token.expires_at).getTime() - new Date(response.access_Token.issued_at).getTime()) / 1000,
         path: "/"
       });
       setCookie({
         name: "refresh_token",
-        value: JSON.stringify(response.refresh_token),
-        expires_second: (new Date(response.refresh_token.expires_at).getTime() - new Date(response.refresh_token.issued_at).getTime()) / 1000,
+        value: JSON.stringify(response.refresh_Token),
+        expires_second: (new Date(response.refresh_Token.expires_at).getTime() - new Date(response.refresh_Token.issued_at).getTime()) / 1000,
         path: "/"
       });
       setCookie({ name: "refresh_sent", value: "false" })

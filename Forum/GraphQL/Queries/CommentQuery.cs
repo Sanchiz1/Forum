@@ -12,9 +12,11 @@ namespace Forum.GraphQL.Queries
     public class CommentQuery : ObjectGraphType
     {
         private readonly IMediator _mediator;
-        public CommentQuery(IMediator mediator)
+        private readonly ILogger _logger;
+        public CommentQuery(IMediator mediator, ILogger logger)
         {
             _mediator = mediator;
+            _logger = logger;
 
             Field<ListGraphType<CommentGraphType>>("comments")
                 .Argument<NonNullGraphType<GetCommentsInputGraphType>>("input")
@@ -22,15 +24,16 @@ namespace Forum.GraphQL.Queries
                 {
                     GetCommentsQuery getCommentsQuery = new GetCommentsQuery()
                     {
-                        Next = context.GetArgument<GetPostsQuery>("input").Next,
-                        Offset = context.GetArgument<GetPostsQuery>("input").Offset,
-                        Order = context.GetArgument<GetPostsQuery>("input").Order,
-                        User_Timestamp = context.GetArgument<GetPostsQuery>("input").User_Timestamp,
+                        Post_Id = context.GetArgument<GetCommentsQuery>("input").Post_Id,
+                        Next = context.GetArgument<GetCommentsQuery>("input").Next,
+                        Offset = context.GetArgument<GetCommentsQuery>("input").Offset,
+                        Order = context.GetArgument<GetCommentsQuery>("input").Order,
+                        User_Timestamp = context.GetArgument<GetCommentsQuery>("input").User_Timestamp,
                         User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
                     };
                     return await _mediator.Send(getCommentsQuery);
                 });
-            Field<PostGraphType>("post")
+            Field<CommentGraphType>("comment")
                 .Argument<NonNullGraphType<GetCommentByIdInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
@@ -39,7 +42,18 @@ namespace Forum.GraphQL.Queries
                         Id = context.GetArgument<GetCommentByIdQuery>("input").Id,
                         User_id = AccountHelper.GetUserIdFromClaims(context.User!)
                     };
-                    return await _mediator.Send(getCommentByIdQuery);
+
+                    try
+                    {
+                        return await _mediator.Send(getCommentByIdQuery);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Logging in");
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
                 });
         }
     }

@@ -9,3 +9,9 @@ export interface Comment{
     replies: Number,
     liked: boolean
 }
+
+export interface CommentInput {
+    post_Id: Number
+    text: string,
+    user_Id: Number
+}

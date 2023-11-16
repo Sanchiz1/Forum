@@ -7,9 +7,11 @@ namespace Forum.GraphQL.Queries
         public MainQuery()
         {
 
-            Field<PostQuery>("posts")
+            Field<UserQuery>("users")
                 .Resolve(context => new { });
 
+            Field<PostQuery>("posts")
+                .Resolve(context => new { });
 
             Field<CommentQuery>("comments")
                 .Resolve(context => new { });

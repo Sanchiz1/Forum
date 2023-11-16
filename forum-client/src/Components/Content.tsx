@@ -6,9 +6,12 @@ import UserPage from './User/UserPage';
 import SignUp from './Sign/Sign-up';
 import { isSigned } from '../API/loginRequests';
 import CreatePost from './Posts/CreatePost';
-import { useDispatch } from 'react-redux';
-import { setLogInError } from '../Redux/Reducers/AccountReducer';
+import { useDispatch, useSelector } from 'react-redux';
+import { setGlobalError, setLogInError } from '../Redux/Reducers/AccountReducer';
 import PostPage from './Posts/PostPage';
+import { Alert, Collapse, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { RootState } from '../Redux/store';
 
 const router = (Action: () => void) => createBrowserRouter([
     {
@@ -46,14 +49,35 @@ const router = (Action: () => void) => createBrowserRouter([
 
 export default function AppContent() {
     const dispatch = useDispatch();
+    const globalError = useSelector((state: RootState) => state.account.GlobalError);
 
     const setSignError = () => {
         dispatch(setLogInError('Not signed in'));
     }
 
     return (
-        <RouterProvider router={router(setSignError)} />
-
+        <>
+            <Collapse in={globalError != ''}>
+                <Alert
+                    severity="error"
+                    action={
+                        <IconButton
+                            aria-label="close"
+                            color="inherit"
+                            onClick={() => {
+                                dispatch(setGlobalError(''));
+                            }}
+                        >
+                            <CloseIcon />
+                        </IconButton>
+                    }
+                    sx={{ fontSize: 15 }}
+                >
+                    {globalError}
+                </Alert>
+            </Collapse>
+            <RouterProvider router={router(setSignError)} />
+        </>
     );
 }
 

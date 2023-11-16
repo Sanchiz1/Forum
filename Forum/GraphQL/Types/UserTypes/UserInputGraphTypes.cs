@@ -53,7 +53,6 @@ namespace Forum.GraphQL.Types.UserTypes
             Field(c => c.Username, type: typeof(StringGraphType));
             Field(c => c.Email, type: typeof(StringGraphType));
             Field(c => c.Bio, type: typeof(StringGraphType));
-            Field(c => c.Password, type: typeof(StringGraphType));
         }
     }
     public class DeleteUserInputGraphType : InputObjectGraphType<DeleteUserCommand>

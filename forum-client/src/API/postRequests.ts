@@ -16,7 +16,7 @@ interface GraphqlPosts {
     }
 }
 
-export function requestPagedPosts(offset: Number, next: Number, order: String, user_timestamp: Date) {
+export function requestPosts(offset: Number, next: Number, order: String, user_timestamp: Date) {
     return ajax<GraphqlPosts>({
         url: url,
         method: "POST",
@@ -25,9 +25,9 @@ export function requestPagedPosts(offset: Number, next: Number, order: String, u
             Accept: "application/json",
         },
         body: JSON.stringify({
-            query: `query($Offset: Int!, $Next: Int!, $Order: String!, $User_timestamp: DateTime!){
+            query: `query($Input:  GetPostsInput!){
               posts{
-                posts:pagedPosts(offset: $Offset, next: $Next, order: $Order, user_timestamp: $User_timestamp){
+                posts(input: $Input){
                     id
                     title
                     text
@@ -41,16 +41,60 @@ export function requestPagedPosts(offset: Number, next: Number, order: String, u
               }
             }`,
             variables: {
-                "Offset": offset,
-                "Next": next,
-                "Order": order,
-                "User_timestamp": user_timestamp.toISOString()
+                "Input": {
+                    "offset": offset,
+                    "next": next,
+                    "order": order,
+                    "user_Timestamp": user_timestamp.toISOString()
+                }
             }
         }),
         withCredentials: true,
     }).pipe(
         map((value) => {
             return value.response.data.posts.posts;
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}
+
+export function requestPostById(id: Number) {
+    return ajax<GraphqlPost>({
+        url: url,
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        },
+        body: JSON.stringify({
+            query: `query($Input:  GetPostByIdInput!){
+              posts{
+                post(input: $Input){
+                    id
+                    title
+                    text
+                    date
+                    user_Id
+                    user_Username
+                    likes
+                    comments
+                    liked
+                }
+              }
+            }`
+            ,
+            variables: {
+                "Input": {
+                    "id": id
+                }
+            }
+        }),
+        withCredentials: true,
+    }).pipe(
+        map((value) => {
+            return value.response.data.posts.post;
         }),
         catchError((error) => {
             throw error
@@ -66,13 +110,13 @@ interface GraphqlCreatePost {
 
 export function createPostRequest(PostInput: PostInput) {
     return GetAjaxObservable<GraphqlCreatePost>(`
-        mutation($Post: PostInput!){
+        mutation($Input: CreatePostInput!){
             post{
-              createPost(post: $Post)
+              createPost(input: $Input)
             }
           }`,
         {
-            "Post": {
+            "Input": {
                 "title": PostInput.title,
                 "text": PostInput.text,
                 "user_Id": PostInput.user_Id
@@ -101,16 +145,18 @@ interface GraphqlUpdatePost {
     }
 }
 
-export function updatePostRequest(text: String, id : Number) {
+export function updatePostRequest(text: String, id: Number) {
     return GetAjaxObservable<GraphqlUpdatePost>(`
-        mutation($text: String!, $id: Int!){
+        mutation($Input: UpdatePostInput!){
             post{
-              updatePost(text: $text, id: $id)
+              updatePost(input: $Input)
             }
           }`,
         {
-            "text": text,
-            "id": id
+            "Input": {
+                "text": text,
+                "id": id
+            }
         }
     ).pipe(
         map((value) => {
@@ -136,15 +182,17 @@ interface GraphqlDeletePost {
     }
 }
 
-export function deletePostRequest( id : Number) {
+export function deletePostRequest(id: Number) {
     return GetAjaxObservable<GraphqlDeletePost>(`
-        mutation($id: Int!){
+        mutation($Input: DeletePostInput!){
             post{
-              deletePost( id: $id)
+              deletePost(input: $Input)
             }
           }`,
         {
-            "id": id
+            "Input": {
+                "id": id
+            }
         }
     ).pipe(
         map((value) => {
@@ -172,42 +220,3 @@ interface GraphqlPost {
     }
 }
 
-export function requestPostById(id: Number) {
-    return ajax<GraphqlPost>({
-        url: url,
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-        },
-        body: JSON.stringify({
-            query: `query($id: Int!){
-              posts{
-                post(id: $id){
-                    id
-                    title
-                    text
-                    date
-                    user_Id
-                    user_Username
-                    likes
-                    comments
-                    liked
-                }
-              }
-            }`
-            ,
-            variables: {
-                "id": id
-            }
-        }),
-        withCredentials: true,
-    }).pipe(
-        map((value) => {
-            return value.response.data.posts.post;
-        }),
-        catchError((error) => {
-            throw error
-        })
-    );
-}

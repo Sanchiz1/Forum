@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces.Repositories;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces.Repositories;
 using Application.UseCases.Users.Queries;
 using MediatR;
 using System;
@@ -16,7 +17,6 @@ namespace Application.UseCases.Users.Commands
         public string Username { get; set; }
         public string Email { get; set; }
         public string? Bio { get; set; }
-        public string? Password { get; set; }
     }
     public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand>
     {
@@ -29,14 +29,17 @@ namespace Application.UseCases.Users.Commands
 
         public async Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            if ((await _context.GetUserByUsernameAsync(new GetUserByUsernameQuery() { Username = request.Username }))?.Id != request.User_Id)
+            var usernameCheck = await _context.GetUserByUsernameAsync(new GetUserByUsernameQuery() { Username = request.Username });
+            var emailCheck = await _context.GetUserByEmailAsync(new GetUserByEmailQuery() { Email = request.Username });
+
+            if (!(usernameCheck?.Id == request.User_Id || usernameCheck == null))
             {
-                throw new Exception("User with this username already exists");
+                throw new UserAlreadyExistsException("User with this username already exists");
             }
 
-            if ((await _context.GetUserByEmailAsync(new GetUserByEmailQuery() { Email = request.Username }))?.Id != request.User_Id)
+            if (!(emailCheck?.Id == request.User_Id || emailCheck == null))
             {
-                throw new Exception("User with this email already exists");
+                throw new UserAlreadyExistsException("User with this email already exists");
             }
 
             await _context.UpdateUserAsync(request);

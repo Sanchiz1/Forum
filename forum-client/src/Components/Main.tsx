@@ -1,24 +1,26 @@
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import { Box, Button, Container, CssBaseline, Paper, Skeleton } from '@mui/material';
+import { Box, Button, Container, CssBaseline, MenuItem, Paper, Select, Skeleton } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserAccount } from '../Redux/Epics/AccountEpics';
 import { RootState } from '../Redux/store';
-import ButtonWithCheck from './ButtonWithCheck/ButtonWithCheck';
+import ButtonWithCheck from './UtilComponents/ButtonWithCheck';
 import { isSigned } from '../API/loginRequests';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { setLogInError } from '../Redux/Reducers/AccountReducer';
 import { useEffect, useRef, useState } from 'react';
-import { requestPagedPosts } from '../API/postRequests';
+import { requestPosts } from '../API/postRequests';
 import { Post } from '../Types/Post';
 import PostElement from './Posts/PostElement';
 import { User } from '../Types/User';
+import { BootstrapInput } from './UtilComponents/BootstrapInput';
 
 export default function Main() {
   const next = 4;
   const [userTimestamp, setUserTimestamp] = useState(new Date());
   const [offset, setOffset] = useState(0);
+  const [order, setOrder] = useState("Date");
   const [posts, setPosts] = useState<Post[]>([]);
   const [hasMore, setHasMore] = useState(true);
 
@@ -31,10 +33,13 @@ export default function Main() {
   const Account: User = useSelector((state: RootState) => state.account.Account);
 
   useEffect(() => {
-    setUserTimestamp(new Date())
-  }, []);
+    setPosts([]);
+    setOffset(0);
+    setUserTimestamp(new Date());
+  }, [order]);
+
   useEffect(() => {
-    requestPagedPosts(offset, next, "Date", userTimestamp).subscribe({
+    requestPosts(offset, next, order, userTimestamp).subscribe({
       next(value) {
         if (value.length == 0) {
           setHasMore(false);
@@ -83,8 +88,21 @@ export default function Main() {
               <Paper sx={{
                 p: 1,
                 width: 1,
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'stretch',
               }}>
-                <ButtonWithCheck variant='outlined' ActionWithCheck={() => { navigator('/CreatePost'); }}>Create Post</ButtonWithCheck>
+                <Typography variant="caption" sx={{ fontSize: '15px', display: 'flex', alignItems: 'center' }}>
+                  <Select
+                    value={order}
+                    onChange={(e) => setOrder(e.target.value)}
+                    input={<BootstrapInput sx={{ height: 1, display: 'flex' }} />}
+                  >
+                    <MenuItem value={"Likes"}>Top</MenuItem>
+                    <MenuItem value={"Date"}>New</MenuItem>
+                  </Select>
+                </Typography>
+                <ButtonWithCheck sx={{ml: 'auto'}} variant='outlined' ActionWithCheck={() => { navigator('/CreatePost'); }}>Create Post</ButtonWithCheck>
               </Paper>
             </Grid>
             {

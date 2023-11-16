@@ -22,10 +22,11 @@ namespace Forum.GraphQL.Queries
                 {
                     GetRepliesQuery getRepliesQuery = new GetRepliesQuery()
                     {
-                        Next = context.GetArgument<GetPostsQuery>("input").Next,
-                        Offset = context.GetArgument<GetPostsQuery>("input").Offset,
-                        Order = context.GetArgument<GetPostsQuery>("input").Order,
-                        User_Timestamp = context.GetArgument<GetPostsQuery>("input").User_Timestamp,
+                        Comment_Id = context.GetArgument<GetRepliesQuery>("input").Comment_Id,
+                        Next = context.GetArgument<GetRepliesQuery>("input").Next,
+                        Offset = context.GetArgument<GetRepliesQuery>("input").Offset,
+                        Order = context.GetArgument<GetRepliesQuery>("input").Order,
+                        User_Timestamp = context.GetArgument<GetRepliesQuery>("input").User_Timestamp,
                         User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
                     };
                     return await _mediator.Send(getRepliesQuery);
@@ -36,7 +37,7 @@ namespace Forum.GraphQL.Queries
                 {
                     GetReplyByIdQuery getReplyByIdQuery = new GetReplyByIdQuery()
                     {
-                        Id = context.GetArgument<GetPostByIdQuery>("input").Id
+                        Id = context.GetArgument<GetReplyByIdQuery>("input").Id
                     };
                     return await _mediator.Send(getReplyByIdQuery);
                 });
