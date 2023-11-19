@@ -19,7 +19,7 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link as RouterLink } from 'react-router-dom';
 import { Post } from '../../Types/Post';
-import { deletePostRequest, requestPostById, updatePostRequest } from '../../API/postRequests';
+import { deletePostRequest, likePostRequest, requestPostById, updatePostRequest } from '../../API/postRequests';
 import { GetLocalDate, timeSince } from '../../Helpers/TimeHelper';
 import EditIcon from '@mui/icons-material/Edit';
 import Divider from '@mui/material/Divider';
@@ -42,6 +42,7 @@ import { setGlobalError, setLogInError } from '../../Redux/Reducers/AccountReduc
 import { User } from '../../Types/User';
 import CommentInputElement from '../UtilComponents/CommentInputElement';
 import CommentsSection from './CommentsSection';
+import IconButtonWithCheck from '../UtilComponents/IconButtonWithCheck';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -80,10 +81,10 @@ export default function PostPage() {
                 if (value.length == 0) {
                     setHasMore(false);
                     return;
-                  }
+                }
                 setComments([...comments, ...value]);
                 if (document.documentElement.offsetHeight - window.innerHeight < 100) {
-                  setOffset(offset + next);
+                    setOffset(offset + next);
                 }
             },
             error(err) {
@@ -314,9 +315,19 @@ export default function PostPage() {
                                                 >
                                                     <Grid>
                                                         <Typography variant="caption" color="text.disabled" component="p" sx={{ fontSize: '16px', display: 'flex', alignItems: 'center' }}>
-                                                            <IconButton sx={{ p: 0.5, color: 'inherit' }} onClick={(e) => { e.stopPropagation(); setLikes(liked ? likes - 1 : likes + 1); SetLiked(!liked) }}>
+                                                            <IconButtonWithCheck sx={{ p: 0.5, color: 'inherit' }} ActionWithCheck={() => {
+                                                                setLikes(liked ? likes - 1 : likes + 1); SetLiked(!liked)
+                                                                likePostRequest(post.id).subscribe({
+                                                                    next(value) {
+
+                                                                    },
+                                                                    error(err) {
+                                                                        dispatch(setGlobalError(err.message));
+                                                                    },
+                                                                })
+                                                            }}>
                                                                 {liked ? <FavoriteIcon></FavoriteIcon> : <FavoriteBorderIcon></FavoriteBorderIcon>}
-                                                            </IconButton>
+                                                            </IconButtonWithCheck>
                                                             {likes.toString()}
                                                         </Typography>
                                                     </Grid>

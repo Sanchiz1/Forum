@@ -1,15 +1,10 @@
 ﻿using Application.Common.Interfaces.Services;
 using Microsoft.IdentityModel.Tokens;
-using Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using static Infrastructure.Services.TokenValidator;
+using Application.Common.Models;
 
 namespace Infrastructure.Services
 {

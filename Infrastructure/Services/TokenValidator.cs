@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Services
 {
-    internal class TokenValidator : ITokenValidator
+    public class TokenValidator : ITokenValidator
     {
         public readonly ITokenRepository _tokenRepository;
         private readonly IConfiguration _configuration;
@@ -65,11 +65,10 @@ namespace Infrastructure.Services
             return true;
         }
         public JwtSecurityToken ReadJwtToken(string token) => new JwtSecurityTokenHandler().ReadJwtToken(token);
-
-        public class AuthOptions
-        {
-            public static SymmetricSecurityKey GetSymmetricSecurityKey(string KEY) =>
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(KEY));
-        }
+    }
+    public class AuthOptions
+    {
+        public static SymmetricSecurityKey GetSymmetricSecurityKey(string KEY) =>
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(KEY));
     }
 }

@@ -39,7 +39,7 @@ namespace Infrastructure.Services
 
         public async Task<LoginResponse> Login(LoginQuery loginQuery)
         {
-            var user = await _mediator.Send(new GetUserByCredentialsQuery { Username_Or_Email =  loginQuery.Username_Or_Email, Password = loginQuery.Password });
+            var user = (await _mediator.Send(new GetUserByCredentialsQuery { Username_Or_Email =  loginQuery.Username_Or_Email, Password = loginQuery.Password })).User;
 
 
             if (user == null) throw new FailedLoginException();

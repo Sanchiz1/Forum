@@ -1,16 +1,15 @@
-﻿using Application.Common.Interfaces.Repositories;
+﻿using Application.Common.DTOs;
+using Application.Common.Interfaces.Repositories;
+using Application.Common.ViewModels;
 using Application.UseCases.Comments.Commands;
 using Application.UseCases.Comments.Queries;
 using Dapper;
-using Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Infrastructure.Data.Repositories
 {
@@ -24,26 +23,43 @@ namespace Infrastructure.Data.Repositories
             _dapperContext = context;
             _logger = logger;
         }
-        public async Task<List<Comment>> GetCommentsAsync(GetCommentsQuery getCommentsQuery)
+        public async Task<List<CommentViewModel>> GetCommentsAsync(GetCommentsQuery getCommentsQuery)
         {
-            List<Comment> result = null;
-            string query = $"SELECT Comments.Id, Comments.Text, Comments.Date, Comments.User_Id, " +
+            List<CommentViewModel> result = null;
+            string query = $"SELECT Comments.Id, Comments.Post_Id, Comments.Text, Comments.Date, Comments.User_Id, " +
                 $"users.Username as User_Username, " +
                 $"Count(DISTINCT Comment_Likes.User_Id) as Likes, " +
                 $"Count(DISTINCT Replies.Id) as Replies, " +
-                $"CASE WHEN EXISTS (SELECT * FROM Comment_Likes WHERE Comment_Likes.Comment_Id = Comments.Id AND User_Id = @User_Id) then 1 ELSE 0 END AS Liked " +
+                $"CAST(CASE WHEN EXISTS (SELECT * FROM Comment_Likes WHERE Comment_Likes.Comment_Id = Comments.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked " +
                 $"FROM Comments " +
                 $"INNER JOIN Users ON Users.Id = Comments.User_Id " +
                 $"LEFT JOIN Comment_Likes ON Comment_Likes.Comment_Id = Comments.Id " +
                 $"LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id " +
                 $"WHERE Comments.Date < @user_timestamp AND Comments.Post_Id = @post_id " +
-                $"GROUP BY Comments.Id, Comments.Text, Comments.Date, Comments.User_Id, users.Username " +
+                $"GROUP BY Comments.Id, Comments.Post_Id, Comments.Text, Comments.Date, Comments.User_Id, users.Username " +
                 $"ORDER BY {getCommentsQuery.Order} DESC OFFSET @offset ROWS FETCH NEXT @next ROWS ONLY";
 
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<Comment>(query, getCommentsQuery)).ToList();
+                result = (await connection.QueryAsync<dynamic>(query, getCommentsQuery)).Select(item =>
+
+                    new CommentViewModel()
+                    {
+                        Comment = new CommentDto()
+                        {
+                            Id = item.Id,
+                            Text = item.Text,
+                            Post_Id = item.Post_Id,
+                            User_Id = item.User_Id,
+                            Date = item.Date,
+                        },
+                        User_Username = item.User_Username,
+                        Likes = item.Likes,
+                        Replies = item.Replies,
+                        Liked = item.Liked,
+                    }
+                ).ToList();
             }
             catch (SqlException ex)
             {
@@ -58,26 +74,42 @@ namespace Infrastructure.Data.Repositories
 
             return result;
         }
-        public async Task<Comment> GetCommentByIdAsync(GetCommentByIdQuery getCommentByIdQuery)
+        public async Task<CommentViewModel> GetCommentByIdAsync(GetCommentByIdQuery getCommentByIdQuery)
         {
-            Comment result = null;
+            CommentViewModel result = null;
 
-            string query = "SELECT Comments.Id, Comments.Text, Comments.Date, Comments.User_Id, " +
+            string query = "SELECT Comments.Id, Comments.Post_Id, Comments.Text, Comments.Date, Comments.User_Id, " +
                 $"users.Username as User_Username, " +
                 $"Count(DISTINCT Comment_Likes.User_Id) as Likes, " +
                 $"Count(DISTINCT Replies.Id) as Replies, " +
-                $"CASE WHEN EXISTS (SELECT * FROM Comment_Likes WHERE Comment_Likes.Comment_Id = Comments.Id AND User_Id = @User_Id) then 1 ELSE 0 END AS Liked " +
+                $"CAST(CASE WHEN EXISTS (SELECT * FROM Comment_Likes WHERE Comment_Likes.Comment_Id = Comments.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked " +
                 $"FROM Comments " +
                 $"INNER JOIN Users ON Users.Id = Comments.User_Id " +
                 $"LEFT JOIN Comment_Likes ON Comment_Likes.Comment_Id = Comments.Id " +
                 $"LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id " +
                 $"WHERE Comments.Id = @Id " +
-                $"GROUP BY Comments.Id, Comments.Text, Comments.Date, Comments.User_Id, users.Username";
+                $"GROUP BY Comments.Id, Comments.Post_Id, Comments.Text, Comments.Date, Comments.User_Id, users.Username";
 
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<Comment>(query, getCommentByIdQuery)).First();
+                result = (await connection.QueryAsync<dynamic>(query, getCommentByIdQuery)).Select(item =>
+                    new CommentViewModel()
+                    {
+                        Comment = new CommentDto()
+                        {
+                            Id = item.Id,
+                            Text = item.Text,
+                            Post_Id = item.Post_Id,
+                            User_Id = item.User_Id,
+                            Date = item.Date,
+                        },
+                        User_Username = item.User_Username,
+                        Likes = item.Likes,
+                        Replies = item.Replies,
+                        Liked = item.Liked,
+                    }
+                ).First();
             }
             catch (SqlException ex)
             {
@@ -155,7 +187,7 @@ namespace Infrastructure.Data.Repositories
         {
             string query = $"IF EXISTS (SELECT * FROM Comment_Likes WHERE Comment_Id = @Comment_Id AND User_Id = @User_Id)" +
                 $" BEGIN DELETE FROM Comment_Likes WHERE Comment_Id = @Comment_Id AND User_Id = @User_Id END" +
-                $" ELSE BEGIN INSERT INTO Comment_Likes (Comment_Id, User_Id) VALUES(@Comment_Id, @User_Id) END GO";
+                $" ELSE BEGIN INSERT INTO Comment_Likes (Comment_Id, User_Id) VALUES(@Comment_Id, @User_Id) END";
 
             try
             {

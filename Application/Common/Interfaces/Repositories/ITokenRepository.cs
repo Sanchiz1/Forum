@@ -1,10 +1,4 @@
-﻿using Application;
-using Application.Common;
-using Application.Common.Interfaces;
-using Application.Common.Interfaces.Repositories;
-using Domain.Entities;
-using System;
-using System.Collections.Generic;
+﻿using Application.Common.Models;
 using System.Threading.Tasks;
 
 namespace Application.Common.Interfaces.Repositories

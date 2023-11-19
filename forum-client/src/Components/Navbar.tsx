@@ -122,24 +122,11 @@ export default function Header() {
           </Link>
           <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
             {isSigned() ?
-              <>
-                {User.username ?
-                  <IconButton
-                    onClick={handleClick}
-                    size="small"
-                    sx={{ ml: 2 }}
-                    aria-controls={open ? 'account-menu' : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={open ? 'true' : undefined}
-                  >
-                    <Avatar>{User!.username.charAt(0).toUpperCase()}</Avatar>
-
-                  </IconButton>
-                  :
-                  <AccountCircleIcon />
-                }</>
+              <Link variant="subtitle1" align="center" color="text.primary" component="span" onClick={handleClick} sx={{textDecoration: 'none', ":hover": {cursor: 'pointer'}}}>
+                {User.username}
+              </Link>
               :
-              <Button variant="outlined" onClick={() => navigator("/Sign-in", { state: location })}>Sign in</Button>
+              <Button variant="text" onClick={() => navigator("/Sign-in", { state: location })}>Sign in</Button>
             }
 
           </Box>

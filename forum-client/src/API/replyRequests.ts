@@ -5,25 +5,15 @@ import { GetAjaxObservable } from "./loginRequests";
 
 const url = "https://localhost:7295/graphql";
 
-interface GraphqlReply {
-    data: {
-        replies: {
-            replies: Reply[]
-        }
+interface GraphqlReplies {
+    replies: {
+        replies: Reply[]
     }
 }
 
 export function requestReplies(comment_id: Number, offset: Number, next: Number, order: String, user_timestamp: Date) {
-    return ajax<GraphqlReply>({
-        url: url,
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-        },
-        body: JSON.stringify({
-            query: `
-            query($Input:  GetRepliesInput!){
+    return GetAjaxObservable<GraphqlReplies>(
+        `query($Input:  GetRepliesInput!){
                 replies{
                     replies(input: $Input){
                         id
@@ -39,26 +29,22 @@ export function requestReplies(comment_id: Number, offset: Number, next: Number,
                     }
                 }
             }`,
-            variables: {
-
-                "Input": {
-                    "comment_Id": comment_id,
-                    "offset": offset,
-                    "next": next,
-                    "order": order,
-                    "user_Timestamp": user_timestamp.toISOString()
-                }
+        {
+            "Input": {
+                "comment_Id": comment_id,
+                "offset": offset,
+                "next": next,
+                "order": order,
+                "user_Timestamp": user_timestamp.toISOString()
             }
-        }),
-        withCredentials: true,
-    }).pipe(
-        map((value) => {
-            return value.response.data.replies.replies;
-        }),
-        catchError((error) => {
-            throw error
-        })
-    );
+        }, false).pipe(
+            map((value) => {
+                return value.response.data.replies.replies;
+            }),
+            catchError((error) => {
+                throw error
+            })
+        );
 }
 
 interface GraphqlCreateReply {
@@ -91,6 +77,41 @@ export function createReplyRequest(ReplyInput: ReplyInput) {
             }
 
             return value.response.data.reply.createReply;
+
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}
+
+interface GraphqlLikeReply {
+    reply: {
+        likeReply: string
+    }
+}
+
+export function likeReplyRequest(id: Number) {
+    return GetAjaxObservable<GraphqlLikeReply>(`
+        mutation($Input: LikeReplyInput!){
+            reply{
+              likeReply(input: $Input)
+            }
+          }`,
+        {
+            "Input": {
+                "reply_Id": id
+            }
+        }
+    ).pipe(
+        map((value) => {
+
+            if (value.response.errors) {
+
+                throw new Error(value.response.errors[0].message);
+            }
+
+            return value.response.data.reply.likeReply;
 
         }),
         catchError((error) => {

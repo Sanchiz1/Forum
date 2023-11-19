@@ -1,5 +1,7 @@
-﻿using Application.UseCases.Replies.Commands;
+﻿using Application.UseCases.Posts.Commands;
+using Application.UseCases.Replies.Commands;
 using Forum.GraphQL.Types.ReplyTypes;
+using Forum.Helpers;
 using GraphQL;
 using GraphQL.Types;
 using MediatR;
@@ -48,7 +50,11 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<LikeReplyInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    LikeReplyCommand likeReplyCommand = context.GetArgument<LikeReplyCommand>("input");
+                    LikeReplyCommand likeReplyCommand = new LikeReplyCommand()
+                    {
+                        Reply_Id = context.GetArgument<LikeReplyCommand>("input").Reply_Id,
+                        User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
+                    };
                     await _mediator.Send(likeReplyCommand);
 
                     return "Reply liked successfully";

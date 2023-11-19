@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces.Repositories;
+using Application.Common.ViewModels;
 using Domain.Entities;
 using MediatR;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Replies.Queries
 {
-    public class GetRepliesQuery : IRequest<List<Reply>>
+    public class GetRepliesQuery : IRequest<List<ReplyViewModel>>
     {
         public int Comment_Id { get; set; }
         public int Next { get; set; }
@@ -19,7 +20,7 @@ namespace Application.UseCases.Replies.Queries
         public string Order { get; set; } = "Date";
         public int User_Id { get; set; } = 0;
     }
-    public class GetRepliesQueryHandler : IRequestHandler<GetRepliesQuery, List<Reply>>
+    public class GetRepliesQueryHandler : IRequestHandler<GetRepliesQuery, List<ReplyViewModel>>
     {
         private readonly IReplyRepository _context;
 
@@ -28,6 +29,6 @@ namespace Application.UseCases.Replies.Queries
             _context = context;
         }
 
-        public async Task<List<Reply>> Handle(GetRepliesQuery request, CancellationToken cancellationToken) => await _context.GetRepliesAsync(request);
+        public async Task<List<ReplyViewModel>> Handle(GetRepliesQuery request, CancellationToken cancellationToken) => await _context.GetRepliesAsync(request);
     }
 }

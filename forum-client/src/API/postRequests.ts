@@ -9,23 +9,14 @@ import { Post, PostInput } from "../Types/Post";
 const url = "https://localhost:7295/graphql";
 
 interface GraphqlPosts {
-    data: {
-        posts: {
-            posts: Post[]
-        }
+    posts: {
+        posts: Post[]
     }
 }
 
 export function requestPosts(offset: Number, next: Number, order: String, user_timestamp: Date) {
-    return ajax<GraphqlPosts>({
-        url: url,
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-        },
-        body: JSON.stringify({
-            query: `query($Input:  GetPostsInput!){
+    return GetAjaxObservable<GraphqlPosts>(
+        `query($Input:  GetPostsInput!){
               posts{
                 posts(input: $Input){
                     id
@@ -40,17 +31,16 @@ export function requestPosts(offset: Number, next: Number, order: String, user_t
                 }
               }
             }`,
-            variables: {
-                "Input": {
-                    "offset": offset,
-                    "next": next,
-                    "order": order,
-                    "user_Timestamp": user_timestamp.toISOString()
-                }
+        {
+            "Input": {
+                "offset": offset,
+                "next": next,
+                "order": order,
+                "user_Timestamp": user_timestamp.toISOString()
             }
-        }),
-        withCredentials: true,
-    }).pipe(
+        },
+        false
+    ).pipe(
         map((value) => {
             return value.response.data.posts.posts;
         }),
@@ -60,16 +50,52 @@ export function requestPosts(offset: Number, next: Number, order: String, user_t
     );
 }
 
-export function requestPostById(id: Number) {
-    return ajax<GraphqlPost>({
-        url: url,
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
+export function requestUserPosts(author_username: String, offset: Number, next: Number, order: String, user_timestamp: Date) {
+    return GetAjaxObservable<GraphqlPosts>(
+        `query($Input: GetUserPostsInput!){
+              posts{
+                posts:userPosts(input: $Input){
+                    id
+                    title
+                    text
+                    date
+                    user_Id
+                    user_Username
+                    likes
+                    comments
+                    liked
+                }
+              }
+            }`,
+        {
+            "Input": {
+                "author_Username": author_username,
+                "offset": offset,
+                "next": next,
+                "order": order,
+                "user_Timestamp": user_timestamp.toISOString()
+            }
         },
-        body: JSON.stringify({
-            query: `query($Input:  GetPostByIdInput!){
+        false
+    ).pipe(
+        map((value) => {
+            return value.response.data.posts.posts;
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}
+
+interface GraphqlPost {
+    posts: {
+        post: Post
+    }
+}
+
+export function requestPostById(id: Number) {
+    return GetAjaxObservable<GraphqlPost>(
+        `query($Input:  GetPostByIdInput!){
               posts{
                 post(input: $Input){
                     id
@@ -84,15 +110,14 @@ export function requestPostById(id: Number) {
                 }
               }
             }`
-            ,
-            variables: {
-                "Input": {
-                    "id": id
-                }
+        ,
+        {
+            "Input": {
+                "id": id
             }
-        }),
-        withCredentials: true,
-    }).pipe(
+        },
+        false
+    ).pipe(
         map((value) => {
             return value.response.data.posts.post;
         }),
@@ -212,11 +237,37 @@ export function deletePostRequest(id: Number) {
 }
 
 
-interface GraphqlPost {
-    data: {
-        posts: {
-            post: Post
-        }
+interface GraphqlLikePost {
+    post: {
+        likePost: string
     }
 }
 
+export function likePostRequest(id: Number) {
+    return GetAjaxObservable<GraphqlLikePost>(`
+        mutation($Input: LikePostInput!){
+            post{
+              likePost(input: $Input)
+            }
+          }`,
+        {
+            "Input": {
+                "post_Id": id
+            }
+        }
+    ).pipe(
+        map((value) => {
+
+            if (value.response.errors) {
+
+                throw new Error(value.response.errors[0].message);
+            }
+
+            return value.response.data.post.likePost;
+
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}

@@ -1,5 +1,6 @@
 ﻿using Application.UseCases.Posts.Commands;
 using Forum.GraphQL.Types.PostTypes;
+using Forum.Helpers;
 using GraphQL;
 using GraphQL.Types;
 using MediatR;
@@ -46,7 +47,11 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<LikePostInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    LikePostCommand likePostCommand = context.GetArgument<LikePostCommand>("input");
+                    LikePostCommand likePostCommand = new LikePostCommand()
+                    {
+                        Post_Id = context.GetArgument<LikePostCommand>("input").Post_Id,
+                        User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
+                    };
                     await _mediator.Send(likePostCommand);
 
                     return "Post liked successfully";

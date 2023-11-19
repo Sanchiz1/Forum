@@ -213,6 +213,56 @@ export type response<T = any> = {
 }
 
 export function GetAjaxObservable<T>(query: string, variables: {}, authorized = true, withCredentials = false, requestUrl = url, forGraphql = true) {
+  if (isSigned()) {
+    var refreshObservable = of('/');
+    if (CheckRefresh()) {
+      const refreshSentString = getCookie("refresh_sent");
+      const refreshSent: boolean = refreshSentString ? JSON.parse(refreshSentString) : refreshSentString
+      if (!refreshSent) {
+        setCookie({ name: "refresh_sent", value: "true" })
+        refreshObservable = RefreshTokenRequest({});
+      }
+      else {
+        refreshObservable = new Observable<string>((subscriber) => {
+          const sub = timer(10, 20).subscribe({
+            next: () => {
+              let refreshSentString = getCookie("refresh_sent");
+              let isTokenSent: boolean = refreshSentString ? JSON.parse(refreshSentString) : refreshSentString
+              if (!isTokenSent) {
+                subscriber.next()
+                sub.unsubscribe()
+              }
+            }
+          })
+        })
+      }
+    }
+    return refreshObservable.pipe(
+      catchError(error => {
+        setLogInError(error.message)
+        if (error.message == "Invalid token") {
+          Logout()
+        }
+        return throwError(() => new Error(error.message));
+      }),
+      mergeMap(() => {
+        const token: TokenType = JSON.parse(getCookie("access_token")!)
+        return ajax<response<T>>({
+          url: requestUrl,
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token.value,
+          },
+          body: JSON.stringify({
+            query,
+            variables
+          }),
+          withCredentials: withCredentials
+        })
+      })
+    )
+  }
   if (!authorized) {
     return ajax<response<T>>({
       url: requestUrl,
@@ -227,60 +277,9 @@ export function GetAjaxObservable<T>(query: string, variables: {}, authorized = 
       withCredentials: withCredentials
     })
   }
-
-
-  if (!isSigned()) {
-    return throwError(() => {
-      return new Error("Not signed in");
-    });
+  return throwError(() => {
+    return new Error("Not signed in");
   }
-  var refreshObservable = of('/');
-  if (CheckRefresh()) {
-    const refreshSentString = getCookie("refresh_sent");
-    const refreshSent: boolean = refreshSentString ? JSON.parse(refreshSentString) : refreshSentString
-    if (!refreshSent) {
-      setCookie({ name: "refresh_sent", value: "true" })
-      refreshObservable = RefreshTokenRequest({});
-    }
-    else {
-      refreshObservable = new Observable<string>((subscriber) => {
-        const sub = timer(10, 20).subscribe({
-          next: () => {
-            let refreshSentString = getCookie("refresh_sent");
-            let isTokenSent: boolean = refreshSentString ? JSON.parse(refreshSentString) : refreshSentString
-            if (!isTokenSent) {
-              subscriber.next()
-              sub.unsubscribe()
-            }
-          }
-        })
-      })
-    }
-  }
-  return refreshObservable.pipe(
-    catchError(error => {
-      setLogInError(error.message)
-      if (error.message == "Invalid token") {
-        Logout()
-      }
-      return throwError(() => new Error(error.message));
-    }),
-    mergeMap(() => {
-      const token: TokenType = JSON.parse(getCookie("access_token")!)
-      return ajax<response<T>>({
-        url: requestUrl,
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + token.value,
-        },
-        body: JSON.stringify({
-          query,
-          variables
-        }),
-        withCredentials: withCredentials
-      })
-    })
   )
 }
 

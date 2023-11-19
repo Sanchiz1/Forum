@@ -11,23 +11,24 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Posts.Queries
 {
-    public class GetPostsQuery : IRequest<List<PostViewModel>>
+    public class GetUserPostsQuery : IRequest<List<PostViewModel>>
     {
+        public string Author_Username { get; set; }
         public int Next { get; set; }
         public int Offset { get; set; }
         public DateTime User_Timestamp { get; set; }
         public int User_Id { get; set; } = 0;
         public string Order { get; set; } = "Date";
     }
-    public class GetPostsQueryHandler : IRequestHandler<GetPostsQuery, List<PostViewModel>>
+    public class GetUserPostsQueryHandler : IRequestHandler<GetUserPostsQuery, List<PostViewModel>>
     {
         private readonly IPostRepository _context;
 
-        public GetPostsQueryHandler(IPostRepository context)
+        public GetUserPostsQueryHandler(IPostRepository context)
         {
             _context = context;
         }
 
-        public async Task<List<PostViewModel>> Handle(GetPostsQuery request, CancellationToken cancellationToken) => await _context.GetPostsAsync(request);
+        public async Task<List<PostViewModel>> Handle(GetUserPostsQuery request, CancellationToken cancellationToken) => await _context.GetUserPostsAsync(request);
     }
 }

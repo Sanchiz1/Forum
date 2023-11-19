@@ -14,6 +14,17 @@ namespace Forum.GraphQL.Types.PostTypes
             Field(p => p.Order, type: typeof(StringGraphType));
         }
     }
+    public class GetUserPostsInputGraphType : InputObjectGraphType<GetUserPostsQuery>
+    {
+        public GetUserPostsInputGraphType()
+        {
+            Field(p => p.Author_Username, type: typeof(StringGraphType));
+            Field(p => p.Next, type: typeof(IntGraphType));
+            Field(p => p.Offset, type: typeof(IntGraphType));
+            Field(p => p.User_Timestamp, type: typeof(DateTimeGraphType));
+            Field(p => p.Order, type: typeof(StringGraphType));
+        }
+    }
     public class GetPostByIdInputGraphType : InputObjectGraphType<GetPostByIdQuery>
     {
         public GetPostByIdInputGraphType()
@@ -49,7 +60,6 @@ namespace Forum.GraphQL.Types.PostTypes
     {
         public LikePostInputGraphType()
         {
-            Field(c => c.User_Id, type: typeof(IntGraphType));
             Field(c => c.Post_Id, type: typeof(IntGraphType));
         }
     }

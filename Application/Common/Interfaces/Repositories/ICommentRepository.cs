@@ -2,6 +2,7 @@
 using Application.Common;
 using Application.Common.Interfaces;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.ViewModels;
 using Application.UseCases.Comments.Commands;
 using Application.UseCases.Comments.Queries;
 using Application.UseCases.Posts.Commands;
@@ -14,8 +15,8 @@ namespace Application.Common.Interfaces.Repositories
 {
     public interface ICommentRepository
     {
-        Task<List<Comment>> GetCommentsAsync(GetCommentsQuery getCommentsQuery);
-        Task<Comment> GetCommentByIdAsync(GetCommentByIdQuery getCommentByIdQuery);
+        Task<List<CommentViewModel>> GetCommentsAsync(GetCommentsQuery getCommentsQuery);
+        Task<CommentViewModel> GetCommentByIdAsync(GetCommentByIdQuery getCommentByIdQuery);
         Task CreateCommentAsync(CreateCommentCommand createCommentCommand);
         Task UpdateCommentAsync(UpdateCommentCommand updateCommentCommand);
         Task DeleteCommentAsync(DeleteCommentCommand deleteCommentCommand);

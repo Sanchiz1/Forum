@@ -1,14 +1,10 @@
 ﻿using Application.Common.Interfaces.Repositories;
-using Application.UseCases.Comments.Commands;
-using Application.UseCases.Comments.Queries;
+using Application.Common.Models;
 using Dapper;
-using Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Repositories

@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="Common\BaseEvent.cs" />
     <Compile Include="Entities\Comment.cs" />
-    <Compile Include="Entities\Token.cs" />
     <Compile Include="Entities\Post.cs" />
     <Compile Include="Entities\Reply.cs" />
     <Compile Include="Entities\User.cs" />

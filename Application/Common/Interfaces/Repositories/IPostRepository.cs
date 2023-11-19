@@ -2,6 +2,7 @@
 using Application.Common;
 using Application.Common.Interfaces;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.ViewModels;
 using Application.UseCases.Posts.Commands;
 using Application.UseCases.Posts.Queries;
 using Domain.Entities;
@@ -13,8 +14,9 @@ namespace Application.Common.Interfaces.Repositories
 {
     public interface IPostRepository
     {
-        Task<List<Post>> GetPostsAsync(GetPostsQuery getPostsQuery);
-        Task<Post> GetPostByIdAsync(GetPostByIdQuery getPostByIdQuery);
+        Task<List<PostViewModel>> GetPostsAsync(GetPostsQuery getPostsQuery);
+        Task<List<PostViewModel>> GetUserPostsAsync(GetUserPostsQuery getUserPostsQuery);
+        Task<PostViewModel> GetPostByIdAsync(GetPostByIdQuery getPostByIdQuery);
         Task CreatePostAsync(CreatePostCommand createPostCommand);
         Task UpdatePostAsync(UpdatePostCommand updatePostCommand);
         Task DeletePostAsync(DeletePostCommand deletePostCommand);

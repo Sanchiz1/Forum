@@ -1,16 +1,14 @@
-﻿using Application.Common.Interfaces.Repositories;
-using Application.UseCases.Comments.Commands;
-using Application.UseCases.Comments.Queries;
+﻿using Application.Common.DTOs;
+using Application.Common.Interfaces.Repositories;
+using Application.Common.ViewModels;
 using Application.UseCases.Replies.Commands;
 using Application.UseCases.Replies.Queries;
 using Dapper;
-using Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Repositories
@@ -25,13 +23,13 @@ namespace Infrastructure.Data.Repositories
             _dapperContext = context;
             _logger = logger;
         }
-        public async Task<List<Reply>> GetRepliesAsync(GetRepliesQuery getRepliesQuery)
+        public async Task<List<ReplyViewModel>> GetRepliesAsync(GetRepliesQuery getRepliesQuery)
         {
-            List<Reply> result = null;
+            List<ReplyViewModel> result = null;
             string query = $"SELECT Replies.Id, Replies.Text, Replies.Date, Replies.User_Id, Replies.Comment_Id, Replies.Reply_Id, " +
                     $" users.Username as User_Username, ReplyToUsers.Username as Reply_Username, " +
                     $" Count(DISTINCT Reply_Likes.User_Id) as Likes, " +
-                    $" CASE WHEN EXISTS (SELECT * FROM Reply_Likes WHERE Reply_Likes.Reply_Id = Replies.Id AND User_Id = @user_id) then 1 ELSE 0 END AS Liked " +
+                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Reply_Likes WHERE Reply_Likes.Reply_Id = Replies.Id AND User_Id = @user_id) then 1 ELSE 0 END AS BIT) AS Liked " +
                     $"FROM Replies " +
                     $" INNER JOIN Users ON Users.Id = Replies.User_Id " +
                     $" LEFT JOIN Replies ReplyToReplies ON ReplyToReplies.Id = Replies.Reply_Id " +
@@ -45,7 +43,23 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<Reply>(query, getRepliesQuery)).ToList();
+                result = (await connection.QueryAsync<dynamic>(query, getRepliesQuery)).Select(item =>
+                    new ReplyViewModel()
+                    {
+                        Reply = new ReplyDto()
+                        {
+                            Id = item.Id,
+                            Text = item.Text,
+                            Comment_Id = item.Comment_Id,
+                            User_Id = item.User_Id,
+                            Date = item.Date,
+                        },
+                        Reply_Username = item.Reply_Username,
+                        User_Username = item.User_Username,
+                        Likes = item.Likes,
+                        Liked = item.Liked,
+                    }
+                ).ToList();
             }
             catch (SqlException ex)
             {
@@ -60,16 +74,32 @@ namespace Infrastructure.Data.Repositories
 
             return result;
         }
-        public async Task<Reply> GetReplyByIdAsync(GetReplyByIdQuery getReplyByIdQuery)
+        public async Task<ReplyViewModel> GetReplyByIdAsync(GetReplyByIdQuery getReplyByIdQuery)
         {
-            Reply result = null;
+            ReplyViewModel result = null;
             string query = $"SELECT Replies.Id as Id, Text, Date, User_Id, Comment_Id, users.Username as User_Username" +
                $" FROM Replies INNER JOIN Users ON Users.Id = Replies.User_Id WHERE Replies.Id = @Id";
 
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<Reply>(query, getReplyByIdQuery)).First();
+                result = (await connection.QueryAsync<dynamic>(query, getReplyByIdQuery)).Select(item =>
+                     new ReplyViewModel()
+                     {
+                         Reply = new ReplyDto()
+                         {
+                             Id = item.Id,
+                             Text = item.Text,
+                             Comment_Id = item.Comment_Id,
+                             User_Id = item.User_Id,
+                             Date = item.Date,
+                         },
+                         Reply_Username = item.Reply_Username,
+                         User_Username = item.User_Username,
+                         Likes = item.Likes,
+                         Liked = item.Liked,
+                     }
+                ).First();
             }
             catch (SqlException ex)
             {
@@ -148,7 +178,7 @@ namespace Infrastructure.Data.Repositories
         {
             string query = $"IF EXISTS (SELECT * FROM Reply_Likes WHERE Reply_Id = @Reply_Id AND User_Id = @User_Id)" +
                 $" BEGIN DELETE FROM Reply_Likes WHERE Reply_Id = @Reply_Id AND User_Id = @User_Id END" +
-                $" ELSE BEGIN INSERT INTO Reply_Likes (Reply_Id, User_Id) VALUES(@Reply_Id, @User_Id) END GO";
+                $" ELSE BEGIN INSERT INTO Reply_Likes (Reply_Id, User_Id) VALUES(@Reply_Id, @User_Id) END";
 
             try
             {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
+import { SxProps, Theme } from "@mui/material/styles";
 import Divider from '@mui/material/Divider';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Paper, Link, Stack, IconButton, Button } from '@mui/material';
@@ -10,19 +11,24 @@ import { GetLocalDate, timeSince } from '../../Helpers/TimeHelper';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import IconButtonWithCheck from '../UtilComponents/IconButtonWithCheck';
+import { likePostRequest } from '../../API/postRequests';
+import { setGlobalError } from '../../Redux/Reducers/AccountReducer';
 
 interface Props {
   post: Post;
   customClickEvent: React.MouseEventHandler<HTMLDivElement>
+  sx?: SxProps<Theme> | undefined,
 }
 
 export default function PostElement(props: Props) {
   const [liked, SetLiked] = useState(props.post.liked);
   const [likes, setLikes] = useState(props.post.likes.valueOf());
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   return (
-    <Grid item xs={12} md={12} lg={12} onClick={props.customClickEvent}>
+    <Grid item xs={12} md={12} lg={12} onClick={props.customClickEvent} sx={props.sx}>
       <Paper sx={{
         p: 1,
         width: 1,
@@ -79,9 +85,19 @@ export default function PostElement(props: Props) {
         >
           <Grid lg={1} md={2} xs={3} item>
             <Typography variant="caption" color="text.disabled" component="p" sx={{ fontSize: '16px', display: 'flex', alignItems: 'center' }}>
-              <IconButton sx={{ p: 0.5, color: 'inherit' }} onClick={(e) => { e.stopPropagation(); setLikes(liked ? likes - 1 : likes + 1); SetLiked(!liked) }}>
+              <IconButtonWithCheck sx={{ p: 0.5, color: 'inherit' }} ActionWithCheck={() => { 
+                setLikes(liked ? likes - 1 : likes + 1); SetLiked(!liked) 
+                likePostRequest(props.post.id).subscribe({
+                  next(value) {
+                    
+                  },
+                  error(err) {
+                    dispatch(setGlobalError(err.message));
+                  },
+                })
+                }}>
                 {liked ? <FavoriteIcon></FavoriteIcon> : <FavoriteBorderIcon></FavoriteBorderIcon>}
-              </IconButton>
+              </IconButtonWithCheck>
               {likes.toString()}
             </Typography>
           </Grid>

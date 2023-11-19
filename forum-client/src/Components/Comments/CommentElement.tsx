@@ -20,7 +20,8 @@ import ReplyInputElement from '../UtilComponents/ReplyInputElement';
 import { useDispatch, useSelector } from 'react-redux';
 import { setGlobalError } from '../../Redux/Reducers/AccountReducer';
 import { RootState } from '../../Redux/store';
-import { requestCommentById } from '../../API/commentRequests';
+import { likeCommentRequest, requestCommentById } from '../../API/commentRequests';
+import IconButtonWithCheck from '../UtilComponents/IconButtonWithCheck';
 
 interface Props {
   comment: Comment;
@@ -46,7 +47,7 @@ export default function CommentElement(props: Props) {
         refetchReplies();
       },
       error(err) {
-        dispatch(setGlobalError(err));
+        dispatch(setGlobalError(err.message));
       }
     })
   }
@@ -68,7 +69,7 @@ export default function CommentElement(props: Props) {
         SetReplies([...replies, ...result]);
       },
       error(err) {
-        dispatch(setGlobalError(err));
+        dispatch(setGlobalError(err.message));
       }
     })
   };
@@ -115,10 +116,20 @@ export default function CommentElement(props: Props) {
         alignItems: 'center'
       }}>
         <Typography variant="caption" color="text.disabled" component="p" sx={{ fontSize: '14px', display: 'flex', alignItems: 'center', mr: 3 }}>
-          <IconButton sx={{ p: 0.5, color: 'inherit' }} onClick={(e) => { e.stopPropagation(); setLikes(liked ? likes - 1 : likes + 1); setLiked(!liked); }}>
+          <IconButtonWithCheck sx={{ p: 0.5, color: 'inherit' }} ActionWithCheck={() => {
+            setLikes(liked ? likes - 1 : likes + 1); setLiked(!liked)
+            likeCommentRequest(comment.id).subscribe({
+              next(value) {
+
+              },
+              error(err) {
+                dispatch(setGlobalError(err.message));
+              },
+            })
+          }}>
             {liked ? <FavoriteIcon sx={{ fontSize: '18px' }}></FavoriteIcon> :
               <FavoriteBorderIcon sx={{ fontSize: '18px' }}></FavoriteBorderIcon>}
-          </IconButton>
+          </IconButtonWithCheck>
           {likes.toString()}
         </Typography>
         <ButtonWithCheck variant='text' sx={{ color: "text.secondary", fontSize: "14px important!" }} ActionWithCheck={() => {
@@ -127,7 +138,7 @@ export default function CommentElement(props: Props) {
       </Grid>
       {openReplyInput ?
 
-        <Box sx={{ pl: 3 }}>
+        <Box sx={{ pl: 5 }}>
           <ReplyInputElement
             setState={setOpenReplyInput}
             Action={(e: string) => {
@@ -150,7 +161,7 @@ export default function CommentElement(props: Props) {
                     refetchComment()
                   },
                   error(err) {
-                    dispatch(setGlobalError(err));
+                    dispatch(setGlobalError(err.message));
                   },
                 }
               )
@@ -166,7 +177,7 @@ export default function CommentElement(props: Props) {
       }
       {
         openReplies ?
-          <Box sx={{ pl: 3 }}>
+          <Box sx={{ pl: 5 }}>
             {
               replies.map((reply, index) =>
                 <ReplyElement reply={reply} key={index} refreshComment={refetchComment}></ReplyElement>

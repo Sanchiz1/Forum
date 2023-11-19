@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Application.Common.Models;
 using GraphQL.Types;
 
 namespace Forum.GraphQL.Types.IdentityTypes

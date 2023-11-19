@@ -1,16 +1,14 @@
-﻿using Application.Common.Interfaces.Repositories;
-using Application.UseCases.Comments.Commands;
-using Application.UseCases.Comments.Queries;
+﻿using Application.Common.DTOs;
+using Application.Common.Interfaces.Repositories;
+using Application.Common.ViewModels;
 using Application.UseCases.Posts.Commands;
 using Application.UseCases.Posts.Queries;
 using Dapper;
-using Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Repositories
@@ -25,14 +23,14 @@ namespace Infrastructure.Data.Repositories
             _dapperContext = context;
             _logger = logger;
         }
-        public async Task<List<Post>> GetPostsAsync(GetPostsQuery getPostsQuery)
+        public async Task<List<PostViewModel>> GetPostsAsync(GetPostsQuery getPostsQuery)
         {
-            List<Post> result = null;
+            List<PostViewModel> result = null;
             string query = $"SELECT Posts.Id, Posts.Title, Posts.Text, Posts.Date, Posts.User_Id," +
                     $" users.Username as User_Username," +
                     $" Count(DISTINCT Post_Likes.User_Id) as Likes," +
                     $" Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                    $" CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) then 1 ELSE 0 END AS Liked" +
+                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked" +
                     $" FROM Posts " +
                     $"  INNER JOIN Users ON Users.Id = Posts.User_Id" +
                     $"  LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id " +
@@ -45,7 +43,24 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<Post>(query, getPostsQuery)).ToList();
+                result = (await connection.QueryAsync<dynamic>(query, getPostsQuery)).Select(item =>
+
+                    new PostViewModel()
+                    {
+                        Post = new PostDto()
+                        {
+                            Id = item.Id,
+                            Title = item.Title,
+                            Text = item.Text,
+                            User_Id = item.User_Id,
+                            Date = item.Date,
+                        },
+                        User_Username = item.User_Username,
+                        Likes = item.Likes,
+                        Comments = item.Comments,
+                        Liked = item.Liked,
+                    }
+                ).ToList();
             }
             catch (SqlException ex)
             {
@@ -60,14 +75,66 @@ namespace Infrastructure.Data.Repositories
 
             return result;
         }
-        public async Task<Post> GetPostByIdAsync(GetPostByIdQuery getPostByIdQuery)
+        public async Task<List<PostViewModel>> GetUserPostsAsync(GetUserPostsQuery getUserPostsQuery)
         {
-            Post result = null;
+            List<PostViewModel> result = null;
+            string query = $"SELECT Posts.Id, Posts.Title, Posts.Text, Posts.Date, Posts.User_Id," +
+                    $" Users.Username as User_Username," +
+                    $" Count(DISTINCT Post_Likes.User_Id) as Likes," +
+                    $" Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
+                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked" +
+                    $" FROM Posts " +
+                    $"  INNER JOIN Users ON Users.Id = Posts.User_Id" +
+                    $"  LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id " +
+                    $"  LEFT JOIN Comments ON Comments.Post_Id = Posts.Id " +
+                    $"  LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id" +
+                    $" WHERE Posts.Date < @User_Timestamp AND users.Username = @Author_Username" +
+                    $" GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date, Posts.User_Id, users.Username" +
+                    $" ORDER BY {getUserPostsQuery.Order} DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+                result = (await connection.QueryAsync<dynamic>(query, getUserPostsQuery)).Select(item =>
+
+                    new PostViewModel()
+                    {
+                        Post = new PostDto()
+                        {
+                            Id = item.Id,
+                            Title = item.Title,
+                            Text = item.Text,
+                            User_Id = item.User_Id,
+                            Date = item.Date,
+                        },
+                        User_Username = item.User_Username,
+                        Likes = item.Likes,
+                        Comments = item.Comments,
+                        Liked = item.Liked,
+                    }
+                ).ToList();
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Getting user posts");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Getting user posts");
+                throw;
+            }
+
+            return result;
+        }
+        public async Task<PostViewModel> GetPostByIdAsync(GetPostByIdQuery getPostByIdQuery)
+        {
+            PostViewModel result = null;
             string query = $"SELECT Posts.Id, Posts.Title, Posts.Text, Posts.Date, Posts.User_Id," +
                     $" users.Username as User_Username," +
                     $" Count(DISTINCT Post_Likes.User_Id) as Likes," +
                     $" Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                    $" CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) then 1 ELSE 0 END AS Liked" +
+                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked" +
                     $"  FROM Posts " +
                     $"  INNER JOIN Users ON Users.Id = Posts.User_Id" +
                     $"  LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id " +
@@ -79,7 +146,24 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<Post>(query, getPostByIdQuery)).First();
+                result = (await connection.QueryAsync<dynamic>(query, getPostByIdQuery)).Select(item =>
+
+                    new PostViewModel()
+                    {
+                        Post = new PostDto()
+                        {
+                            Id = item.Id,
+                            Title = item.Title,
+                            Text = item.Text,
+                            User_Id = item.User_Id,
+                            Date = item.Date,
+                        },
+                        User_Username = item.User_Username,
+                        Likes = item.Likes,
+                        Comments = item.Comments,
+                        Liked = item.Liked,
+                    }
+                ).First();
             }
             catch (SqlException ex)
             {
@@ -156,9 +240,9 @@ namespace Infrastructure.Data.Repositories
         }
         public async Task LikePostAsync(LikePostCommand likePostCommand)
         {
-            string query = $"IF EXISTS (SELECT * FROM Post_Likes WHERE Post_Id = @post_id AND User_Id = @user_id)" +
-                $" BEGIN DELETE FROM Post_Likes WHERE Post_Id = @post_id AND User_Id = @user_id END" +
-                $" ELSE BEGIN INSERT INTO Post_Likes (Post_Id, User_Id) VALUES(@post_id, @user_id) END GO";
+            string query = $"IF EXISTS (SELECT * FROM Post_Likes WHERE Post_Id = @Post_Id AND User_Id = @User_Id)" +
+                $" BEGIN DELETE FROM Post_Likes WHERE Post_Id = @Post_Id AND User_Id = @User_Id END" +
+                $" ELSE BEGIN INSERT INTO Post_Likes (Post_Id, User_Id) VALUES(@Post_Id, @User_Id) END";
 
             try
             {

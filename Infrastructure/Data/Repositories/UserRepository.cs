@@ -1,15 +1,14 @@
-﻿using Application.Common.Interfaces.Repositories;
+﻿using Application.Common.DTOs;
+using Application.Common.Interfaces.Repositories;
+using Application.Common.ViewModels;
 using Application.UseCases.Users.Commands;
 using Application.UseCases.Users.Queries;
 using Dapper;
-using Domain.Entities;
 using Infrastructure.Helpers;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Repositories
@@ -24,16 +23,28 @@ namespace Infrastructure.Data.Repositories
             _dapperContext = context;
             _logger = logger;
         }
-        public async Task<User> GetUserByIdAsync(GetUserByIdQuery getUserByIdQuery)
+        public async Task<UserViewModel> GetUserByIdAsync(GetUserByIdQuery getUserByIdQuery)
         {
-            User result = null;
+            UserViewModel result = null;
 
-            string query = $"SELECT * FROM Users WHERE Id = @User_Id";
+            string query = $"SELECT Id, Username, Email, Bio, Registered_At FROM Users WHERE Id = @User_Id";
 
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<User>(query, getUserByIdQuery)).FirstOrDefault();
+                result = (await connection.QueryAsync<dynamic>(query, getUserByIdQuery)).Select(item =>
+                    new UserViewModel()
+                    {
+                        User = new UserDto()
+                        {
+                            Id = item.Id,
+                            Username = item.Username,
+                            Email = item.Email,
+                            Bio = item.Bio,
+                            Registered_At = item.Registered_At,
+                        }
+                    }
+                ).FirstOrDefault();
             }
             catch (SqlException ex)
             {
@@ -48,16 +59,28 @@ namespace Infrastructure.Data.Repositories
 
             return result;
         }
-        public async Task<User> GetUserByUsernameAsync(GetUserByUsernameQuery getUserByEmailQuery)
+        public async Task<UserViewModel> GetUserByUsernameAsync(GetUserByUsernameQuery getUserByEmailQuery)
         {
-            User result = null;
+            UserViewModel result = null;
 
-            string query = $"SELECT * FROM Users WHERE Username = @Username";
+            string query = $"SELECT Id, Username, Email, Bio, Registered_At FROM Users WHERE Username = @Username";
 
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<User>(query, getUserByEmailQuery)).FirstOrDefault();
+                result = (await connection.QueryAsync<dynamic>(query, getUserByEmailQuery)).Select(item =>
+                    new UserViewModel()
+                    {
+                        User = new UserDto()
+                        {
+                            Id = item.Id,
+                            Username = item.Username,
+                            Email = item.Email,
+                            Bio = item.Bio,
+                            Registered_At = item.Registered_At,
+                        }
+                    }
+                ).FirstOrDefault();
             }
             catch (SqlException ex)
             {
@@ -72,16 +95,28 @@ namespace Infrastructure.Data.Repositories
 
             return result;
         }
-        public async Task<User> GetUserByEmailAsync(GetUserByEmailQuery getUserByEmailQuery)
+        public async Task<UserViewModel> GetUserByEmailAsync(GetUserByEmailQuery getUserByEmailQuery)
         {
-            User result = null;
+            UserViewModel result = null;
 
-            string query = $"SELECT * FROM Users WHERE Email = @Email";
+            string query = $"SELECT Id, Username, Email, Bio, Registered_At FROM Users WHERE Email = @Email";
 
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<User>(query, getUserByEmailQuery)).FirstOrDefault();
+                result = (await connection.QueryAsync<dynamic>(query, getUserByEmailQuery)).Select(item =>
+                    new UserViewModel()
+                    {
+                        User = new UserDto()
+                        {
+                            Id = item.Id,
+                            Username = item.Username,
+                            Email = item.Email,
+                            Bio = item.Bio,
+                            Registered_At = item.Registered_At,
+                        }
+                    }
+                ).FirstOrDefault();
             }
             catch (SqlException ex)
             {
@@ -96,11 +131,11 @@ namespace Infrastructure.Data.Repositories
 
             return result;
         }
-        public async Task<User> GetUserByCredentialsAsync(GetUserByCredentialsQuery getUserByCredentialsQuery)
+        public async Task<UserViewModel> GetUserByCredentialsAsync(GetUserByCredentialsQuery getUserByCredentialsQuery)
         {
-            User result = null;
+            UserViewModel result = null;
 
-            string query = $"SELECT * FROM Users WHERE (Username = @Username_Or_Email OR Email = @Username_Or_Email) AND Password = @Password";
+            string query = $"SELECT Id, Username, Email, Bio, Registered_At FROM Users WHERE (Username = @Username_Or_Email OR Email = @Username_Or_Email) AND Password = @Password";
 
             try
             {
@@ -113,7 +148,19 @@ namespace Infrastructure.Data.Repositories
 
                 getUserByCredentialsQuery.Password = PasswordHashHelper.ComputeHash(getUserByCredentialsQuery.Password, salt);
 
-                result = (await connection.QueryAsync<User>(query, getUserByCredentialsQuery)).FirstOrDefault();
+                result = (await connection.QueryAsync<dynamic>(query, getUserByCredentialsQuery)).Select(item =>
+                    new UserViewModel()
+                    {
+                        User = new UserDto()
+                        {
+                            Id = item.Id,
+                            Username = item.Username,
+                            Email = item.Email,
+                            Bio = item.Bio,
+                            Registered_At = item.Registered_At,
+                        }
+                    }
+                ).FirstOrDefault();
             }
             catch (SqlException ex)
             {

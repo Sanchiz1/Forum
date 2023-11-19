@@ -10,9 +10,9 @@ import Button from '@mui/material/Button';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { getUserAccount } from '../../Redux/Epics/AccountEpics';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { RootState } from '../../Redux/store';
-import { Backdrop, Badge, CircularProgress, Container, CssBaseline, IconButton, LinearProgress, Toolbar, Collapse, TextField, Alert } from '@mui/material';
+import { Backdrop, Badge, CircularProgress, Container, CssBaseline, IconButton, LinearProgress, Toolbar, Collapse, TextField, Alert, Select, MenuItem, Skeleton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -20,8 +20,12 @@ import { GetDateString } from '../../Helpers/DateFormatHelper';
 import { User, UserInput } from '../../Types/User';
 import { requestUserByUsername, updateUserRequest } from '../../API/userRequests';
 import UserNotFoundPage from './UserNotFoundPage';
-import { getAccount } from '../../Redux/Reducers/AccountReducer';
+import { getAccount, setGlobalError } from '../../Redux/Reducers/AccountReducer';
 import { SnackbarProvider, VariantType, enqueueSnackbar, useSnackbar } from 'notistack';
+import { BootstrapInput } from '../UtilComponents/BootstrapInput';
+import { Post } from '../../Types/Post';
+import { requestUserPosts } from '../../API/postRequests';
+import PostElement from '../Posts/PostElement';
 
 const validUsernamePattern = /^[a-zA-Z0-9_.]+$/;
 const validEmailPattern = /^(?=.{0,64}$)[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -42,6 +46,7 @@ export default function UserPage() {
   let { Username } = useParams();
   const dispatch = useDispatch();
   const navigator = useNavigate();
+  const { state } = useLocation()
 
   const Account = useSelector((state: RootState) => state.account.Account);
 
@@ -110,6 +115,49 @@ export default function UserPage() {
       },
     })
   }
+
+
+  // Posts
+
+  const next = 4;
+  const [userTimestamp, setUserTimestamp] = useState(new Date());
+  const [offset, setOffset] = useState(0);
+  const [order, setOrder] = useState("Date");
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [hasMore, setHasMore] = useState(true);
+
+  useEffect(() => {
+    setPosts([]);
+    setOffset(0);
+    setUserTimestamp(new Date());
+  }, [order]);
+
+  useEffect(() => {
+    requestUserPosts(Username!, offset, next, order, userTimestamp).subscribe({
+      next(value) {
+        if (value.length == 0) {
+          setHasMore(false);
+          return;
+        }
+        setPosts([...posts, ...value])
+        if (document.documentElement.offsetHeight - window.innerHeight < 100) {
+          setOffset(offset + next);
+        }
+      },
+      error(err) {
+        setHasMore(false);
+        dispatch(setGlobalError(err.message));
+      },
+    })
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [offset]);
+
+  function handleScroll() {
+    if (window.innerHeight + document.documentElement.scrollTop <= document.documentElement.scrollHeight - 10 || !hasMore) return;
+    setOffset(offset + next);
+  }
+
   return (
     <>
       {userExists ?
@@ -133,132 +181,192 @@ export default function UserPage() {
                 <Container maxWidth='lg' sx={{
                   mt: 4, mb: 4, width: 1
                 }}>
-                  <Grid container spacing={3}>
-                    <Grid item xs={12} md={6} lg={4}>
-                      <Paper
-                        sx={{
-                          p: 2,
-                          display: 'flex',
-                          flexDirection: 'column',
-                          height: 1,
-                        }}
-                      >
-                        <Grid sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                        }}>
-                          <Typography variant="h4" color="text.secondary" component="p">
-                            {user.username}
+                  <Grid container spacing={2}>
+
+                    <Grid item xs={12} md={4} lg={4}>
+                      <Grid item xs={12}>
+                        <Paper
+                          sx={{
+                            p: 2,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            height: 1,
+                          }}
+                        >
+                          <Grid sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                          }}>
+                            <Typography variant="h4" color="text.secondary" component="p">
+                              {user.username}
+                            </Typography>
+                            <Typography variant="subtitle1" color="text.secondary" component="p">
+                              Joined: {GetDateString(new Date(user.registered_At))}
+                            </Typography>
+                            {
+                              user.bio ?
+                                <>
+                                  <Typography variant="subtitle1" color="text.secondary" component="p" sx={{ mt: 2, whiteSpace: 'pre-line', overflowWrap: 'break-word' }}>
+                                    {user.bio}
+                                  </Typography>
+                                </>
+                                :
+                                <></>
+                            }
+                            {(Account != null && user.id === Account.id) ?
+                              <>
+                                <Divider sx={{ mt: 2 }} />
+                                <Button onClick={() => setOpenEdit(!openEdit)}>Edit</Button>
+                                <Collapse in={openEdit}>
+                                  <Box component="form" onSubmit={handleSubmitEdit} noValidate sx={{ mt: 1 }}>
+                                    <TextField
+                                      margin="normal"
+                                      required
+                                      fullWidth
+                                      id="username"
+                                      label="Username"
+                                      name="username"
+                                      autoComplete="off"
+                                      autoFocus
+                                      defaultValue={Account.username}
+                                      error={usernameError != ''}
+                                      onFocus={() => SetUsernameError('')}
+                                      helperText={usernameError}
+                                    />
+                                    <TextField
+                                      margin="normal"
+                                      required
+                                      fullWidth
+                                      id="email"
+                                      label="Email address"
+                                      name="email"
+                                      autoComplete="off"
+                                      autoFocus
+                                      defaultValue={Account.email}
+                                      error={emailError != ''}
+                                      onFocus={() => SetEmailError('')}
+                                      helperText={emailError}
+                                    />
+                                    <TextField
+                                      margin="normal"
+                                      fullWidth
+                                      id="bio"
+                                      label="Bio"
+                                      name="bio"
+                                      multiline
+                                      rows={4}
+                                      inputProps={{ maxLength: 100 }}
+                                      defaultValue={Account.bio}
+                                      error={bioError != ''}
+                                      onFocus={() => SetBioError('')}
+                                      helperText={bioError}
+                                    />
+                                    <Collapse in={error != ''}>
+                                      <Alert
+                                        severity="error"
+                                        action={
+                                          <IconButton
+                                            aria-label="close"
+                                            color="inherit"
+                                            onClick={() => {
+                                              setError('');
+                                            }}
+                                          >
+                                            <CloseIcon />
+                                          </IconButton>
+                                        }
+                                        sx={{ mb: 2, fontSize: 15 }}
+                                      >
+                                        {error}
+                                      </Alert>
+                                    </Collapse>
+                                    <Button
+                                      type="submit"
+                                      fullWidth
+                                      variant="outlined"
+                                    >
+                                      Submit
+                                    </Button>
+                                  </Box>
+                                </Collapse>
+                              </>
+                              : <></>}
+                          </Grid>
+                        </Paper>
+                      </Grid>
+                    </Grid>
+
+                    <Grid item xs={12} md={8} lg={8}>
+                      <Grid item xs={12} sx={{ mb: 2 }}>
+                        <Paper
+                          sx={{
+                            p: 2,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            height: 1,
+                          }}
+                        >
+                          <Typography variant="subtitle1" color="text.secondary" component="p">
+                            Posts
                           </Typography>
                           <Typography variant="subtitle1" color="text.secondary" component="p">
-                            Joined: {GetDateString(new Date(user.registered_At))}
+                            Comments
                           </Typography>
-                          {
-                            user.bio ?
-                              <>
-                                <Typography variant="subtitle1" color="text.secondary" component="p" sx={{ mt: 2, whiteSpace: 'pre-line', overflowWrap: 'break-word'}}>
-                                  {user.bio}
-                                </Typography>
-                              </>
-                              :
-                              <></>
-                          }
-                          {(Account != null && user.id === Account.id) ?
-                            <>
-                              <Divider sx={{ mt: 2 }} />
-                              <Button onClick={() => setOpenEdit(!openEdit)}>Edit</Button>
-                              <Collapse in={openEdit}>
-                                <Box component="form" onSubmit={handleSubmitEdit} noValidate sx={{ mt: 1 }}>
-                                  <TextField
-                                    margin="normal"
-                                    required
-                                    fullWidth
-                                    id="username"
-                                    label="Username"
-                                    name="username"
-                                    autoComplete="off"
-                                    autoFocus
-                                    defaultValue={Account.username}
-                                    error={usernameError != ''}
-                                    onFocus={() => SetUsernameError('')}
-                                    helperText={usernameError}
-                                  />
-                                  <TextField
-                                    margin="normal"
-                                    required
-                                    fullWidth
-                                    id="email"
-                                    label="Email address"
-                                    name="email"
-                                    autoComplete="off"
-                                    autoFocus
-                                    defaultValue={Account.email}
-                                    error={emailError != ''}
-                                    onFocus={() => SetEmailError('')}
-                                    helperText={emailError}
-                                  />
-                                  <TextField
-                                    margin="normal"
-                                    fullWidth
-                                    id="bio"
-                                    label="Bio"
-                                    name="bio"
-                                    multiline
-                                    rows={4}
-                                    inputProps={{maxLength: 100}}
-                                    defaultValue={Account.bio}
-                                    error={bioError != ''}
-                                    onFocus={() => SetBioError('')}
-                                    helperText={bioError}
-                                  />
-                                  <Collapse in={error != ''}>
-                                    <Alert
-                                      severity="error"
-                                      action={
-                                        <IconButton
-                                          aria-label="close"
-                                          color="inherit"
-                                          onClick={() => {
-                                            setError('');
-                                          }}
-                                        >
-                                          <CloseIcon />
-                                        </IconButton>
-                                      }
-                                      sx={{ mb: 2, fontSize: 15 }}
-                                    >
-                                      {error}
-                                    </Alert>
-                                  </Collapse>
-                                  <Button
-                                    type="submit"
-                                    fullWidth
-                                    variant="outlined"
-                                  >
-                                    Submit
-                                  </Button>
-                                </Box>
-                              </Collapse>
-                            </>
-                            : <></>}
-                        </Grid>
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={12} md={6} lg={8}>
-                      <Paper
-                        sx={{
-                          p: 2,
+                        </Paper>
+                      </Grid>
+
+                      <Grid item xs={12} md={12} lg={12} sx={{ mb: 2 }}>
+                        <Paper sx={{
+                          p: 1,
+                          width: 1,
                           display: 'flex',
-                          flexDirection: 'column',
-                          height: 1,
-                        }}
-                      >
-                        2
-                      </Paper>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                      </Paper>
+                          flexDirection: 'row',
+                          alignItems: 'stretch',
+                        }}>
+                          <Typography variant="caption" color="text.secondary" sx={{ fontSize: '15px', display: 'flex', alignItems: 'center' }}>
+                            {user.username}`s posts
+                          </Typography>
+                          <Typography variant="caption" sx={{ ml: 'auto', fontSize: '15px', display: 'flex', alignItems: 'center' }}>
+                            <Select
+                              value={order}
+                              onChange={(e) => setOrder(e.target.value)}
+                              input={<BootstrapInput sx={{ height: 1, display: 'flex' }} />}
+                            >
+                              <MenuItem value={"Likes"}>Top</MenuItem>
+                              <MenuItem value={"Date"}>New</MenuItem>
+                            </Select>
+                          </Typography>
+                        </Paper>
+                      </Grid>
+                      {
+                        posts?.map((post, index) =>
+                          <PostElement
+                            post={post}
+                            key={index}
+                            customClickEvent={(event: React.MouseEvent<HTMLDivElement>) => navigator('/post/' + post.id, { state: state })}
+                            sx={{ mb: 2 }}
+                          ></PostElement>
+                        )
+                      }
+                      <Grid item xs={12} md={12} lg={12}>
+                        {
+                          hasMore ?
+                            <Paper sx={{
+                              p: 1,
+                              width: 1,
+                              ":hover": {
+                                boxShadow: 5
+                              }
+                            }}>
+                              <Skeleton width="10%" animation="wave" sx={{ fontSize: '10px' }} />
+                              <Skeleton width="30%" animation="wave" />
+                              <Divider />
+                              <Skeleton animation="wave" height={40} />
+                            </Paper>
+                            :
+                            <></>
+                        }
+                      </Grid>
                     </Grid>
                   </Grid>
                 </Container>

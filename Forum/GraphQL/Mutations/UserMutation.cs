@@ -68,7 +68,7 @@ namespace Forum.GraphQL.Mutations
                     }
 
                     return "Account updated successfully";
-                }).AuthorizeWithPolicy("Authorized");
+                });
         }
     }
 }

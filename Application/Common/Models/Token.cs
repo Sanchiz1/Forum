@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Domain.Entities
+namespace Application.Common.Models
 {
     public class Token
     {

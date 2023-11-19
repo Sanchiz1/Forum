@@ -8,7 +8,7 @@ import { RootState } from '../Redux/store';
 import ButtonWithCheck from './UtilComponents/ButtonWithCheck';
 import { isSigned } from '../API/loginRequests';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { setLogInError } from '../Redux/Reducers/AccountReducer';
+import { setGlobalError, setLogInError } from '../Redux/Reducers/AccountReducer';
 import { useEffect, useRef, useState } from 'react';
 import { requestPosts } from '../API/postRequests';
 import { Post } from '../Types/Post';
@@ -51,7 +51,8 @@ export default function Main() {
         }
       },
       error(err) {
-
+        setHasMore(false);
+        dispatch(setGlobalError(err.message));
       },
     })
     window.addEventListener('scroll', handleScroll);

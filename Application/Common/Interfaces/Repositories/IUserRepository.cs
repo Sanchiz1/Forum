@@ -2,6 +2,7 @@
 using Application.Common;
 using Application.Common.Interfaces;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.ViewModels;
 using Application.UseCases.Users.Commands;
 using Application.UseCases.Users.Queries;
 using Domain.Entities;
@@ -13,10 +14,10 @@ namespace Application.Common.Interfaces.Repositories
 {
     public interface IUserRepository
     {
-        Task<User> GetUserByIdAsync(GetUserByIdQuery getUserByIdQuery);
-        Task<User> GetUserByUsernameAsync(GetUserByUsernameQuery getUserByUsernameQuery);
-        Task<User> GetUserByEmailAsync(GetUserByEmailQuery getUserByEmailQuery);
-        Task<User> GetUserByCredentialsAsync(GetUserByCredentialsQuery getUserByCredentialsQuery);
+        Task<UserViewModel> GetUserByIdAsync(GetUserByIdQuery getUserByIdQuery);
+        Task<UserViewModel> GetUserByUsernameAsync(GetUserByUsernameQuery getUserByUsernameQuery);
+        Task<UserViewModel> GetUserByEmailAsync(GetUserByEmailQuery getUserByEmailQuery);
+        Task<UserViewModel> GetUserByCredentialsAsync(GetUserByCredentialsQuery getUserByCredentialsQuery);
         Task CreateUserAsync(CreateUserCommand createUserCommand);
         Task UpdateUserAsync(UpdateUserCommand updateUserCommand);
         Task DeleteUserAsync(DeleteUserCommand deleteUserCommand);

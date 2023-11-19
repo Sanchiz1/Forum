@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces.Repositories;
+using Application.Common.ViewModels;
 using Domain.Entities;
 using MediatR;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Comments.Queries
 {
-    public class GetCommentsQuery : IRequest<List<Comment>>
+    public class GetCommentsQuery : IRequest<List<CommentViewModel>>
     {
         public int Post_Id { get; set; }
         public int Next { get; set; }
@@ -19,7 +20,7 @@ namespace Application.UseCases.Comments.Queries
         public string Order { get; set; } = "Date";
         public int User_Id { get; set; } = 0;
     }
-    public class GetCommentsQueryHandler : IRequestHandler<GetCommentsQuery, List<Comment>>
+    public class GetCommentsQueryHandler : IRequestHandler<GetCommentsQuery, List<CommentViewModel>>
     {
         private readonly ICommentRepository _context;
 
@@ -28,6 +29,6 @@ namespace Application.UseCases.Comments.Queries
             _context = context;
         }
 
-        public async Task<List<Comment>> Handle(GetCommentsQuery request, CancellationToken cancellationToken) => await _context.GetCommentsAsync(request);
+        public async Task<List<CommentViewModel>> Handle(GetCommentsQuery request, CancellationToken cancellationToken) => await _context.GetCommentsAsync(request);
     }
 }

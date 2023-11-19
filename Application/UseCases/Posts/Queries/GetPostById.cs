@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces.Repositories;
+using Application.Common.ViewModels;
 using Domain.Entities;
 using MediatR;
 using System;
@@ -10,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Posts.Queries
 {
-    public class GetPostByIdQuery : IRequest<Post>
+    public class GetPostByIdQuery : IRequest<PostViewModel>
     {
         public int Id { get; set; }
         public int User_id { get; set; } = 0;
     }
-    public class GetPostByIdQueryHandler : IRequestHandler<GetPostByIdQuery, Post>
+    public class GetPostByIdQueryHandler : IRequestHandler<GetPostByIdQuery, PostViewModel>
     {
         private readonly IPostRepository _context;
 
@@ -24,6 +25,6 @@ namespace Application.UseCases.Posts.Queries
             _context = context;
         }
 
-        public async Task<Post> Handle(GetPostByIdQuery request, CancellationToken cancellationToken) => await _context.GetPostByIdAsync(request);
+        public async Task<PostViewModel> Handle(GetPostByIdQuery request, CancellationToken cancellationToken) => await _context.GetPostByIdAsync(request);
     }
 }

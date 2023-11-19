@@ -14,9 +14,10 @@ import ButtonWithCheck from '../UtilComponents/ButtonWithCheck';
 import ReplyInputElement from '../UtilComponents/ReplyInputElement';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../Redux/store';
-import { createReplyRequest } from '../../API/replyRequests';
+import { createReplyRequest, likeReplyRequest } from '../../API/replyRequests';
 import { enqueueSnackbar } from 'notistack';
 import { setGlobalError } from '../../Redux/Reducers/AccountReducer';
+import IconButtonWithCheck from '../UtilComponents/IconButtonWithCheck';
 
 interface Props {
   reply: Reply;
@@ -32,7 +33,7 @@ export default function ReplyElement(props: Props) {
   const Account = useSelector((state: RootState) => state.account.Account);
 
   return (
-    <Grid item xs={12} md={12} lg={12} sx={{ mb: 2 }}>
+    <Grid item xs={12} md={12} lg={12} sx={{ mt: 2 }}>
       <Grid sx={{
         display: 'flex',
         flexDirection: 'row',
@@ -80,9 +81,19 @@ export default function ReplyElement(props: Props) {
         alignItems: 'center'
       }}>
         <Typography variant="caption" color="text.disabled" component="p" sx={{ fontSize: '14px', display: 'flex', alignItems: 'center', mr: 3 }}>
-          <IconButton sx={{ p: 0.5, color: 'inherit' }} onClick={(e) => { e.stopPropagation(); setLikes(liked ? likes - 1 : likes + 1); setLiked(!liked); }}>
+          <IconButtonWithCheck sx={{ p: 0.5, color: 'inherit' }} ActionWithCheck={() => {
+            setLikes(liked ? likes - 1 : likes + 1); setLiked(!liked)
+            likeReplyRequest(props.reply.id).subscribe({
+              next(value) {
+
+              },
+              error(err) {
+                dispatch(setGlobalError(err.message));
+              },
+            })
+          }}>
             {liked ? <FavoriteIcon sx={{ fontSize: '18px' }}></FavoriteIcon> : <FavoriteBorderIcon sx={{ fontSize: '18px' }}></FavoriteBorderIcon>}
-          </IconButton>
+          </IconButtonWithCheck>
           {likes.toString()}
         </Typography>
         <ButtonWithCheck variant='text' sx={{ color: "text.secondary" }} ActionWithCheck={() => {
@@ -115,7 +126,7 @@ export default function ReplyElement(props: Props) {
                     props.refreshComment()
                   },
                   error(err) {
-                    dispatch(setGlobalError(err));
+                    dispatch(setGlobalError(err.message));
                   },
                 }
               )

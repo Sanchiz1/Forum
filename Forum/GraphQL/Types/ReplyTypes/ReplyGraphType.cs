@@ -1,18 +1,19 @@
-﻿using Domain.Entities;
+﻿using Application.Common.ViewModels;
+using Domain.Entities;
 using GraphQL.Types;
 
 namespace Forum.GraphQL.Types.ReplyTypes
 {
-    public class ReplyGraphType : ObjectGraphType<Reply>
+    public class ReplyGraphType : ObjectGraphType<ReplyViewModel>
     {
         public ReplyGraphType()
         {
-            Field(i => i.Id, type: typeof(IntGraphType));
-            Field(i => i.Text, type: typeof(StringGraphType));
-            Field(i => i.Date, type: typeof(DateTimeGraphType));
-            Field(i => i.Comment_Id, type: typeof(IntGraphType));
-            Field(i => i.Reply_Id, type: typeof(IntGraphType));
-            Field(i => i.User_Id, type: typeof(IntGraphType), nullable: true);
+            Field(i => i.Reply.Id, type: typeof(IntGraphType));
+            Field(i => i.Reply.Text, type: typeof(StringGraphType));
+            Field(i => i.Reply.Date, type: typeof(DateTimeGraphType));
+            Field(i => i.Reply.Comment_Id, type: typeof(IntGraphType));
+            Field(i => i.Reply.Reply_Id, type: typeof(IntGraphType));
+            Field(i => i.Reply.User_Id, type: typeof(IntGraphType), nullable: true);
             Field(i => i.User_Username, type: typeof(StringGraphType));
             Field(i => i.Reply_Username, type: typeof(StringGraphType), nullable: true);
             Field(i => i.Likes, type: typeof(IntGraphType));
