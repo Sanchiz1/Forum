@@ -87,7 +87,7 @@ export default function SignUp() {
                 navigator("/Sign-in", { state: state })
             },
             error(err) {
-                dispatch(setGlobalError(err));
+                dispatch(setGlobalError(err.message));
             },
         })
     };

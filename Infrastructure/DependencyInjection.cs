@@ -25,6 +25,7 @@ namespace Infrastructure
             services.AddSingleton<IPostRepository, PostRepository>();
             services.AddSingleton<ICommentRepository, CommentRepository>();
             services.AddSingleton<IReplyRepository, ReplyRepository>();
+            services.AddSingleton<ICategoryRepository, CategoryRepository>();
             services.AddSingleton<ITokenRepository, TokenRepository>();
             services.AddSingleton<ITokenFactory, TokenFactory>();
             services.AddSingleton<ITokenValidator, TokenValidator>();

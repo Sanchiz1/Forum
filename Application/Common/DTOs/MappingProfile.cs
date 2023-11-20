@@ -15,6 +15,7 @@ namespace Application.Common.DTOs
             CreateMap<Post, PostDto>();
             CreateMap<Comment, CommentDto>();
             CreateMap<Reply, ReplyDto>();
+            CreateMap<Category, CategoryDto>();
             CreateMap<User, UserDto>();
         }
     }

@@ -280,6 +280,7 @@
   <ItemGroup>
     <Compile Include="Data\DapperContext.cs" />
     <Compile Include="Data\Repositories\CommentRepository.cs" />
+    <Compile Include="Data\Repositories\CategoryRepository.cs" />
     <Compile Include="Data\Repositories\TokenRepository.cs" />
     <Compile Include="Data\Repositories\PostRepository.cs" />
     <Compile Include="Data\Repositories\ReplyRepository.cs" />

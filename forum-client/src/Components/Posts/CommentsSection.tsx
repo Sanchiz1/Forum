@@ -92,7 +92,7 @@ export default function CommentsSection(Props: CommentsSectionProps) {
                 }
             },
             error(err) {
-                dispatch(setGlobalError(err));
+                dispatch(setGlobalError(err.message));
             },
         })
     }
@@ -160,7 +160,7 @@ export default function CommentsSection(Props: CommentsSectionProps) {
                                     refetchComments();
                                 },
                                 error(err) {
-                                    dispatch(setGlobalError(err));
+                                    dispatch(setGlobalError(err.message));
                                 },
                             }
                         )

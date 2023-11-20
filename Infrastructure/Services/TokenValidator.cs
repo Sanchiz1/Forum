@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces.Repositories;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces.Repositories;
 using Application.Common.Interfaces.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -64,7 +65,16 @@ namespace Infrastructure.Services
             }
             return true;
         }
-        public JwtSecurityToken ReadJwtToken(string token) => new JwtSecurityTokenHandler().ReadJwtToken(token);
+        public JwtSecurityToken ReadJwtToken(string token) {
+            try
+            {
+                return new JwtSecurityTokenHandler().ReadJwtToken(token);
+            }
+            catch
+            {
+                throw new InvalidTokenException();
+            }
+        }
     }
     public class AuthOptions
     {

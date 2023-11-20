@@ -88,7 +88,7 @@ export default function PostPage() {
                 }
             },
             error(err) {
-                dispatch(setGlobalError(err));
+                dispatch(setGlobalError(err.message));
             },
         })
     }
@@ -104,7 +104,7 @@ export default function PostPage() {
                 setLikes(post.likes.valueOf());
             },
             error(err) {
-                dispatch(setGlobalError(err));
+                dispatch(setGlobalError(err.message));
             },
         })
     }, [PostId])

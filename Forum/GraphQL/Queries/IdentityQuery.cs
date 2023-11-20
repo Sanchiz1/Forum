@@ -43,7 +43,7 @@ namespace Forum.GraphQL.Queries
             Field<LoginResponseGraphType>("refreshToken")
               .ResolveAsync(async context =>
               {
-                  var refreshToken = _contextAccessor.HttpContext!.Request.Headers.First(at => at.Key == "refresh_token").Value[0]!;
+                  var refreshToken = _contextAccessor.HttpContext!.Request.Headers.First(at => at.Key == "refresh_token").Value[0];
 
                   try
                   {

@@ -300,42 +300,41 @@ export default function UserPage() {
                       <Grid item xs={12} sx={{ mb: 2 }}>
                         <Paper
                           sx={{
-                            p: 2,
+                            p: 1,
                             display: 'flex',
                             flexDirection: 'column',
                             height: 1,
                           }}
                         >
-                          <Typography variant="subtitle1" color="text.secondary" component="p">
-                            Posts
-                          </Typography>
-                          <Typography variant="subtitle1" color="text.secondary" component="p">
-                            Comments
-                          </Typography>
-                        </Paper>
-                      </Grid>
-
-                      <Grid item xs={12} md={12} lg={12} sx={{ mb: 2 }}>
-                        <Paper sx={{
-                          p: 1,
-                          width: 1,
-                          display: 'flex',
-                          flexDirection: 'row',
-                          alignItems: 'stretch',
-                        }}>
-                          <Typography variant="caption" color="text.secondary" sx={{ fontSize: '15px', display: 'flex', alignItems: 'center' }}>
-                            {user.username}`s posts
-                          </Typography>
-                          <Typography variant="caption" sx={{ ml: 'auto', fontSize: '15px', display: 'flex', alignItems: 'center' }}>
-                            <Select
-                              value={order}
-                              onChange={(e) => setOrder(e.target.value)}
-                              input={<BootstrapInput sx={{ height: 1, display: 'flex' }} />}
-                            >
-                              <MenuItem value={"Likes"}>Top</MenuItem>
-                              <MenuItem value={"Date"}>New</MenuItem>
-                            </Select>
-                          </Typography>
+                          <Grid item xs={12} sx={{ mb: 2 }}>
+                            <Typography variant="subtitle1" color="text.primary" component="p">
+                              Posts
+                            </Typography>
+                            <Typography variant="subtitle1" color="text.primary" component="p">
+                              Comments
+                            </Typography>
+                          </Grid>
+                          <Divider sx={{ mb: 1 }} />
+                          <Grid item xs={12} sx={{
+                            width: 1,
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'stretch',
+                          }}>
+                            <Typography variant="subtitle1" color="text.primary" component="p" sx={{ display: 'flex', alignItems: 'center' }}>
+                              {user.username}`s posts
+                            </Typography>
+                            <Typography variant="subtitle1" sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}>
+                              <Select
+                                value={order}
+                                onChange={(e) => setOrder(e.target.value)}
+                                input={<BootstrapInput sx={{ height: 1, display: 'flex' }} />}
+                              >
+                                <MenuItem value={"Likes"}>Top</MenuItem>
+                                <MenuItem value={"Date"}>New</MenuItem>
+                              </Select>
+                            </Typography>
+                          </Grid>
                         </Paper>
                       </Grid>
                       {

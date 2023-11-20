@@ -14,10 +14,10 @@ import Typography from '@mui/material/Typography';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { AppBar, Container } from '@mui/material';
+import { AppBar, FormControl } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../Redux/store';
-import { Backdrop, CircularProgress } from '@mui/material';
+import { Backdrop, CircularProgress, TextField, InputAdornment } from '@mui/material';
 import { getAccount, setLogInError } from '../Redux/Reducers/AccountReducer';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -25,6 +25,7 @@ import Link from '@mui/material/Link';
 import { getUserAccount } from '../Redux/Epics/AccountEpics';
 import { setCookie } from '../Helpers/CookieHelper';
 import { User } from '../Types/User';
+import SearchIcon from '@mui/icons-material/Search';
 
 export default function Header() {
   const dispatch = useDispatch();
@@ -120,9 +121,22 @@ export default function Header() {
             sx={{ mr: 'auto', textDecoration: 'none', color: 'text.secondary' }}>
             Forum
           </Link>
+          <FormControl sx={{ mr: 'auto', textDecoration: 'none', color: 'text.secondary' }}>
+            <TextField
+              size="small"
+              variant="outlined"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                )
+              }}
+            />
+          </FormControl>
           <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
             {isSigned() ?
-              <Link variant="subtitle1" align="center" color="text.primary" component="span" onClick={handleClick} sx={{textDecoration: 'none', ":hover": {cursor: 'pointer'}}}>
+              <Link variant="subtitle1" align="center" color="text.primary" component="span" onClick={handleClick} sx={{ textDecoration: 'none', ":hover": { cursor: 'pointer' } }}>
                 {User.username}
               </Link>
               :
@@ -131,6 +145,7 @@ export default function Header() {
 
           </Box>
           <Menu
+            disableAutoFocusItem
             anchorEl={anchorEl}
             id="account-menu"
             open={open}
