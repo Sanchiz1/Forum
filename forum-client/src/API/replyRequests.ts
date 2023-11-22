@@ -18,7 +18,8 @@ export function requestReplies(comment_id: Number, offset: Number, next: Number,
                     replies(input: $Input){
                         id
                         text
-                        date
+                        date_Created
+                        date_Edited
                         comment_Id
                         reply_Id
                         user_Id
@@ -26,6 +27,7 @@ export function requestReplies(comment_id: Number, offset: Number, next: Number,
                         reply_Username
                         likes
                         liked
+                        is_Deleted
                     }
                 }
             }`,
@@ -77,6 +79,78 @@ export function createReplyRequest(ReplyInput: ReplyInput) {
             }
 
             return value.response.data.reply.createReply;
+
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}
+
+interface GraphqlUpdateReply {
+    reply: {
+        updateReply: string
+    }
+}
+
+export function updateReplyRequest(text: String, id: Number) {
+    return GetAjaxObservable<GraphqlUpdateReply>(
+        `mutation($Input: UpdateReplyInput!){
+            reply{
+              updateReply(input: $Input)
+            }
+          }`,
+        {
+            "Input": {
+                "text": text,
+                "id": id
+            }
+        }
+    ).pipe(
+        map((value) => {
+
+            if (value.response.errors) {
+
+                throw new Error(value.response.errors[0].message);
+            }
+
+            return value.response.data.reply.updateReply;
+
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}
+
+
+interface GraphqlDeleteReply {
+    reply: {
+        deleteReply: string
+    }
+}
+
+export function deleteReplyRequest(id: Number) {
+    return GetAjaxObservable<GraphqlDeleteReply>(`
+        mutation($Input: DeleteReplyInput!){
+            reply{
+              deleteReply(input: $Input)
+            }
+          }`,
+        {
+            "Input": {
+                "id": id
+            }
+        }
+    ).pipe(
+        map((value) => {
+
+            if (value.response.errors) {
+
+                throw new Error(value.response.errors[0].message);
+            }
+
+            return value.response.data.reply.deleteReply;
 
         }),
         catchError((error) => {

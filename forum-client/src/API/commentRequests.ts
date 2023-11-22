@@ -18,7 +18,8 @@ export function requestComments(post_Id: Number, offset: Number, next: Number, o
                     comments(input: $Input){
                         id
                         text
-                        date
+                        date_Created
+                        date_Edited
                         post_Id
                         user_Id
                         user_Username
@@ -60,7 +61,8 @@ export function requestCommentById(id: number) {
                     comment(input: $Input){
                         id
                         text
-                        date
+                        date_Created
+                        date_Edited
                         post_Id
                         user_Id
                         user_Username
@@ -114,6 +116,79 @@ export function createCommentRequest(CommentInput: CommentInput) {
             }
 
             return value.response.data.comment.createComment;
+
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}
+
+
+interface GraphqlUpdateComment {
+    comment: {
+        updateComment: string
+    }
+}
+
+export function updateCommentRequest(text: String, id: Number) {
+    return GetAjaxObservable<GraphqlUpdateComment>(`
+        mutation($Input: UpdateCommentInput!){
+            comment{
+              updateComment(input: $Input)
+            }
+          }`,
+        {
+            "Input": {
+                "text": text,
+                "id": id
+            }
+        }
+    ).pipe(
+        map((value) => {
+
+            if (value.response.errors) {
+
+                throw new Error(value.response.errors[0].message);
+            }
+
+            return value.response.data.comment.updateComment;
+
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}
+
+
+interface GraphqlDeleteComment {
+    comment: {
+        deleteComment: string
+    }
+}
+
+export function deleteCommentRequest(id: Number) {
+    return GetAjaxObservable<GraphqlDeleteComment>(`
+        mutation($Input: DeleteCommentInput!){
+            comment{
+              deleteComment(input: $Input)
+            }
+          }`,
+        {
+            "Input": {
+                "id": id
+            }
+        }
+    ).pipe(
+        map((value) => {
+
+            if (value.response.errors) {
+
+                throw new Error(value.response.errors[0].message);
+            }
+
+            return value.response.data.comment.deleteComment;
 
         }),
         catchError((error) => {

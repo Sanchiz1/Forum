@@ -63,7 +63,7 @@ export default function CommentsSection(Props: CommentsSectionProps) {
     const next = 4;
     const [userTimestamp, setUserTimestamp] = useState(new Date());
     const [offset, setOffset] = useState(0);
-    const [order, setOrder] = useState("Date");
+    const [order, setOrder] = useState("Date_Created");
 
     let { PostId } = useParams();
     const { state } = useLocation();
@@ -135,7 +135,7 @@ export default function CommentsSection(Props: CommentsSectionProps) {
                             input={<BootstrapInput sx={{ height: 1, display: 'flex' }} />}
                         >
                             <MenuItem value={"Likes"}>Top</MenuItem>
-                            <MenuItem value={"Date"}>New</MenuItem>
+                            <MenuItem value={"Date_Created"}>New</MenuItem>
                         </Select>
                     </Typography>
                 </Grid>

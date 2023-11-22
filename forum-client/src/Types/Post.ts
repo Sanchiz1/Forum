@@ -2,7 +2,8 @@ export interface Post{
     id: Number,
     title: string,
     text?: string,
-    date: Date,
+    date_Created: Date,
+    date_Edited?: Date,
     user_Id: Number
     user_Username: string,
     likes: Number,

@@ -50,11 +50,11 @@ export default function PostElement(props: Props) {
           } >
             {props.post.user_Username}
           </Link>
-          <Typography variant="caption" color="text.disabled" component="p" sx={{ fontSize: 3, mr: 0.5 }}>
-            {'\u2B24'}
+          <Typography variant="caption" color="text.disabled" component="p" sx={{ mr: 0.5, fontFamily:'cursive' }}>
+            ·
           </Typography>
           <Typography variant="caption" color="text.disabled" component="p">
-            {timeSince(GetLocalDate(new Date(props.post.date)))}
+            {timeSince(GetLocalDate(new Date(props.post.date_Created)))}
           </Typography>
         </Grid>
         <Typography variant="subtitle1" component="p">
@@ -85,17 +85,17 @@ export default function PostElement(props: Props) {
         >
           <Grid lg={1} md={2} xs={3} item>
             <Typography variant="caption" color="text.disabled" component="p" sx={{ fontSize: '16px', display: 'flex', alignItems: 'center' }}>
-              <IconButtonWithCheck sx={{ p: 0.5, color: 'inherit' }} ActionWithCheck={() => { 
-                setLikes(liked ? likes - 1 : likes + 1); SetLiked(!liked) 
+              <IconButtonWithCheck sx={{ p: 0.5, color: 'inherit' }} ActionWithCheck={() => {
+                setLikes(liked ? likes - 1 : likes + 1); SetLiked(!liked)
                 likePostRequest(props.post.id).subscribe({
                   next(value) {
-                    
+
                   },
                   error(err) {
                     dispatch(setGlobalError(err.message));
                   },
                 })
-                }}>
+              }}>
                 {liked ? <FavoriteIcon></FavoriteIcon> : <FavoriteBorderIcon></FavoriteBorderIcon>}
               </IconButtonWithCheck>
               {likes.toString()}

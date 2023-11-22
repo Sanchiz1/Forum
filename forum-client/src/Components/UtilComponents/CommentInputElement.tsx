@@ -9,11 +9,13 @@ import { setLogInError } from "../../Redux/Reducers/AccountReducer";
 interface CommentInputProps {
     Action: (e : string) => void,
     sx?: SxProps<Theme> | undefined,
+    Comment?: string,
+    CancelAction?: () => void
 }
 
 export default function CommentInputElement(Props: CommentInputProps) {
     const dispatch = useDispatch();
-    const [comment, setComment] = useState('');
+    const [comment, setComment] = useState(Props.Comment);
     const [focuse, setFocuse] = useState(false);
 
 
@@ -56,7 +58,7 @@ export default function CommentInputElement(Props: CommentInputProps) {
                         color='secondary'
                         sx={{ ml: 'auto', mr: 1 }}
                         variant="text"
-                        onClick={() => { setFocuse(false); setComment('') }}
+                        onClick={() => { setFocuse(false); setComment(''); if(Props.CancelAction) Props.CancelAction!()}}
                     >
                         Cancel
                     </Button>

@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { Box, Button, Container, CssBaseline, Paper, Link, IconButton, TextField, Collapse, MenuItem } from '@mui/material';
+import { Box, Button, Container, CssBaseline, Paper, Link, IconButton, Dialog, DialogTitle, DialogActions, MenuItem, Tooltip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -24,7 +24,7 @@ import ReplyInputElement from '../UtilComponents/ReplyInputElement';
 import { useDispatch, useSelector } from 'react-redux';
 import { setGlobalError } from '../../Redux/Reducers/AccountReducer';
 import { RootState } from '../../Redux/store';
-import { likeCommentRequest, requestCommentById } from '../../API/commentRequests';
+import { deleteCommentRequest, likeCommentRequest, requestCommentById, updateCommentRequest } from '../../API/commentRequests';
 import IconButtonWithCheck from '../UtilComponents/IconButtonWithCheck';
 
 interface Props {
@@ -72,12 +72,29 @@ export default function CommentElement(props: Props) {
   const [openEdit, setOpenEdit] = useState(false);
   const [error, setError] = useState<String>('');
 
-  const handleSubmitEdit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const text = data.get('text')!.toString().trim();
+  const handleSubmitEdit = (text: string) => {
+    if (text.trim().length === 0) {
+      setError('Comment cannot be empty');
+      return;
+    }
 
-
+    updateCommentRequest(text, props.comment.id).subscribe({
+      next(value) {
+        enqueueSnackbar(value, {
+          variant: 'success', anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'center'
+          },
+          autoHideDuration: 1500
+        });
+        setError('');
+        setOpenEdit(false);
+        refetchComment();
+      },
+      error(err) {
+        setGlobalError(err.message);
+      },
+    })
 
 
   }
@@ -85,7 +102,21 @@ export default function CommentElement(props: Props) {
   // delete
   const [openDelete, setOpenDelete] = useState(false);
   const handleSubmitDelete = () => {
-
+    deleteCommentRequest(comment.id).subscribe({
+      next(value) {
+        enqueueSnackbar(value, {
+          variant: 'success', anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'center'
+          },
+          autoHideDuration: 1500
+        });
+        setOpenDelete(false);
+      },
+      error(err) {
+        setError(err.message)
+      },
+    })
   }
 
   //replies
@@ -96,6 +127,7 @@ export default function CommentElement(props: Props) {
   const [offset, setOffset] = useState(0);
 
   const refetchReplies = () => {
+    setFetching(true);
     SetReplies([]);
     setUserTimestamp(new Date())
     setOffset(0);
@@ -127,103 +159,173 @@ export default function CommentElement(props: Props) {
       onMouseOver={() => setShowButton(true)}
       onMouseOut={() => setShowButton(false)}
     >
-      <Grid item xs={12} md={12} lg={12} sx={{
-        mb: 2,
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        pl: 0.5
-      }}>
-        <Grid item xs={11} md={11} lg={11}>
-          <Grid sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            pl: 0.5
-          }}>
-            <Link variant="caption" onClick={(e) => e.stopPropagation()} component={RouterLink} to={'/user/' + comment.user_Username} color="primary" sx={{
-              mr: 0.5, textDecoration: 'none', cursor: 'pointer', color: 'white',
-              ":hover": {
-                textDecoration: 'underline'
-              }
-            }
-            } >
-              {comment.user_Username}
-            </Link>
-            <Typography variant="caption" color="text.disabled" component="p" sx={{ fontSize: 3, mr: 0.5 }}>
-              {'\u2B24'}
-            </Typography>
-            <Typography variant="caption" color="text.disabled" component="p">
-              {timeSince(GetLocalDate(new Date(comment.date)))}
-            </Typography>
-          </Grid>
-          <Typography variant="subtitle1" component="p" sx={{ pl: 0.5, whiteSpace: 'pre-line', overflowWrap: 'break-word' }}>
-            {comment.text}
-          </Typography>
-          <Grid lg={12} md={12} xs={12} item sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center'
-          }}>
-            <Typography variant="caption" color="text.disabled" component="p" sx={{ fontSize: '14px', display: 'flex', alignItems: 'center', mr: 3 }}>
-              <IconButtonWithCheck sx={{ p: 0.5, color: 'inherit' }} ActionWithCheck={() => {
-                setLikes(liked ? likes - 1 : likes + 1); setLiked(!liked)
-                likeCommentRequest(comment.id).subscribe({
-                  next(value) {
-
-                  },
-                  error(err) {
-                    dispatch(setGlobalError(err.message));
-                  },
-                })
-              }}>
-                {liked ? <FavoriteIcon sx={{ fontSize: '18px' }}></FavoriteIcon> :
-                  <FavoriteBorderIcon sx={{ fontSize: '18px' }}></FavoriteBorderIcon>}
-              </IconButtonWithCheck>
-              {likes.toString()}
-            </Typography>
-            <ButtonWithCheck variant='text' sx={{ color: "text.secondary", fontSize: "14px important!" }} ActionWithCheck={() => {
-              setOpenReplyInput(!openReplyInput);
-            }}>Reply</ButtonWithCheck>
-          </Grid>
-          {openReplyInput ?
-            <Box sx={{ pl: 5 }}>
-              <ReplyInputElement
-                setState={setOpenReplyInput}
-                Action={(e: string) => {
-                  if (e.trim() === '') return;
-                  const replyInput: ReplyInput = {
-                    comment_Id: props.comment.id,
-                    text: e,
-                    user_Id: Account.id
-                  }
-                  createReplyRequest(replyInput).subscribe(
-                    {
-                      next(value) {
-                        enqueueSnackbar(value, {
-                          variant: 'success', anchorOrigin: {
-                            vertical: 'top',
-                            horizontal: 'center'
-                          },
-                          autoHideDuration: 1500
-                        });
-                        refetchComment()
-                      },
-                      error(err) {
-                        dispatch(setGlobalError(err.message));
-                      },
-                    }
-                  )
+      <Grid item xs={12} md={12} lg={12} sx={{mb: 2}}>
+        <Grid item xs={12} md={12} lg={12} sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          pl: 0.5
+        }}>
+          <Grid item xs={11} md={11} lg={11}>
+            <Grid sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              pl: 0.5
+            }}>
+              <Link variant="caption" onClick={(e) => e.stopPropagation()} component={RouterLink} to={'/user/' + comment.user_Username} color="primary" sx={{
+                mr: 0.5, textDecoration: 'none', cursor: 'pointer', color: 'white',
+                ":hover": {
+                  textDecoration: 'underline'
                 }
-                }></ReplyInputElement>
-            </Box>
-            : <></>}
-          {
-            comment.replies.valueOf() > 0 ?
-              <Button onClick={() => setOpenReplies(!openReplies)}>{comment.replies.valueOf()} Replies</Button>
+              }
+              } >
+                {comment.user_Username}
+              </Link>
+              <Typography variant="caption" color="text.disabled" component="p" sx={{ mr: 0.5, fontFamily: 'cursive' }}>
+                ·
+              </Typography>
+              <Typography variant="caption" color="text.disabled" component="p" sx={{ mr: 0.5 }}>
+                {timeSince(GetLocalDate(new Date(comment.date_Created)))}
+              </Typography>
+              {comment.date_Edited ?
+                <>
+                  <Tooltip title={timeSince(GetLocalDate(new Date(comment.date_Edited)))} placement="right" arrow>
+                    <Typography variant="caption" color="text.disabled" component="p">
+                      (edited)
+                    </Typography>
+                  </Tooltip>
+                </>
+                :
+                <>
+                </>}
+            </Grid>
+            {openEdit ?
+              <CommentInputElement Action={(e) => {
+                handleSubmitEdit(e)
+              }} Comment={props.comment.text} CancelAction={() => setOpenEdit(false)}></CommentInputElement>
               :
-              <></>
-          }
+              <Typography variant="subtitle1" component="p" sx={{ pl: 0.5, whiteSpace: 'pre-line', overflowWrap: 'break-word' }}>
+                {comment.text}
+              </Typography>
+            }
+            <Grid lg={12} md={12} xs={12} item sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center'
+            }}>
+              <Typography variant="caption" color="text.disabled" component="p" sx={{ fontSize: '14px', display: 'flex', alignItems: 'center', mr: 3 }}>
+                <IconButtonWithCheck sx={{ p: 0.5, color: 'inherit' }} ActionWithCheck={() => {
+                  setLikes(liked ? likes - 1 : likes + 1); setLiked(!liked)
+                  likeCommentRequest(comment.id).subscribe({
+                    next(value) {
+
+                    },
+                    error(err) {
+                      dispatch(setGlobalError(err.message));
+                    },
+                  })
+                }}>
+                  {liked ? <FavoriteIcon sx={{ fontSize: '18px' }}></FavoriteIcon> :
+                    <FavoriteBorderIcon sx={{ fontSize: '18px' }}></FavoriteBorderIcon>}
+                </IconButtonWithCheck>
+                {likes.toString()}
+              </Typography>
+              <ButtonWithCheck variant='text' sx={{ color: "text.secondary", fontSize: "14px important!" }} ActionWithCheck={() => {
+                setOpenReplyInput(!openReplyInput);
+              }}>Reply</ButtonWithCheck>
+            </Grid>
+            {openReplyInput ?
+              <Box sx={{ pl: 5 }}>
+                <ReplyInputElement
+                  setState={setOpenReplyInput}
+                  Action={(e: string) => {
+                    if (e.trim() === '') return;
+                    const replyInput: ReplyInput = {
+                      comment_Id: props.comment.id,
+                      text: e,
+                      user_Id: Account.id
+                    }
+                    createReplyRequest(replyInput).subscribe(
+                      {
+                        next(value) {
+                          enqueueSnackbar(value, {
+                            variant: 'success', anchorOrigin: {
+                              vertical: 'top',
+                              horizontal: 'center'
+                            },
+                            autoHideDuration: 1500
+                          });
+                          refetchComment()
+                        },
+                        error(err) {
+                          dispatch(setGlobalError(err.message));
+                        },
+                      }
+                    )
+                  }
+                  }></ReplyInputElement>
+              </Box>
+              : <></>}
+            {
+              comment.replies.valueOf() > 0 ?
+                <Button onClick={() => setOpenReplies(!openReplies)}>{comment.replies.valueOf()} Replies</Button>
+                :
+                <></>
+            }
+          </Grid>
+          <Grid item xs={1} md={1} lg={1} sx={{ display: 'flex', mb: 'auto' }}>
+            {comment.user_Id == Account.id && showButton ? <>
+              <IconButton
+                aria-label="more"
+                id="long-button"
+                aria-controls={open ? 'long-menu' : undefined}
+                aria-expanded={open ? 'true' : undefined}
+                aria-haspopup="true"
+                onClick={handleClickMenu}
+                sx={{ ml: 'auto', p: 0.5 }}
+              >
+                <MoreVertIcon />
+              </IconButton>
+              <StyledMenu
+                id="demo-customized-menu"
+                MenuListProps={{
+                  'aria-labelledby': 'demo-customized-button',
+                }}
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleCloseMenu}
+              >
+                <MenuItem onClick={() => { setOpenEdit(true); handleCloseMenu(); }} disableRipple>
+                  <EditIcon />
+                  Edit
+                </MenuItem>
+                <MenuItem onClick={() => { setOpenDelete(true); handleCloseMenu(); }} disableRipple>
+                  <DeleteIcon />
+                  Delete
+                </MenuItem>
+              </StyledMenu>
+            </> : <></>}
+          </Grid>
+
+          <Dialog
+            open={openDelete}
+            onClose={() => setOpenDelete(false)}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Are You sure you want to delete this comment?"}
+            </DialogTitle>
+            <DialogActions>
+              <Button onClick={() => setOpenDelete(false)}>Cancel</Button>
+              <Button onClick={() => handleSubmitDelete()} autoFocus>
+                Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Grid>
+        <Grid item xs={12}>
           {
             openReplies ?
               <Box sx={{ pl: 5 }}>
@@ -241,39 +343,6 @@ export default function CommentElement(props: Props) {
               :
               <></>
           }
-        </Grid>
-        <Grid item xs={1} md={1} lg={1} sx={{display: 'flex', mb: 'auto'}}>
-          {comment.user_Id == Account.id && showButton ? <>
-            <IconButton
-              aria-label="more"
-              id="long-button"
-              aria-controls={open ? 'long-menu' : undefined}
-              aria-expanded={open ? 'true' : undefined}
-              aria-haspopup="true"
-              onClick={handleClickMenu}
-              sx={{ ml: 'auto', p: 0.5 }}
-            >
-              <MoreVertIcon />
-            </IconButton>
-            <StyledMenu
-              id="demo-customized-menu"
-              MenuListProps={{
-                'aria-labelledby': 'demo-customized-button',
-              }}
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleCloseMenu}
-            >
-              <MenuItem onClick={() => { setOpenEdit(true); handleCloseMenu(); }} disableRipple>
-                <EditIcon />
-                Edit
-              </MenuItem>
-              <MenuItem onClick={() => { setOpenDelete(true); handleCloseMenu(); }} disableRipple>
-                <DeleteIcon />
-                Delete
-              </MenuItem>
-            </StyledMenu>
-          </> : <></>}
         </Grid>
       </Grid>
     </div>

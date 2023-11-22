@@ -26,19 +26,19 @@ namespace Infrastructure.Data.Repositories
         public async Task<List<ReplyViewModel>> GetRepliesAsync(GetRepliesQuery getRepliesQuery)
         {
             List<ReplyViewModel> result = null;
-            string query = $"SELECT Replies.Id, Replies.Text, Replies.Date, Replies.User_Id, Replies.Comment_Id, Replies.Reply_Id, " +
-                    $" users.Username as User_Username, ReplyToUsers.Username as Reply_Username, " +
+            string query = $"SELECT Replies.Id, Replies.Text, Replies.Date_Created, Replies.Date_Edited, Replies.User_Id, Replies.Comment_Id, Replies.Reply_Id, Replies.Is_Deleted, " +
+                    $" Users.Username as User_Username, ReplyToUsers.Username as Reply_Username, " +
                     $" Count(DISTINCT Reply_Likes.User_Id) as Likes, " +
-                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Reply_Likes WHERE Reply_Likes.Reply_Id = Replies.Id AND User_Id = @user_id) then 1 ELSE 0 END AS BIT) AS Liked " +
+                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Reply_Likes WHERE Reply_Likes.Reply_Id = Replies.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked " +
                     $"FROM Replies " +
                     $" INNER JOIN Users ON Users.Id = Replies.User_Id " +
                     $" LEFT JOIN Replies ReplyToReplies ON ReplyToReplies.Id = Replies.Reply_Id " +
                     $" LEFT JOIN Users ReplyToUsers ON ReplyToUsers.Id = ReplyToReplies.User_Id " +
                     $" LEFT JOIN Reply_Likes ON Reply_Likes.Reply_Id = Replies.Id " +
-                    $"WHERE Replies.Date < @user_timestamp AND Replies.Comment_Id = @comment_id " +
-                    $"GROUP BY Replies.Id, Replies.Text, Replies.Date, Replies.Comment_Id, Replies.User_Id, users.Username, " +
-                    $" ReplyToUsers.Username, ReplyToReplies.User_Id, Replies.Reply_Id " +
-                    $"ORDER BY Date ASC OFFSET @offset ROWS FETCH NEXT @next ROWS ONLY";
+                    $"WHERE Replies.Date_Created < @user_timestamp AND Replies.Comment_Id = @comment_id " +
+                    $"GROUP BY Replies.Id, Replies.Text, Replies.Date_Created, Replies.Date_Edited, Replies.Comment_Id, Replies.User_Id, users.Username, " +
+                    $" ReplyToUsers.Username, ReplyToReplies.User_Id, Replies.Reply_Id, Replies.Is_Deleted " +
+                    $"ORDER BY Date_Created ASC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
 
             try
             {
@@ -52,12 +52,15 @@ namespace Infrastructure.Data.Repositories
                             Text = item.Text,
                             Comment_Id = item.Comment_Id,
                             User_Id = item.User_Id,
-                            Date = item.Date,
+                            Date_Created = item.Date_Created,
+                            Date_Edited = item.Date_Edited,
+                            Reply_Id = item.Reply_Id,
                         },
                         Reply_Username = item.Reply_Username,
                         User_Username = item.User_Username,
                         Likes = item.Likes,
                         Liked = item.Liked,
+                        Is_Deleted = item.Is_Deleted,
                     }
                 ).ToList();
             }
@@ -77,7 +80,7 @@ namespace Infrastructure.Data.Repositories
         public async Task<ReplyViewModel> GetReplyByIdAsync(GetReplyByIdQuery getReplyByIdQuery)
         {
             ReplyViewModel result = null;
-            string query = $"SELECT Replies.Id as Id, Text, Date, User_Id, Comment_Id, users.Username as User_Username" +
+            string query = $"SELECT Replies.Id as Id, Text, Date_Created, Date_Edited, User_Id, Comment_Id,  Reply.Is_Deleted, users.Username as User_Username" +
                $" FROM Replies INNER JOIN Users ON Users.Id = Replies.User_Id WHERE Replies.Id = @Id";
 
             try
@@ -92,12 +95,15 @@ namespace Infrastructure.Data.Repositories
                              Text = item.Text,
                              Comment_Id = item.Comment_Id,
                              User_Id = item.User_Id,
-                             Date = item.Date,
+                             Date_Created = item.Date_Created,
+                             Date_Edited = item.Date_Edited,
+                             Reply_Id = item.Reply_Id,
                          },
                          Reply_Username = item.Reply_Username,
                          User_Username = item.User_Username,
                          Likes = item.Likes,
                          Liked = item.Liked,
+                         Is_Deleted = item.Is_Deleted,
                      }
                 ).First();
             }
@@ -156,7 +162,7 @@ namespace Infrastructure.Data.Repositories
         }
         public async Task DeleteReplyAsync(DeleteReplyCommand deleteReplyCommand)
         {
-            string query = $"DELETE FROM Replies WHERE Id = @Id";
+            string query = $"UPDATE Replies SET Text = 'Reply was deleted', Is_Deleted = 1 WHERE Id = @Id";
 
             try
             {

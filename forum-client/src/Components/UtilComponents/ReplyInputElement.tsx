@@ -9,12 +9,13 @@ import { setLogInError } from "../../Redux/Reducers/AccountReducer";
 interface ReplyInputProps {
     Action: (e: string) => void,
     sx?: SxProps<Theme> | undefined,
+    Reply?: string,
     setState: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 export default function ReplyInputElement(Props: ReplyInputProps) {
     const dispatch = useDispatch();
-    const [comment, setComment] = useState('');
+    const [comment, setComment] = useState(Props.Reply);
 
     const handlesubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();

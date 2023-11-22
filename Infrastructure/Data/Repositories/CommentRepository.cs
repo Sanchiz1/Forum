@@ -26,7 +26,7 @@ namespace Infrastructure.Data.Repositories
         public async Task<List<CommentViewModel>> GetCommentsAsync(GetCommentsQuery getCommentsQuery)
         {
             List<CommentViewModel> result = null;
-            string query = $"SELECT Comments.Id, Comments.Post_Id, Comments.Text, Comments.Date, Comments.User_Id, " +
+            string query = $"SELECT Comments.Id, Comments.Post_Id, Comments.Text, Comments.Date_Created, Comments.Date_Edited, Comments.User_Id, " +
                 $"users.Username as User_Username, " +
                 $"Count(DISTINCT Comment_Likes.User_Id) as Likes, " +
                 $"Count(DISTINCT Replies.Id) as Replies, " +
@@ -35,8 +35,8 @@ namespace Infrastructure.Data.Repositories
                 $"INNER JOIN Users ON Users.Id = Comments.User_Id " +
                 $"LEFT JOIN Comment_Likes ON Comment_Likes.Comment_Id = Comments.Id " +
                 $"LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id " +
-                $"WHERE Comments.Date < @user_timestamp AND Comments.Post_Id = @post_id " +
-                $"GROUP BY Comments.Id, Comments.Post_Id, Comments.Text, Comments.Date, Comments.User_Id, users.Username " +
+                $"WHERE Comments.Date_Created < @user_timestamp AND Comments.Post_Id = @post_id " +
+                $"GROUP BY Comments.Id, Comments.Post_Id, Comments.Text, Comments.Date_Created, Comments.Date_Edited, Comments.User_Id, users.Username " +
                 $"ORDER BY {getCommentsQuery.Order} DESC OFFSET @offset ROWS FETCH NEXT @next ROWS ONLY";
 
             try
@@ -52,7 +52,8 @@ namespace Infrastructure.Data.Repositories
                             Text = item.Text,
                             Post_Id = item.Post_Id,
                             User_Id = item.User_Id,
-                            Date = item.Date,
+                            Date_Created = item.Date_Created,
+                            Date_Edited = item.Date_Edited,
                         },
                         User_Username = item.User_Username,
                         Likes = item.Likes,
@@ -68,7 +69,7 @@ namespace Infrastructure.Data.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Getting comment by id");
+                _logger.LogError(ex, "Getting comments");
                 throw;
             }
 
@@ -78,7 +79,7 @@ namespace Infrastructure.Data.Repositories
         {
             CommentViewModel result = null;
 
-            string query = "SELECT Comments.Id, Comments.Post_Id, Comments.Text, Comments.Date, Comments.User_Id, " +
+            string query = "SELECT Comments.Id, Comments.Post_Id, Comments.Text, Comments.Date_Created, Comments.Date_Edited, Comments.User_Id, " +
                 $"users.Username as User_Username, " +
                 $"Count(DISTINCT Comment_Likes.User_Id) as Likes, " +
                 $"Count(DISTINCT Replies.Id) as Replies, " +
@@ -88,7 +89,7 @@ namespace Infrastructure.Data.Repositories
                 $"LEFT JOIN Comment_Likes ON Comment_Likes.Comment_Id = Comments.Id " +
                 $"LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id " +
                 $"WHERE Comments.Id = @Id " +
-                $"GROUP BY Comments.Id, Comments.Post_Id, Comments.Text, Comments.Date, Comments.User_Id, users.Username";
+                $"GROUP BY Comments.Id, Comments.Post_Id, Comments.Text, Comments.Date_Created, Comments.Date_Edited, Comments.User_Id, users.Username";
 
             try
             {
@@ -102,7 +103,8 @@ namespace Infrastructure.Data.Repositories
                             Text = item.Text,
                             Post_Id = item.Post_Id,
                             User_Id = item.User_Id,
-                            Date = item.Date,
+                            Date_Created = item.Date_Created,
+                            Date_Edited = item.Date_Edited,
                         },
                         User_Username = item.User_Username,
                         Likes = item.Likes,

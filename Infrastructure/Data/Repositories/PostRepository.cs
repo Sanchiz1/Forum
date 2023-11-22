@@ -26,7 +26,7 @@ namespace Infrastructure.Data.Repositories
         public async Task<List<PostViewModel>> GetPostsAsync(GetPostsQuery getPostsQuery)
         {
             List<PostViewModel> result = null;
-            string query = $"SELECT Posts.Id, Posts.Title, Posts.Text, Posts.Date, Posts.User_Id," +
+            string query = $"SELECT Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id," +
                     $" users.Username as User_Username," +
                     $" Count(DISTINCT Post_Likes.User_Id) as Likes," +
                     $" Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
@@ -36,8 +36,8 @@ namespace Infrastructure.Data.Repositories
                     $"  LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id " +
                     $"  LEFT JOIN Comments ON Comments.Post_Id = Posts.Id " +
                     $"  LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id" +
-                    $" WHERE Posts.Date < @User_Timestamp" +
-                    $" GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date, Posts.User_Id, users.Username" +
+                    $" WHERE Posts.Date_Created < @User_Timestamp" +
+                    $" GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id, users.Username" +
                     $" ORDER BY {getPostsQuery.Order} DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
 
             try
@@ -53,7 +53,8 @@ namespace Infrastructure.Data.Repositories
                             Title = item.Title,
                             Text = item.Text,
                             User_Id = item.User_Id,
-                            Date = item.Date,
+                            Date_Created = item.Date_Created,
+                            Date_Edited = item.Date_Edited,
                         },
                         User_Username = item.User_Username,
                         Likes = item.Likes,
@@ -78,7 +79,7 @@ namespace Infrastructure.Data.Repositories
         public async Task<List<PostViewModel>> GetUserPostsAsync(GetUserPostsQuery getUserPostsQuery)
         {
             List<PostViewModel> result = null;
-            string query = $"SELECT Posts.Id, Posts.Title, Posts.Text, Posts.Date, Posts.User_Id," +
+            string query = $"SELECT Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id," +
                     $" Users.Username as User_Username," +
                     $" Count(DISTINCT Post_Likes.User_Id) as Likes," +
                     $" Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
@@ -88,8 +89,8 @@ namespace Infrastructure.Data.Repositories
                     $"  LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id " +
                     $"  LEFT JOIN Comments ON Comments.Post_Id = Posts.Id " +
                     $"  LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id" +
-                    $" WHERE Posts.Date < @User_Timestamp AND users.Username = @Author_Username" +
-                    $" GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date, Posts.User_Id, users.Username" +
+                    $" WHERE Posts.Date_Created < @User_Timestamp AND users.Username = @Author_Username" +
+                    $" GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id, users.Username" +
                     $" ORDER BY {getUserPostsQuery.Order} DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
 
             try
@@ -105,7 +106,8 @@ namespace Infrastructure.Data.Repositories
                             Title = item.Title,
                             Text = item.Text,
                             User_Id = item.User_Id,
-                            Date = item.Date,
+                            Date_Created = item.Date_Created,
+                            Date_Edited = item.Date_Edited,
                         },
                         User_Username = item.User_Username,
                         Likes = item.Likes,
@@ -130,7 +132,7 @@ namespace Infrastructure.Data.Repositories
         public async Task<PostViewModel> GetPostByIdAsync(GetPostByIdQuery getPostByIdQuery)
         {
             PostViewModel result = null;
-            string query = $"SELECT Posts.Id, Posts.Title, Posts.Text, Posts.Date, Posts.User_Id," +
+            string query = $"SELECT Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id," +
                     $" users.Username as User_Username," +
                     $" Count(DISTINCT Post_Likes.User_Id) as Likes," +
                     $" Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
@@ -141,7 +143,7 @@ namespace Infrastructure.Data.Repositories
                     $"  LEFT JOIN Comments ON Comments.Post_Id = Posts.Id " +
                     $"  LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id" +
                     $" WHERE Posts.Id = @Id" +
-                    $" GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date, Posts.User_Id, users.Username";
+                    $" GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id, users.Username";
 
             try
             {
@@ -156,7 +158,8 @@ namespace Infrastructure.Data.Repositories
                             Title = item.Title,
                             Text = item.Text,
                             User_Id = item.User_Id,
-                            Date = item.Date,
+                            Date_Created = item.Date_Created,
+                            Date_Edited = item.Date_Edited,
                         },
                         User_Username = item.User_Username,
                         Likes = item.Likes,

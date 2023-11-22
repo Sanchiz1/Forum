@@ -22,7 +22,8 @@ export function requestPosts(offset: Number, next: Number, order: String, user_t
                     id
                     title
                     text
-                    date
+                    date_Created
+                    date_Edited
                     user_Id
                     user_Username
                     likes
@@ -58,7 +59,8 @@ export function requestUserPosts(author_username: String, offset: Number, next: 
                     id
                     title
                     text
-                    date
+                    date_Created
+                    date_Edited
                     user_Id
                     user_Username
                     likes
@@ -101,7 +103,8 @@ export function requestPostById(id: Number) {
                     id
                     title
                     text
-                    date
+                    date_Created
+                    date_Edited
                     user_Id
                     user_Username
                     likes

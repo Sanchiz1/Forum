@@ -122,7 +122,7 @@ export default function UserPage() {
   const next = 4;
   const [userTimestamp, setUserTimestamp] = useState(new Date());
   const [offset, setOffset] = useState(0);
-  const [order, setOrder] = useState("Date");
+  const [order, setOrder] = useState("Date_Created");
   const [posts, setPosts] = useState<Post[]>([]);
   const [hasMore, setHasMore] = useState(true);
 
@@ -331,7 +331,7 @@ export default function UserPage() {
                                 input={<BootstrapInput sx={{ height: 1, display: 'flex' }} />}
                               >
                                 <MenuItem value={"Likes"}>Top</MenuItem>
-                                <MenuItem value={"Date"}>New</MenuItem>
+                                <MenuItem value={"Date_Created"}>New</MenuItem>
                               </Select>
                             </Typography>
                           </Grid>

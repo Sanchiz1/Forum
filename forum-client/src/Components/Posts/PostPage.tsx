@@ -11,7 +11,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { RootState } from '../../Redux/store';
 import {
     FormControl, Select, Stack, Container, CssBaseline, IconButton, LinearProgress,
-    Toolbar, Collapse, TextField, Alert, Link, MenuItem, Button, Dialog, DialogTitle, DialogActions
+    Toolbar, Collapse, TextField, Alert, Link, MenuItem, Button, Dialog, DialogTitle, DialogActions, Tooltip
 } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -62,10 +62,6 @@ export default function PostPage() {
 
     const [hasMore, setHasMore] = useState(true);
 
-    const next = 4;
-    const [userTimestamp, setUserTimestamp] = useState(new Date());
-    const [offset, setOffset] = useState(0);
-    const [order, setOrder] = useState("Date");
 
     let { PostId } = useParams();
     const { state } = useLocation();
@@ -74,24 +70,6 @@ export default function PostPage() {
 
     const Account: User = useSelector((state: RootState) => state.account.Account);
 
-
-    const fetchComments = () => {
-        requestComments(parseInt(PostId!), offset, next, order, userTimestamp).subscribe({
-            next(value) {
-                if (value.length == 0) {
-                    setHasMore(false);
-                    return;
-                }
-                setComments([...comments, ...value]);
-                if (document.documentElement.offsetHeight - window.innerHeight < 100) {
-                    setOffset(offset + next);
-                }
-            },
-            error(err) {
-                dispatch(setGlobalError(err.message));
-            },
-        })
-    }
     useEffect(() => {
         requestPostById(parseInt(PostId!)).subscribe({
             next(post) {
@@ -108,18 +86,6 @@ export default function PostPage() {
             },
         })
     }, [PostId])
-
-    useEffect(() => {
-        fetchComments()
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [offset])
-
-
-    function handleScroll() {
-        if (window.innerHeight + document.documentElement.scrollTop <= document.documentElement.scrollHeight - 10 || !hasMore) return;
-        setOffset(offset + next);
-    }
 
 
     //menu
@@ -234,12 +200,23 @@ export default function PostPage() {
                                                     } >
                                                         {post.user_Username}
                                                     </Link>
-                                                    <Typography variant="caption" color="text.disabled" component="p" sx={{ fontSize: 3, mr: 0.5 }}>
-                                                        {'\u2B24'}
+                                                    <Typography variant="caption" color="text.disabled" component="p" sx={{ mr: 0.5, fontFamily: 'cursive' }}>
+                                                        ·
                                                     </Typography>
-                                                    <Typography variant="caption" color="text.disabled" component="p">
-                                                        {timeSince(GetLocalDate(new Date(post.date)))}
+                                                    <Typography variant="caption" color="text.disabled" component="p" sx={{ mr: 0.5 }}>
+                                                        {timeSince(GetLocalDate(new Date(post.date_Created)))}
                                                     </Typography>
+                                                    {post.date_Edited ?
+                                                        <>
+                                                            <Tooltip title={timeSince(GetLocalDate(new Date(post.date_Edited)))} sx={{ m: 0 }} placement="right" arrow>
+                                                                <Typography variant="caption" color="text.disabled" component="p">
+                                                                    (edited)
+                                                                </Typography>
+                                                            </Tooltip>
+                                                        </>
+                                                        :
+                                                        <>
+                                                        </>}
                                                     {post.user_Id == Account.id ? <>
                                                         <IconButton
                                                             aria-label="more"
