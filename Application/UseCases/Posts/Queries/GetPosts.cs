@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces.Repositories;
+﻿using Application.Common.DTOs;
+using Application.Common.Interfaces.Repositories;
 using Application.Common.ViewModels;
 using Domain.Entities;
 using MediatR;
@@ -18,6 +19,8 @@ namespace Application.UseCases.Posts.Queries
         public DateTime User_Timestamp { get; set; }
         public int User_Id { get; set; } = 0;
         public string Order { get; set; } = "Date";
+        public string Search { get; set; } = "%";
+        public string[] Categories { get; set; } = [];
     }
     public class GetPostsQueryHandler : IRequestHandler<GetPostsQuery, List<PostViewModel>>
     {

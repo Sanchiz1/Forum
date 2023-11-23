@@ -27,7 +27,12 @@ namespace Infrastructure.Data.Repositories
         {
             UserViewModel result = null;
 
-            string query = $"SELECT Id, Username, Email, Bio, Registered_At FROM Users WHERE Id = @User_Id";
+            string query = $"SELECT Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, " +
+                $"COALESCE(Roles.Name, 'User') AS Role, " +
+                $"COALESCE(Users.Role_Id, 0) AS Role_Id " +
+                $"FROM Users " +
+                $"LEFT JOIN Roles ON Roles.Id = Users.Role_Id " +
+                $"WHERE Users.Id = @User_Id ";
 
             try
             {
@@ -42,7 +47,9 @@ namespace Infrastructure.Data.Repositories
                             Email = item.Email,
                             Bio = item.Bio,
                             Registered_At = item.Registered_At,
-                        }
+                        },
+                        Role = item.Role,
+                        Role_Id = item.Role_Id,
                     }
                 ).FirstOrDefault();
             }
@@ -63,7 +70,12 @@ namespace Infrastructure.Data.Repositories
         {
             UserViewModel result = null;
 
-            string query = $"SELECT Id, Username, Email, Bio, Registered_At FROM Users WHERE Username = @Username";
+            string query = $"SELECT Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, " +
+                $"COALESCE(Roles.Name, 'User') AS Role, " +
+                $"COALESCE(Users.Role_Id, 0) AS Role_Id " +
+                $"FROM Users " +
+                $"LEFT JOIN Roles ON Roles.Id = Users.Role_Id " +
+                $"WHERE Users.Username = @Username";
 
             try
             {
@@ -78,7 +90,9 @@ namespace Infrastructure.Data.Repositories
                             Email = item.Email,
                             Bio = item.Bio,
                             Registered_At = item.Registered_At,
-                        }
+                        },
+                        Role = item.Role,
+                        Role_Id = item.Role_Id,
                     }
                 ).FirstOrDefault();
             }
@@ -99,7 +113,12 @@ namespace Infrastructure.Data.Repositories
         {
             UserViewModel result = null;
 
-            string query = $"SELECT Id, Username, Email, Bio, Registered_At FROM Users WHERE Email = @Email";
+            string query = $"SELECT Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, " +
+                $"COALESCE(Roles.Name, 'User') AS Role, " +
+                $"COALESCE(Users.Role_Id, 0) AS Role_Id " +
+                $"FROM Users " +
+                $"LEFT JOIN Roles ON Roles.Id = Users.Role_Id " +
+                $"WHERE Users.Email = @Email ";
 
             try
             {
@@ -114,7 +133,9 @@ namespace Infrastructure.Data.Repositories
                             Email = item.Email,
                             Bio = item.Bio,
                             Registered_At = item.Registered_At,
-                        }
+                        },
+                        Role = item.Role,
+                        Role_Id = item.Role_Id,
                     }
                 ).FirstOrDefault();
             }
@@ -135,7 +156,12 @@ namespace Infrastructure.Data.Repositories
         {
             UserViewModel result = null;
 
-            string query = $"SELECT Id, Username, Email, Bio, Registered_At FROM Users WHERE (Username = @Username_Or_Email OR Email = @Username_Or_Email) AND Password = @Password";
+            string query = $"SELECT Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, " +
+                $"COALESCE(Roles.Name, 'User') AS Role, " +
+                $"COALESCE(Users.Role_Id, 0) AS Role_Id " +
+                $"FROM Users " +
+                $"LEFT JOIN Roles ON Roles.Id = Users.Role_Id " +
+                $"WHERE (Users.Username = @Username_Or_Email OR Users.Email = @Username_Or_Email) AND Users.Password = @Password";
 
             try
             {
@@ -158,7 +184,9 @@ namespace Infrastructure.Data.Repositories
                             Email = item.Email,
                             Bio = item.Bio,
                             Registered_At = item.Registered_At,
-                        }
+                        },
+                        Role = item.Role,
+                        Role_Id = item.Role_Id,
                     }
                 ).FirstOrDefault();
             }
@@ -235,6 +263,46 @@ namespace Infrastructure.Data.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Deleting user");
+                throw;
+            }
+        }
+        public async Task AddUserRoleAsync(AddUserRoleCommand addUserRoleCommand)
+        {
+            string query = $"INSERT INTO User_Roles (User_Id, Role_Id) VALUES (@User_Id, @Role_Id)";
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+                await connection.ExecuteAsync(query, addUserRoleCommand);
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Adding user role");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Adding user role");
+                throw;
+            }
+        }
+        public async Task RemoveUserRoleAsync(RemoveUserRoleCommand removeUserRoleCommand)
+        {
+            string query = $"DELETE FROM User_Roles WHERE User_Id = @User_Id AND Role_Id = @Role_Id";
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+                await connection.ExecuteAsync(query, removeUserRoleCommand);
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Removing user role");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Removing user role");
                 throw;
             }
         }

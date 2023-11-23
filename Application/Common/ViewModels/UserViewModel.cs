@@ -1,4 +1,5 @@
-﻿using Application.Common.DTOs;
+﻿using Application.Common.Constants;
+using Application.Common.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,5 +11,7 @@ namespace Application.Common.ViewModels
     public class UserViewModel
     {
         public UserDto User { get; set; }
+        public int Role_Id { get; set; }
+        public string Role { get; set; }
     }
 }

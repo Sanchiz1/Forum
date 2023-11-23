@@ -62,4 +62,20 @@ namespace Forum.GraphQL.Types.UserTypes
             Field(c => c.User_Id, type: typeof(IntGraphType));
         }
     }
+    public class AddUserRoleInputGraphType : InputObjectGraphType<AddUserRoleCommand>
+    {
+        public AddUserRoleInputGraphType()
+        {
+            Field(c => c.User_Id, type: typeof(IntGraphType));
+            Field(c => c.Role_Id, type: typeof(IntGraphType));
+        }
+    }
+    public class RemoveUserRoleInputGraphType : InputObjectGraphType<RemoveUserRoleCommand>
+    {
+        public RemoveUserRoleInputGraphType()
+        {
+            Field(c => c.User_Id, type: typeof(IntGraphType));
+            Field(c => c.Role_Id, type: typeof(IntGraphType));
+        }
+    }
 }

@@ -39,21 +39,21 @@ namespace Infrastructure.Services
 
         public async Task<LoginResponse> Login(LoginQuery loginQuery)
         {
-            var user = (await _mediator.Send(new GetUserByCredentialsQuery { Username_Or_Email =  loginQuery.Username_Or_Email, Password = loginQuery.Password })).User;
+            var user = (await _mediator.Send(new GetUserByCredentialsQuery { Username_Or_Email =  loginQuery.Username_Or_Email, Password = loginQuery.Password }));
 
 
             if (user == null) throw new FailedLoginException();
 
-            var encodedJwt = _tokenFactory.GetAccessToken(user.Id);
+            var encodedJwt = _tokenFactory.GetAccessToken(user.User.Id, user.Role);
 
-            var refreshToken = _tokenFactory.GetRefreshToken(user.Id);
+            var refreshToken = _tokenFactory.GetRefreshToken(user.User.Id);
 
-            await _tokenRepository.CreateRefreshTokenAsync(refreshToken, user.Id);
+            await _tokenRepository.CreateRefreshTokenAsync(refreshToken, user.User.Id);
 
             return new LoginResponse()
             {
                 Access_Token = encodedJwt,
-                User_Id = user.Id,
+                User_Id = user.User.Id,
                 Refresh_Token = refreshToken,
             };
         }
@@ -66,8 +66,10 @@ namespace Infrastructure.Services
 
             int userId = int.Parse(_tokenValidator.ReadJwtToken(refreshTokenQuery.Token).Claims.First(c => c.Type == "UserId").Value);
 
-            var newAccessToken = _tokenFactory.GetAccessToken(userId);
-            var newRefreshToken = _tokenFactory.GetRefreshToken(userId);
+            var user = (await _mediator.Send(new GetUserByIdQuery { User_Id = userId }));
+
+            var newAccessToken = _tokenFactory.GetAccessToken(user.User.Id, user.Role);
+            var newRefreshToken = _tokenFactory.GetRefreshToken(user.User.Id);
 
             await _tokenRepository.UpdateRefreshTokenAsync(refreshTokenQuery.Token, newRefreshToken, userId);
 

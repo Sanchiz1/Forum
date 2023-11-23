@@ -58,7 +58,6 @@ export default function Header() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  //Account menu
 
   return (
     <React.Fragment>

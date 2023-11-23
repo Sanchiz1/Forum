@@ -21,5 +21,7 @@ namespace Application.Common.Interfaces.Repositories
         Task CreateUserAsync(CreateUserCommand createUserCommand);
         Task UpdateUserAsync(UpdateUserCommand updateUserCommand);
         Task DeleteUserAsync(DeleteUserCommand deleteUserCommand);
+        Task AddUserRoleAsync(AddUserRoleCommand addUserRoleCommand);
+        Task RemoveUserRoleAsync(RemoveUserRoleCommand removeUserRoleCommand);
     }
 }

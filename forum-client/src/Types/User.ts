@@ -3,7 +3,9 @@ export interface User {
     username: string,
     email?: string,
     bio: string,
-    registered_At: Date
+    registered_At: Date,
+    role_Id: number
+    role: string
 }
 export interface UserRegistration {
     id: number,

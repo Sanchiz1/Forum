@@ -69,6 +69,54 @@ namespace Forum.GraphQL.Mutations
 
                     return "Account updated successfully";
                 });
+
+            Field<StringGraphType>("addUserRole")
+                .Argument<NonNullGraphType<AddUserRoleInputGraphType>>("input")
+                .ResolveAsync(async context =>
+                {
+                    AddUserRoleCommand addUserRoleCommand = context.GetArgument<AddUserRoleCommand>("input");
+
+                    try
+                    {
+                        await _mediator.Send(addUserRoleCommand);
+                    }
+                    catch (UserAlreadyExistsException ex)
+                    {
+                        context.Errors.Add(new ExecutionError(ex.Message));
+                        return null;
+                    }
+                    catch
+                    {
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
+
+                    return "Role updated successfully";
+                }).AuthorizeWithPolicy("AdminPolicy");
+
+            Field<StringGraphType>("removeUserRole")
+                .Argument<NonNullGraphType<RemoveUserRoleInputGraphType>>("input")
+                .ResolveAsync(async context =>
+                {
+                    RemoveUserRoleCommand removeUserRoleCommand = context.GetArgument<RemoveUserRoleCommand>("input");
+
+                    try
+                    {
+                        await _mediator.Send(removeUserRoleCommand);
+                    }
+                    catch (UserAlreadyExistsException ex)
+                    {
+                        context.Errors.Add(new ExecutionError(ex.Message));
+                        return null;
+                    }
+                    catch
+                    {
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
+
+                    return "Role updated successfully";
+                }).AuthorizeWithPolicy("AdminPolicy");
         }
     }
 }

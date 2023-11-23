@@ -18,7 +18,7 @@ namespace Infrastructure.Services
         {
             _configuration = configuration;
         }
-        public Token GetAccessToken(int userId)
+        public Token GetAccessToken(int userId, string userRole)
         {
             var expiredAt = DateTime.UtcNow.Add(TimeSpan.FromSeconds(TokenFactory.AccessTokenExpiration));
             var issuedAt = DateTime.UtcNow;
@@ -27,6 +27,7 @@ namespace Infrastructure.Services
 
             var claims = new[] {
                 new Claim("UserId", userId.ToString()),
+                new Claim(ClaimTypes.Role, userRole),
                 new Claim("IsAccess",true.ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, issuedAtOffset.ToUnixTimeSeconds().ToString()),
             };

@@ -120,6 +120,7 @@
     <Compile Include="Common\DTOs\PostDto.cs" />
     <Compile Include="Common\DTOs\ReplyDto.cs" />
     <Compile Include="Common\DTOs\UserDto.cs" />
+    <Compile Include="Common\Constants\UserRoles.cs" />
     <Compile Include="Common\Exceptions\FailedLoginException.cs" />
     <Compile Include="Common\Exceptions\InvalidTokenException.cs" />
     <Compile Include="Common\Exceptions\UserAlreadyExistsException.cs" />
@@ -170,8 +171,10 @@
     <Compile Include="UseCases\Replies\Commands\UpdateReply.cs" />
     <Compile Include="UseCases\Replies\Queries\GetReplies.cs" />
     <Compile Include="UseCases\Replies\Queries\GetReplyById.cs" />
+    <Compile Include="UseCases\Users\Commands\AddUserRole.cs" />
     <Compile Include="UseCases\Users\Commands\CreateUser.cs" />
     <Compile Include="UseCases\Users\Commands\DeleteUser.cs" />
+    <Compile Include="UseCases\Users\Commands\RemoveUserRole.cs" />
     <Compile Include="UseCases\Users\Commands\UpdateUser.cs" />
     <Compile Include="UseCases\Users\Queries\GetUserByCredentials.cs" />
     <Compile Include="UseCases\Users\Queries\GetUserByEmail.cs" />

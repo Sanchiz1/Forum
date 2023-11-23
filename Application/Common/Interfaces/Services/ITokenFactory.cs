@@ -5,6 +5,6 @@ namespace Application.Common.Interfaces.Services
     public interface ITokenFactory
     {
         Token GetRefreshToken(int userId);
-        Token GetAccessToken(int userId);
+        Token GetAccessToken(int userId, string userRole);
     }
 }

@@ -1,9 +1,13 @@
 using Application;
+using Application.Common.Constants;
 using GraphQL;
 using Infrastructure;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 using TimeTracker.GraphQL.Schemas;
 
@@ -45,9 +49,11 @@ builder.Services.AddCors();
 builder.Services.AddGraphQL(c => c.AddSystemTextJson()
                                   .AddSchema<MainShema>()
                                   .AddSchema<IdentitySchema>()
-                                  .AddAuthorization(setting =>
+                                  .AddAuthorization(options =>
                                   {
-                                      setting.AddPolicy("Authorized", p => p.RequireAuthenticatedUser());
+                                      options.AddPolicy("Authorized", policy => policy.RequireAuthenticatedUser());
+                                      options.AddPolicy("AdminPolicy", policy => policy.RequireClaim(ClaimTypes.Role, "Admin"));
+                                      options.AddPolicy("ModeratorPolicy", policy => policy.RequireClaim(ClaimTypes.Role, "Moderator"));
                                   })
                                   .AddGraphTypes(typeof(MainShema).Assembly)
                                   .AddGraphTypes(typeof(IdentitySchema).Assembly)

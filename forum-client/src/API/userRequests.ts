@@ -16,6 +16,8 @@ export function requestUsers(variables: {}) {
           email
           bio
           registered_At
+          role
+          role_Id
       }
     }`, {}).pipe(
         map((value): string => {
@@ -43,6 +45,8 @@ export function requestUserById(id: Number) {
           email
           bio
           registered_At
+          role
+          role_Id
       }
     }`, {
         "Input": {
@@ -69,6 +73,8 @@ export function requestUserByUsername(usernaame: string) {
             email
             bio
             registered_At
+            role
+            role_Id
             }
         }
     }`, {
@@ -96,6 +102,8 @@ export function requestAccount() {
                 email
                 bio
                 registered_At
+                role
+                role_Id
         }
       }
     }`, {}).pipe(
@@ -169,6 +177,37 @@ interface GraphqlUpdateUser {
 }
 
 export function updateUserRequest(UserInput: UserInput) {
+    return GetAjaxObservable<GraphqlUpdateUser>(`
+        mutation($Input: UpdateUserInput!){
+            user{
+              user:updateUser(input: $Input)
+            }
+          }`,
+        {
+            "Input": {
+                "username": UserInput.username,
+                "email": UserInput.email,
+                "bio": UserInput.bio
+            }
+        }
+    ).pipe(
+        map((value) => {
+
+            if (value.response.errors) {
+
+                throw new Error(value.response.errors[0].message);
+            }
+
+            return value.response.data.user.user;
+
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}
+
+export function changeUserRoleRequest(UserInput: UserInput) {
     return GetAjaxObservable<GraphqlUpdateUser>(`
         mutation($Input: UpdateUserInput!){
             user{

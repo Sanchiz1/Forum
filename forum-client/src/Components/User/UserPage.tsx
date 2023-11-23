@@ -12,7 +12,7 @@ import { getUserAccount } from '../../Redux/Epics/AccountEpics';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { RootState } from '../../Redux/store';
-import { Backdrop, Badge, CircularProgress, Container, CssBaseline, IconButton, LinearProgress, Toolbar, Collapse, TextField, Alert, Select, MenuItem, Skeleton } from '@mui/material';
+import { Backdrop, Badge, CircularProgress, Container, CssBaseline, IconButton, LinearProgress, Toolbar, Collapse, TextField, Alert, Select, MenuItem, Skeleton, SelectChangeEvent } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -31,16 +31,15 @@ const validUsernamePattern = /^[a-zA-Z0-9_.]+$/;
 const validEmailPattern = /^(?=.{0,64}$)[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const validPasswordPattern = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[a-zA-Z]).{8,21}$/;
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
-}));
+const roles = {
+  0: "User",
+  1: "Admin",
+  2: "Moderator",
+};
 
 export default function UserPage() {
   const [user, setUser] = useState<User>();
+  const [role, setRole] = useState(0);
   const [userExists, setUserExists] = useState(true);
   const [openEdit, setOpenEdit] = useState(false);
   let { Username } = useParams();
@@ -54,9 +53,11 @@ export default function UserPage() {
     requestUserByUsername(Username!).subscribe({
       next(user) {
         setUser(user);
+        setRole(user.role_Id)
         if (user === null) {
           setUserExists(false);
         }
+        refetchposts()
       },
       error(err) {
       },
@@ -126,10 +127,14 @@ export default function UserPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [hasMore, setHasMore] = useState(true);
 
-  useEffect(() => {
+  const refetchposts = () => {
     setPosts([]);
     setOffset(0);
     setUserTimestamp(new Date());
+  }
+
+  useEffect(() => {
+    refetchposts()
   }, [order]);
 
   useEffect(() => {
@@ -157,6 +162,12 @@ export default function UserPage() {
     if (window.innerHeight + document.documentElement.scrollTop <= document.documentElement.scrollHeight - 10 || !hasMore) return;
     setOffset(offset + next);
   }
+
+
+  // edit role 
+  const handleChange = (event: SelectChangeEvent) => {
+    setRole(parseInt(event.target.value));
+  };
 
   return (
     <>
@@ -280,6 +291,34 @@ export default function UserPage() {
                                         {error}
                                       </Alert>
                                     </Collapse>
+                                    <Button
+                                      type="submit"
+                                      fullWidth
+                                      variant="outlined"
+                                    >
+                                      Submit
+                                    </Button>
+                                  </Box>
+                                </Collapse>
+                              </>
+                              : <></>}
+                            {(Account.role === 'Admin' && user.role !== 'Admin') ?
+                              <>
+                                <Divider sx={{ mt: 2 }} />
+                                <Button onClick={() => setOpenEdit(!openEdit)}>Edit</Button>
+                                <Collapse in={openEdit}>
+                                  <Box component="form" onSubmit={handleSubmitEdit} noValidate sx={{ mt: 1 }}>
+                                    <Select
+                                      labelId="role-label"
+                                      id="role"
+                                      value={role.toString()}
+                                      fullWidth
+                                      onChange={handleChange}
+                                    >
+                                      <MenuItem value={0}>User</MenuItem>
+                                      <MenuItem value={1}>Moderator</MenuItem>
+                                      <MenuItem value={2}>Admin</MenuItem>
+                                    </Select>
                                     <Button
                                       type="submit"
                                       fullWidth

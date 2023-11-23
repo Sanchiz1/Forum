@@ -29,15 +29,15 @@ namespace Application.UseCases.Users.Commands
 
         public async Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            var usernameCheck = (await _context.GetUserByUsernameAsync(new GetUserByUsernameQuery() { Username = request.Username })).User;
-            var emailCheck = (await _context.GetUserByEmailAsync(new GetUserByEmailQuery() { Email = request.Username })).User;
+            var usernameCheck = (await _context.GetUserByUsernameAsync(new GetUserByUsernameQuery() { Username = request.Username }));
+            var emailCheck = (await _context.GetUserByEmailAsync(new GetUserByEmailQuery() { Email = request.Email }));
 
-            if (!(usernameCheck?.Id == request.User_Id || usernameCheck == null))
+            if (!(usernameCheck?.User.Id == request.User_Id || usernameCheck == null))
             {
                 throw new UserAlreadyExistsException("User with this username already exists");
             }
 
-            if (!(emailCheck?.Id == request.User_Id || emailCheck == null))
+            if (!(emailCheck?.User.Id == request.User_Id || emailCheck == null))
             {
                 throw new UserAlreadyExistsException("User with this email already exists");
             }
