@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Application.UseCases.Category.Queries
+namespace Application.UseCases.Categories.Queries
 {
     public class GetCategoryByIdQuery : IRequest<CategoryDto>
     {

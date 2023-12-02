@@ -19,6 +19,8 @@ namespace Application.Common.Interfaces.Repositories
         Task<PostViewModel> GetPostByIdAsync(GetPostByIdQuery getPostByIdQuery);
         Task CreatePostAsync(CreatePostCommand createPostCommand);
         Task UpdatePostAsync(UpdatePostCommand updatePostCommand);
+        Task AddPostCategoryAsync(AddPostCategoryCommand addPostCategoryCommand);
+        Task RemovePostCategoryAsync(RemovePostCategoryCommand removePostCategoryCommand);
         Task DeletePostAsync(DeletePostCommand deletePostCommand);
         Task LikePostAsync(LikePostCommand likePostCommand);
     }

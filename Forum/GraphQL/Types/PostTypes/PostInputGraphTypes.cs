@@ -49,6 +49,22 @@ namespace Forum.GraphQL.Types.PostTypes
             Field(c => c.Text, type: typeof(StringGraphType));
         }
     }
+    public class AddPostCategoryInputGraphType : InputObjectGraphType<AddPostCategoryCommand>
+    {
+        public AddPostCategoryInputGraphType()
+        {
+            Field(c => c.Post_Id, type: typeof(IntGraphType));
+            Field(c => c.Category_Id, type: typeof(IntGraphType));
+        }
+    }
+    public class RemovePostCategoryInputGraphType : InputObjectGraphType<RemovePostCategoryCommand>
+    {
+        public RemovePostCategoryInputGraphType()
+        {
+            Field(c => c.Post_Id, type: typeof(IntGraphType));
+            Field(c => c.Category_Id, type: typeof(IntGraphType));
+        }
+    }
     public class DeletePostInputGraphType : InputObjectGraphType<DeletePostCommand>
     {
         public DeletePostInputGraphType()

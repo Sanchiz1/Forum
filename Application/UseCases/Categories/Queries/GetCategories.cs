@@ -9,15 +9,12 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Application.UseCases.Category.Queries
+namespace Application.UseCases.Categories.Queries
 {
     public class GetCategoriesQuery : IRequest<List<CategoryDto>>
     {
         public int Next { get; set; }
         public int Offset { get; set; }
-        public DateTime User_Timestamp { get; set; }
-        public string Order { get; set; } = "Date";
-        public int User_Id { get; set; } = 0;
     }
     public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, List<CategoryDto>>
     {

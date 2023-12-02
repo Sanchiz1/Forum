@@ -7,11 +7,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Application.UseCases.Category.Commands
+namespace Application.UseCases.Categories.Commands
 {
     public class DeleteCategoryCommand : IRequest
     {
-        public string Title { get; set; }
+        public int Id { get; set; }
     }
     public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand>
     {

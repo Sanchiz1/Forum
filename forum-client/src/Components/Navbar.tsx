@@ -18,8 +18,9 @@ import { AppBar, FormControl } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../Redux/store';
 import { Backdrop, CircularProgress, TextField, InputAdornment } from '@mui/material';
-import { getAccount, setLogInError } from '../Redux/Reducers/AccountReducer';
+import { getAccount, setLogInError, setPermissionError } from '../Redux/Reducers/AccountReducer';
 import Card from '@mui/material/Card';
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import CardContent from '@mui/material/CardContent';
 import Link from '@mui/material/Link';
 import { getUserAccount } from '../Redux/Epics/AccountEpics';
@@ -33,6 +34,7 @@ export default function Header() {
   const location = useLocation();
   const User = useSelector((state: RootState) => state.account.Account);
   const error = useSelector((state: RootState) => state.account.LogInError);
+  const permissionerror = useSelector((state: RootState) => state.account.PermissionError);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -46,6 +48,7 @@ export default function Header() {
   //Sign in error
   const handleErrorClose = () => {
     dispatch(setLogInError(''))
+    dispatch(setPermissionError(''))
   };
   //Sign in error
 
@@ -111,6 +114,30 @@ export default function Header() {
             <Link href="#" variant="body2" onClick={() => navigator("/Sign-up", { state: location })}>
               {"Don't have an account? Sign Up"}
             </Link>
+          </CardContent>
+        </Card>
+      </Backdrop>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={permissionerror !== ''}
+        onClick={handleErrorClose}
+      >
+        <Card sx={{ minWidth: 275 }}>
+          <CardContent>
+            <Typography sx={{ fontSize: 30, textAlign: 'center' }} gutterBottom>
+              Permission Error
+            </Typography>
+            <Typography variant="subtitle2" align="center" color="text.secondary" component="p" gutterBottom>
+              You don`t have permissions for this page
+            </Typography>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              onClick={() => navigator("/")}
+            >Go back
+            </Button>
           </CardContent>
         </Card>
       </Backdrop>
@@ -183,6 +210,12 @@ export default function Header() {
               <Avatar /> My account
             </MenuItem>
             <Divider />
+            {User?.role === "Admin" && <MenuItem onClick={() => { navigator('/AdminPanel'); handleClose(); }} hidden={!(User?.role === "Admin")}>
+              <ListItemIcon>
+                <SupervisorAccountIcon fontSize="small" />
+              </ListItemIcon>
+              Admin panel
+            </MenuItem>}
             <MenuItem onClick={handleClose}>
               <ListItemIcon>
                 <Settings fontSize="small" />

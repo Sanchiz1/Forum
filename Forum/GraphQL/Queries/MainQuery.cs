@@ -18,6 +18,9 @@ namespace Forum.GraphQL.Queries
 
             Field<ReplyQuery>("replies")
                 .Resolve(context => new { });
+
+            Field<CategoryQuery>("categories")
+                .Resolve(context => new { });
         }
     }
 }

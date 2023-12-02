@@ -207,18 +207,17 @@ export function updateUserRequest(UserInput: UserInput) {
     );
 }
 
-export function changeUserRoleRequest(UserInput: UserInput) {
+export function updateUserRoleRequest(user_id: number, role_id: number | null) {
     return GetAjaxObservable<GraphqlUpdateUser>(`
-        mutation($Input: UpdateUserInput!){
+        mutation($Input: UpdateUserRoleInput!){
             user{
-              user:updateUser(input: $Input)
+                user:updateUserRole(input: $Input)
             }
           }`,
         {
             "Input": {
-                "username": UserInput.username,
-                "email": UserInput.email,
-                "bio": UserInput.bio
+                "user_Id": user_id,
+                "role_Id": role_id
             }
         }
     ).pipe(

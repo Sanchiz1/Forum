@@ -8,14 +8,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Application.UseCases.Category.Queries
+namespace Application.UseCases.Categories.Queries
 {
     public class GetPostCategoriesQuery : IRequest<List<CategoryDto>>
     {
         public int Post_Id { get; set; }
-        public int Next { get; set; }
-        public int Offset { get; set; }
-        public string Order { get; set; } = "Date";
     }
     public class GetPostCategoriesQueryHandler : IRequestHandler<GetPostCategoriesQuery, List<CategoryDto>>
     {

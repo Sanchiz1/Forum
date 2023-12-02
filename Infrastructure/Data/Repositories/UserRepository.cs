@@ -246,6 +246,26 @@ namespace Infrastructure.Data.Repositories
                 throw;
             }
         }
+        public async Task UpdateUserRoleAsync(UpdateUserRoleCommand updateUserRoleCommand)
+        {
+            string query = $"UPDATE Users SET Role_Id = @Role_Id WHERE Id = @User_Id";
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+                await connection.ExecuteAsync(query, updateUserRoleCommand);
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Adding user role");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Adding user role");
+                throw;
+            }
+        }
         public async Task DeleteUserAsync(DeleteUserCommand deleteUserCommand)
         {
             string query = $"DELETE FROM Users WHERE Id = @User_Id";
@@ -263,46 +283,6 @@ namespace Infrastructure.Data.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Deleting user");
-                throw;
-            }
-        }
-        public async Task AddUserRoleAsync(AddUserRoleCommand addUserRoleCommand)
-        {
-            string query = $"INSERT INTO User_Roles (User_Id, Role_Id) VALUES (@User_Id, @Role_Id)";
-
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, addUserRoleCommand);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Adding user role");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Adding user role");
-                throw;
-            }
-        }
-        public async Task RemoveUserRoleAsync(RemoveUserRoleCommand removeUserRoleCommand)
-        {
-            string query = $"DELETE FROM User_Roles WHERE User_Id = @User_Id AND Role_Id = @Role_Id";
-
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, removeUserRoleCommand);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Removing user role");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Removing user role");
                 throw;
             }
         }

@@ -18,7 +18,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MenuIcon from '@mui/icons-material/Menu';
 import { GetDateString } from '../../Helpers/DateFormatHelper';
 import { User, UserInput } from '../../Types/User';
-import { requestUserByUsername, updateUserRequest } from '../../API/userRequests';
+import { updateUserRoleRequest, requestUserByUsername, updateUserRequest } from '../../API/userRequests';
 import UserNotFoundPage from './UserNotFoundPage';
 import { getAccount, setGlobalError } from '../../Redux/Reducers/AccountReducer';
 import { SnackbarProvider, VariantType, enqueueSnackbar, useSnackbar } from 'notistack';
@@ -169,6 +169,32 @@ export default function UserPage() {
     setRole(parseInt(event.target.value));
   };
 
+  const handleSubmitEditRole = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    
+    let role_id: number | null = role;
+    if(role === 0){
+      role_id = null;
+    }
+    updateUserRoleRequest(user?.id!, role_id).subscribe({
+      next(value) {
+        enqueueSnackbar(value, {
+          variant: 'success', anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'center'
+          },
+          autoHideDuration: 1500
+        });
+        setError('');
+        setOpenEdit(false);
+        navigator("/user/" + Username);
+      },
+      error(err) {
+        setError(err.message)
+      },
+    })
+  }
+
   return (
     <>
       {userExists ?
@@ -307,13 +333,14 @@ export default function UserPage() {
                                 <Divider sx={{ mt: 2 }} />
                                 <Button onClick={() => setOpenEdit(!openEdit)}>Edit</Button>
                                 <Collapse in={openEdit}>
-                                  <Box component="form" onSubmit={handleSubmitEdit} noValidate sx={{ mt: 1 }}>
+                                  <Box component="form" onSubmit={handleSubmitEditRole} noValidate sx={{ mt: 1 }}>
                                     <Select
                                       labelId="role-label"
                                       id="role"
                                       value={role.toString()}
                                       fullWidth
                                       onChange={handleChange}
+                                      sx={{mb: 2}}
                                     >
                                       <MenuItem value={0}>User</MenuItem>
                                       <MenuItem value={1}>Moderator</MenuItem>

@@ -1,13 +1,7 @@
 ﻿using Application.Common.DTOs;
-using Application.Common.ViewModels;
-using Application.UseCases.Category.Commands;
-using Application.UseCases.Category.Queries;
-using Application.UseCases.Comments.Commands;
-using Application.UseCases.Comments.Queries;
-using System;
+using Application.UseCases.Categories.Commands;
+using Application.UseCases.Categories.Queries;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Application.Common.Interfaces.Repositories

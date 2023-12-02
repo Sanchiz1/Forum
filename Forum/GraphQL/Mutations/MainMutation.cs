@@ -1,4 +1,5 @@
-﻿using GraphQL.Types;
+﻿using GraphQL;
+using GraphQL.Types;
 
 namespace Forum.GraphQL.Mutations
 {
@@ -14,6 +15,8 @@ namespace Forum.GraphQL.Mutations
             .Resolve(context => new { });
             Field<ReplyMutation>("reply")
             .Resolve(context => new { });
+            Field<CategoryMutation>("category")
+            .Resolve(context => new { }).AuthorizeWithPolicy("AdminPolicy");
         }
     }
 }

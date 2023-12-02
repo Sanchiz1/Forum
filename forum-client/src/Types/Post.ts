@@ -1,10 +1,13 @@
+import { Category } from "./Category"
+
 export interface Post{
     id: Number,
     title: string,
     text?: string,
     date_Created: Date,
     date_Edited?: Date,
-    user_Id: Number
+    user_Id: Number,
+    categories: Category[],
     user_Username: string,
     likes: Number,
     comments: Number,

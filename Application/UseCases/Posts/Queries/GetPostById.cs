@@ -18,13 +18,20 @@ namespace Application.UseCases.Posts.Queries
     }
     public class GetPostByIdQueryHandler : IRequestHandler<GetPostByIdQuery, PostViewModel>
     {
-        private readonly IPostRepository _context;
+        private readonly IPostRepository _postContext;
+        private readonly ICategoryRepository _categoryContext;
 
-        public GetPostByIdQueryHandler(IPostRepository context)
+        public GetPostByIdQueryHandler(IPostRepository postContext, ICategoryRepository categoryContext)
         {
-            _context = context;
+            _postContext = postContext;
+            _categoryContext = categoryContext;
         }
 
-        public async Task<PostViewModel> Handle(GetPostByIdQuery request, CancellationToken cancellationToken) => await _context.GetPostByIdAsync(request);
+        public async Task<PostViewModel> Handle(GetPostByIdQuery request, CancellationToken cancellationToken)
+        {
+            var post = await _postContext.GetPostByIdAsync(request);
+            post.Categories = await _categoryContext.GetPostCategoriesAsync(new Categories.Queries.GetPostCategoriesQuery { Post_Id = post.Post.Id });
+            return post;
+        }
     }
 }

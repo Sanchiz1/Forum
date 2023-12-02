@@ -106,6 +106,10 @@ export function requestPostById(id: Number) {
                     date_Created
                     date_Edited
                     user_Id
+                    categories{
+                        id,
+                        title
+                    }
                     user_Username
                     likes
                     comments
@@ -203,7 +207,77 @@ export function updatePostRequest(text: String, id: Number) {
     );
 }
 
+interface GraphqlAddPostCategory {
+    post: {
+        addPostCategory: string
+    }
+}
 
+export function addPostCategoryRequest(post_id: number, category_id: number) {
+    return GetAjaxObservable<GraphqlAddPostCategory>(`
+        mutation($Input: AddPostCategoryInput!){
+            post{
+                addPostCategory(input: $Input)
+            }
+          }`,
+        {
+            "Input": {
+                "post_Id": post_id,
+                "category_Id": category_id
+            }
+        }
+    ).pipe(
+        map((value) => {
+
+            if (value.response.errors) {
+
+                throw new Error(value.response.errors[0].message);
+            }
+
+            return value.response.data.post.addPostCategory;
+
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}
+
+interface GraphqlRemovePostCategory {
+    post: {
+        removePostCategory: string
+    }
+}
+
+export function removePostCategoryRequest(post_id: number, category_id: number) {
+    return GetAjaxObservable<GraphqlRemovePostCategory>(`
+        mutation($Input: RemovePostCategoryInput!){
+            post{
+                removePostCategory(input: $Input)
+            }
+          }`,
+        {
+            "Input": {
+                "post_Id": post_id,
+                "category_Id": category_id
+            }
+        }
+    ).pipe(
+        map((value) => {
+
+            if (value.response.errors) {
+
+                throw new Error(value.response.errors[0].message);
+            }
+
+            return value.response.data.post.removePostCategory;
+
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}
 interface GraphqlDeletePost {
     post: {
         deletePost: string

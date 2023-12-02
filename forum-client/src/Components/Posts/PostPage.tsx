@@ -11,7 +11,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { RootState } from '../../Redux/store';
 import {
     FormControl, Select, Stack, Container, CssBaseline, IconButton, LinearProgress,
-    Toolbar, Collapse, TextField, Alert, Link, MenuItem, Button, Dialog, DialogTitle, DialogActions, Tooltip
+    Toolbar, Collapse, TextField, Alert, Link, MenuItem, Button, Dialog, DialogTitle, DialogActions, Tooltip, Chip
 } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -19,9 +19,10 @@ import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 import CloseIcon from '@mui/icons-material/Close';
 import { Link as RouterLink } from 'react-router-dom';
 import { Post } from '../../Types/Post';
-import { deletePostRequest, likePostRequest, requestPostById, updatePostRequest } from '../../API/postRequests';
+import { addPostCategoryRequest, deletePostRequest, likePostRequest, removePostCategoryRequest, requestPostById, updatePostRequest } from '../../API/postRequests';
 import { GetLocalDate, timeSince } from '../../Helpers/TimeHelper';
 import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
 import Divider from '@mui/material/Divider';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArchiveIcon from '@mui/icons-material/Archive';
@@ -43,6 +44,7 @@ import { User } from '../../Types/User';
 import CommentInputElement from '../UtilComponents/CommentInputElement';
 import CommentsSection from './CommentsSection';
 import IconButtonWithCheck from '../UtilComponents/IconButtonWithCheck';
+import CategoriesSelect from '../Categories/CategorySelect';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -70,7 +72,7 @@ export default function PostPage() {
 
     const Account: User = useSelector((state: RootState) => state.account.Account);
 
-    useEffect(() => {
+    const fetchPost = () => {
         requestPostById(parseInt(PostId!)).subscribe({
             next(post) {
                 if (post === null) {
@@ -85,6 +87,9 @@ export default function PostPage() {
                 dispatch(setGlobalError(err.message));
             },
         })
+    }
+    useEffect(() => {
+        fetchPost()
     }, [PostId])
 
 
@@ -120,7 +125,6 @@ export default function PostPage() {
                     autoHideDuration: 1500
                 });
                 setError('');
-                setOpenEdit(false);
                 navigator("/post/" + post?.id!);
             },
             error(err) {
@@ -156,6 +160,42 @@ export default function PostPage() {
         })
     }
 
+
+    // categories
+    const handleAddPostCategory = (post_id: number, category_id: number) => {
+        addPostCategoryRequest(post_id, category_id).subscribe({
+            next(value) {
+                enqueueSnackbar(value, {
+                    variant: 'success', anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'center'
+                    },
+                    autoHideDuration: 1500
+                });
+            },
+            error(err) {
+                setError(err.message)
+            },
+        })
+    }
+
+    const handleRemovePostCategory = (post_id: number, category_id: number) => {
+        removePostCategoryRequest(post_id, category_id).subscribe({
+            next(value) {
+                enqueueSnackbar(value, {
+                    variant: 'success', anchorOrigin: {
+                        vertical: 'top',
+                        horizontal: 'center'
+                    },
+                    autoHideDuration: 1500
+                });
+                fetchPost();
+            },
+            error(err) {
+                setError(err.message)
+            },
+        })
+    }
 
     return (
         <>
@@ -254,36 +294,65 @@ export default function PostPage() {
                                                 </Typography>
                                                 <Divider sx={{ mb: 1 }} />
                                                 {openEdit ?
-                                                    <Box component="form" onSubmit={handleSubmitEdit} noValidate sx={{ mt: 1 }}>
-                                                        <TextField
-                                                            fullWidth
-                                                            id="text"
-                                                            label="Text"
-                                                            name="text"
-                                                            multiline
-                                                            defaultValue={post.text}
-                                                        />
-                                                        <Box sx={{ my: 1, display: 'flex' }}>
-                                                            <Button
-                                                                color='secondary'
-                                                                sx={{ ml: 'auto', mr: 1 }}
-                                                                onClick={() => setOpenEdit(false)}
-                                                                variant="outlined"
-                                                            >
-                                                                Cancel
-                                                            </Button>
-                                                            <Button
-                                                                type="submit"
-                                                                variant="outlined"
-                                                            >
-                                                                Submit
-                                                            </Button>
+                                                    <>
+                                                        <Box component="form" onSubmit={handleSubmitEdit} noValidate sx={{ mt: 2 }}>
+                                                            <TextField
+                                                                fullWidth
+                                                                id="text"
+                                                                label="Text"
+                                                                name="text"
+                                                                multiline
+                                                                defaultValue={post.text}
+                                                            />
+                                                            <Box sx={{ my: 1, display: 'flex' }}>
+                                                                <Button
+                                                                    color='secondary'
+                                                                    sx={{ ml: 'auto', mr: 1 }}
+                                                                    onClick={() => setOpenEdit(false)}
+                                                                    variant="outlined"
+                                                                >
+                                                                    Cancel
+                                                                </Button>
+                                                                <Button
+                                                                    type="submit"
+                                                                    variant="outlined"
+                                                                >
+                                                                    Submit
+                                                                </Button>
+                                                            </Box>
                                                         </Box>
-                                                    </Box>
+                                                        <Grid sx={{
+                                                            display: 'flex',
+                                                            flexWrap: 'wrap'
+
+                                                        }}>
+                                                            {post.categories.map(category =>
+                                                                <Chip label={category.title} key={category.id} sx={{ mb: 1, mr: 1 }} onDelete={() => handleRemovePostCategory(post.id.valueOf(), category.id)} variant="outlined"></Chip>
+                                                            )}
+                                                            <Chip
+                                                                label="Add"
+                                                                onClick={() => { }}
+                                                                icon={<AddIcon />}
+                                                                variant="outlined"
+                                                                sx={{ mb: 1, mr: 1 }}
+                                                            />
+                                                        </Grid>
+                                                    </>
                                                     :
-                                                    <Typography variant="subtitle1" component="p" sx={{ mt: 2, whiteSpace: 'pre-line', overflowWrap: 'break-word' }}>
-                                                        {post.text}
-                                                    </Typography>
+                                                    <>
+                                                        <Typography variant="subtitle1" component="p" sx={{ mt: 2, mb: 2, whiteSpace: 'pre-line', overflowWrap: 'break-word' }}>
+                                                            {post.text}
+                                                        </Typography>
+                                                        <Grid sx={{
+                                                            display: 'flex',
+                                                            flexWrap: 'wrap'
+
+                                                        }}>
+                                                            {post.categories.map(category =>
+                                                                <Chip label={category.title} key={category.id} sx={{ mb: 1, mr: 1 }} variant="outlined"></Chip>
+                                                            )}
+                                                        </Grid>
+                                                    </>
                                                 }
                                                 <Stack
                                                     direction="row"

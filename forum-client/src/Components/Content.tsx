@@ -7,13 +7,16 @@ import SignUp from './Sign/Sign-up';
 import { isSigned } from '../API/loginRequests';
 import CreatePost from './Posts/CreatePost';
 import { useDispatch, useSelector } from 'react-redux';
-import { setGlobalError, setLogInError } from '../Redux/Reducers/AccountReducer';
+import { setGlobalError, setLogInError, setPermissionError } from '../Redux/Reducers/AccountReducer';
 import PostPage from './Posts/PostPage';
 import { Alert, Collapse, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { RootState } from '../Redux/store';
+import AdminPage from './Admin/AdminPage';
+import { requestAccount } from '../API/userRequests';
+import CategoriesPage from './Categories/CategoriesPage';
 
-const router = (Action: () => void) => createBrowserRouter([
+const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void) => createBrowserRouter([
     {
         element: <Header />,
         children: [
@@ -32,7 +35,17 @@ const router = (Action: () => void) => createBrowserRouter([
             {
                 path: "/createPost",
                 element: <CreatePost />,
-                loader: async () => CheckAndNavigate(Action),
+                loader: async () => CheckSigned(SignInErrorAction),
+            },
+            {
+                path: "/AdminPanel",
+                element: <AdminPage />,
+                loader: async () => CheckRole(SignInErrorAction, PermissionErrorAction),
+            },
+            {
+                path: "/Categories",
+                element: <CategoriesPage />,
+                loader: async () => CheckRole(SignInErrorAction, PermissionErrorAction),
             }
         ]
     },
@@ -51,8 +64,12 @@ export default function AppContent() {
     const dispatch = useDispatch();
     const globalError = useSelector((state: RootState) => state.account.GlobalError);
 
-    const setSignError = () => {
+    const setErrorSignIn = () => {
         dispatch(setLogInError('Not signed in'));
+    }
+
+    const setErrorPermission = () => {
+        dispatch(setPermissionError('Don`t have permissions for this page'));
     }
 
     return (
@@ -76,15 +93,14 @@ export default function AppContent() {
                     {globalError}
                 </Alert>
             </Collapse>
-            <RouterProvider router={router(setSignError)} />
+            <RouterProvider router={router(setErrorSignIn, setErrorPermission)} />
         </>
     );
 }
 
 
 
-function CheckAndNavigate(Action: () => void) {
-
+function CheckSigned(Action: () => void) {
     if (!isSigned()) {
         Action();
         return redirect("/")
@@ -92,3 +108,19 @@ function CheckAndNavigate(Action: () => void) {
     return null;
 }
 
+async function CheckRole(SignInErrorAction: () => void, PermissionErrorAction: () => void) {
+    if (!isSigned()) {
+        SignInErrorAction();
+        return redirect("/")
+    };
+    try {
+        const result = await requestAccount().toPromise();
+        if (result!.role !== "Admin") {
+            PermissionErrorAction();
+            return redirect("/");
+        };
+    } catch (error) {
+        PermissionErrorAction();
+    }
+    return null;
+}

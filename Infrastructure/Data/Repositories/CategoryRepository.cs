@@ -1,44 +1,184 @@
 ﻿using Application.Common.DTOs;
 using Application.Common.Interfaces.Repositories;
-using Application.UseCases.Category.Commands;
-using Application.UseCases.Category.Queries;
+using Application.UseCases.Categories.Commands;
+using Application.UseCases.Categories.Queries;
+using Application.UseCases.Comments.Commands;
+using Dapper;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Repositories
 {
     public class CategoryRepository : ICategoryRepository
     {
-        public Task<List<CategoryDto>> GetCategoriesAsync(GetCategoriesQuery getCategoriesQuery)
+        private readonly DapperContext _dapperContext;
+        private readonly ILogger _logger;
+
+        public CategoryRepository(DapperContext context, ILogger logger)
         {
-            throw new NotImplementedException();
+            _dapperContext = context;
+            _logger = logger;
         }
-        public Task<List<CategoryDto>> GetPostCategoriesAsync(GetPostCategoriesQuery getPostCategoriesQuery)
+        public async Task<List<CategoryDto>> GetCategoriesAsync(GetCategoriesQuery getCategoriesQuery)
         {
-            throw new NotImplementedException();
+            List<CategoryDto> result = null;
+
+            string query = $"SELECT * FROM Categories " +
+                $"ORDER BY Title " +
+                $"OFFSET @offset ROWS FETCH NEXT @next ROWS ONLY";
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+                result = (await connection.QueryAsync<dynamic>(query, getCategoriesQuery)).Select(item =>
+                    new CategoryDto()
+                    {
+                        Id = item.Id,
+                        Title = item.Title,
+                    }
+                ).ToList();
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Getting categories");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Getting categories");
+                throw;
+            }
+
+            return result;
+        }
+        public async Task<List<CategoryDto>> GetPostCategoriesAsync(GetPostCategoriesQuery getPostCategoriesQuery)
+        {
+            List<CategoryDto> result = null;
+
+            string query = $"SELECT Categories.Id, Categories.Title FROM Post_Category " +
+                $"JOIN Categories ON Categories.Id = Post_Category.Category_Id " +
+                $"WHERE Post_Category.Post_Id = @Post_Id";
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+                result = (await connection.QueryAsync<dynamic>(query, getPostCategoriesQuery)).Select(item =>
+                    new CategoryDto()
+                    {
+                        Id = item.Id,
+                        Title = item.Title,
+                    }
+                ).ToList();
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Getting post categories");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Getting post categories");
+                throw;
+            }
+
+            return result;
         }
 
-        public Task<CategoryDto> GetCategoryByIdAsync(GetCategoryByIdQuery getCategoryByIdQuery)
+        public async Task<CategoryDto> GetCategoryByIdAsync(GetCategoryByIdQuery getCategoryByIdQuery)
         {
-            throw new NotImplementedException();
+            CategoryDto result = null;
+
+            string query = $"SELECT * FROM Categories WHERE Id = @Id";
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+                result = (await connection.QueryAsync<dynamic>(query, getCategoryByIdQuery)).Select(item =>
+                    new CategoryDto()
+                    {
+                        Id = item.Id,
+                        Title = item.Title,
+                    }
+                ).FirstOrDefault();
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Getting category by id");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Getting category by id");
+                throw;
+            }
+
+            return result;
         }
 
-        public Task CreateCategoryAsync(CreateCategoryCommand createCategoryCommand)
+        public async Task CreateCategoryAsync(CreateCategoryCommand createCategoryCommand)
         {
-            throw new NotImplementedException();
+            string query = $"INSERT INTO Categories (Title) VALUES(@Title)";
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+                await connection.ExecuteAsync(query, createCategoryCommand);
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Creating category");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Creating category");
+                throw;
+            }
         }
 
-        public Task DeleteCategoryAsync(DeleteCategoryCommand deleteCategoryCommand)
+        public async Task UpdateCategoryAsync(UpdateCategoryCommand updateCategoryCommand)
         {
-            throw new NotImplementedException();
+            string query = $"UPDATE Categories SET Title = @Title WHERE Id = @Id";
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+                await connection.ExecuteAsync(query, updateCategoryCommand);
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Updating category");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Updating category");
+                throw;
+            }
         }
 
-        public Task UpdateCategoryAsync(UpdateCategoryCommand updateCategoryCommand)
+        public async Task DeleteCategoryAsync(DeleteCategoryCommand deleteCategoryCommand)
         {
-            throw new NotImplementedException();
+            string query = $"DELETE FROM Categories WHERE Id = @Id";
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+                await connection.ExecuteAsync(query, deleteCategoryCommand);
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Deleting category");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Deleting category");
+                throw;
+            }
         }
     }
 }

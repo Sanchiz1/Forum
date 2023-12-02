@@ -1,5 +1,6 @@
 ﻿using Application.Common.ViewModels;
 using Domain.Entities;
+using Forum.GraphQL.Types.CategoryTypes;
 using GraphQL.Types;
 
 namespace Forum.GraphQL.Types.UserTypes
@@ -14,6 +15,7 @@ namespace Forum.GraphQL.Types.UserTypes
             Field(i => i.Post.Date_Created, type: typeof(DateTimeGraphType));
             Field(i => i.Post.Date_Edited, type: typeof(DateTimeGraphType), nullable: true);
             Field(i => i.Post.User_Id, type: typeof(IntGraphType));
+            Field(i => i.Categories, type: typeof(ListGraphType<CategoryGraphType>));
             Field(i => i.User_Username, type: typeof(StringGraphType));
             Field(i => i.Likes, type: typeof(IntGraphType));
             Field(i => i.Comments, type: typeof(IntGraphType));

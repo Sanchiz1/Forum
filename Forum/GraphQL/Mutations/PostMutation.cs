@@ -34,6 +34,23 @@ namespace Forum.GraphQL.Mutations
                     return "Post updated successfully";
                 });
 
+            Field<StringGraphType>("addPostCategory")
+                .Argument<NonNullGraphType<AddPostCategoryInputGraphType>>("input")
+                .ResolveAsync(async context =>
+                {
+                    AddPostCategoryCommand addPostCategoryCommand = context.GetArgument<AddPostCategoryCommand>("input");
+                    await _mediator.Send(addPostCategoryCommand);
+                    return "Post category added successfully";
+                });
+
+            Field<StringGraphType>("removePostCategory")
+                .Argument<NonNullGraphType<RemovePostCategoryInputGraphType>>("input")
+                .ResolveAsync(async context =>
+                {
+                    RemovePostCategoryCommand removePostCategoryCommand = context.GetArgument<RemovePostCategoryCommand>("input");
+                    await _mediator.Send(removePostCategoryCommand);
+                    return "Post category removed successfully";
+                });
             Field<StringGraphType>("deletePost")
                 .Argument<NonNullGraphType<DeletePostInputGraphType>>("input")
                 .ResolveAsync(async context =>

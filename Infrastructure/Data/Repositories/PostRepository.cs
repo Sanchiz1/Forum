@@ -221,6 +221,46 @@ namespace Infrastructure.Data.Repositories
                 throw;
             }
         }
+        public async Task AddPostCategoryAsync(AddPostCategoryCommand addPostCategoryCommand)
+        {
+            string query = $"INSERT INTO Post_Category (Post_Id, Category_Id) VALUES (@Post_Id, @Category_Id)";
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+                await connection.ExecuteAsync(query, addPostCategoryCommand);
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Adding post category");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Adding post category");
+                throw;
+            }
+        }
+        public async Task RemovePostCategoryAsync(RemovePostCategoryCommand removePostCategoryCommand)
+        {
+            string query = $"DELETE FROM Post_Category WHERE Post_Id = @Post_Id AND Category_Id = @Category_Id";
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+                await connection.ExecuteAsync(query, removePostCategoryCommand);
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Removing post category");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Removing post category");
+                throw;
+            }
+        }
         public async Task DeletePostAsync(DeletePostCommand deletePostCommand)
         {
             string query = $"Delete FROM Posts WHERE Id = @Id";

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Constants;
+using System;
 
 namespace Domain.Entities
 {
@@ -10,9 +11,7 @@ namespace Domain.Entities
         public string Bio { get; set; }
         public DateTime Registered_At { get; set; }
 
-        public User()
-        {
-        }
+        public User() { }
 
         public User(string username, string email, string bio)
         {
