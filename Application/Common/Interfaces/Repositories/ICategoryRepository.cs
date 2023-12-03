@@ -8,6 +8,7 @@ namespace Application.Common.Interfaces.Repositories
 {
     public interface ICategoryRepository
     {
+        Task<List<CategoryDto>> GetAllCategoriesAsync(GetAllCategoriesQuery getAllCategoriesQuery);
         Task<List<CategoryDto>> GetCategoriesAsync(GetCategoriesQuery getCategoriesQuery);
         Task<List<CategoryDto>> GetPostCategoriesAsync(GetPostCategoriesQuery getPostCategoriesQuery);
         Task<CategoryDto> GetCategoryByIdAsync(GetCategoryByIdQuery getCategoryByIdQuery);

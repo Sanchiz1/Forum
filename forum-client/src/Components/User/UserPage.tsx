@@ -219,7 +219,6 @@ export default function UserPage() {
                   mt: 4, mb: 4, width: 1
                 }}>
                   <Grid container spacing={2}>
-
                     <Grid item xs={12} md={4} lg={4}>
                       <Grid item xs={12}>
                         <Paper

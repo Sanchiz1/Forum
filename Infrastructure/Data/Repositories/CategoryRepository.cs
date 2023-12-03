@@ -23,13 +23,45 @@ namespace Infrastructure.Data.Repositories
             _dapperContext = context;
             _logger = logger;
         }
+        public async Task<List<CategoryDto>> GetAllCategoriesAsync(GetAllCategoriesQuery getAllCategoriesQuery)
+        {
+            List<CategoryDto> result = null;
+
+            string query = $"SELECT * FROM Categories " +
+                $"ORDER BY Title";
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+                result = (await connection.QueryAsync<dynamic>(query, getAllCategoriesQuery)).Select(item =>
+                    new CategoryDto()
+                    {
+                        Id = item.Id,
+                        Title = item.Title,
+                    }
+                ).ToList();
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Getting categories");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Getting categories");
+                throw;
+            }
+
+            return result;
+        }
         public async Task<List<CategoryDto>> GetCategoriesAsync(GetCategoriesQuery getCategoriesQuery)
         {
             List<CategoryDto> result = null;
 
             string query = $"SELECT * FROM Categories " +
+                $"WHERE Title LIKE '{getCategoriesQuery.Search}' " +
                 $"ORDER BY Title " +
-                $"OFFSET @offset ROWS FETCH NEXT @next ROWS ONLY";
+                $"OFFSET @offset ROWS FETCH NEXT @next ROWS ONLY ";
 
             try
             {

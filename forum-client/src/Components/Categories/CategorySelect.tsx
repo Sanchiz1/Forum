@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -6,7 +6,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
     Box, Button, Container, CssBaseline, Paper, Link, IconButton,
     Dialog, DialogTitle, DialogActions, MenuItem, Tooltip, TextField,
-    FormControl, InputLabel, Select, OutlinedInput, Chip, SelectChangeEvent
+    FormControl, InputLabel, Select, OutlinedInput, Chip, SelectChangeEvent, Menu, List, ListItem, ListItemButton, ListItemText
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -30,41 +30,43 @@ import { RootState } from '../../Redux/store';
 import { deleteCommentRequest, likeCommentRequest, requestCommentById, updateCommentRequest } from '../../API/commentRequests';
 import IconButtonWithCheck from '../UtilComponents/IconButtonWithCheck';
 import { Category } from '../../Types/Category';
-import { createCategoryRequest, requestCategories } from '../../API/categoryRequests';
+import { createCategoryRequest, requestAllCategories, requestCategories } from '../../API/categoryRequests';
 import CategoryElement from './CategoryElement';
+import AddIcon from '@mui/icons-material/Add';
 
+interface Props{
+    AddCategory: (category_id: number) => void,
+    Categries: Category[]
+}
 
-export default function CategoriesSelect() {
+export default function CategoriesSelect(props: Props) {
+    const ref = useRef(null)
+    const [seacrh, setSearch] = useState<string>('');
     const [categories, setCategories] = useState<Category[]>([])
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const Account = useSelector((state: RootState) => state.account.Account);
 
-    const next = 4;
-    const [fetching, setFetching] = useState(false);
-    const [userTimestamp, setUserTimestamp] = useState(new Date());
-    const [offset, setOffset] = useState(0);
-    const [hasMore, setHasMore] = useState(true);
 
-    const handleChange = (event: SelectChangeEvent<typeof selectedCategories>) => {
-        const {
-            target: { value },
-        } = event;
-        setSelectedCategories(typeof value === 'string' ? value.split(',') : value,);
+    // menu 
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event: any) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
     };
 
+    const handleSelect = (category_id: number) => {
+        setAnchorEl(null);
+        props.AddCategory(category_id);
+    }
+
     const fetchCategories = () => {
-        requestCategories(offset, next).subscribe({
+        requestAllCategories().subscribe({
             next(value) {
-                if (value.length == 0) {
-                    setHasMore(false);
-                    return;
-                }
-                setCategories([...categories, ...value]);
-                if (document.documentElement.offsetHeight - window.innerHeight < 100) {
-                    setOffset(offset + next);
-                }
+                setCategories(value);
             },
             error(err) {
                 dispatch(setGlobalError(err.message));
@@ -73,43 +75,43 @@ export default function CategoriesSelect() {
     };
 
     useEffect(() => {
+        if (!open) {
+            setCategories([]);
+            return;
+        }
         fetchCategories()
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [offset])
-
-    function handleScroll() {
-        if (window.innerHeight + document.documentElement.scrollTop <= document.documentElement.scrollHeight - 10 || !hasMore) return;
-        setOffset(offset + next);
-    }
+    }, [open])
 
     return (
-        <FormControl sx={{ mt: 1 }} fullWidth>
-            <InputLabel id="demo-multiple-chip-label">Categories</InputLabel>
-            <Select
-                labelId="demo-multiple-chip-label"
-                id="demo-multiple-chip"
-                multiple
-                value={selectedCategories}
-                onChange={handleChange}
-                input={<OutlinedInput id="select-multiple" label="Categories" />}
-                renderValue={(selectedCategories) => (
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {selectedCategories.map((category, index) => (
-                            <Chip key={index} label={category} />
-                        ))}
-                    </Box>
-                )}
+        <>
+            <Chip
+                label="Add"
+                icon={<AddIcon />}
+                variant="outlined"
+                sx={{ mb: 1, mr: 1 }}
+                onClick={handleClick}
+            />
+            <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                    'aria-labelledby': 'basic-button',
+                }}
             >
-                {categories.map((category) => (
-                    <MenuItem
-                        key={category.id}
-                        value={category.title}
-                    >
-                        {category.title}
-                    </MenuItem>
-                ))}
-            </Select>
-        </FormControl>
+                <List sx={{maxHeight: 200}}>
+                    {categories.map((category) => (
+                        <ListItemButton
+                            key={category.id}
+                            onClick={() => handleSelect(category.id)}
+                            disabled={props.Categries.find(c => c.id === category.id) !== undefined}
+                        >
+                            {category.title}
+                        </ListItemButton>
+                    ))}
+                </List>
+            </Menu>
+        </>
     )
 }

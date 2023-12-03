@@ -165,13 +165,14 @@ export default function PostPage() {
     const handleAddPostCategory = (post_id: number, category_id: number) => {
         addPostCategoryRequest(post_id, category_id).subscribe({
             next(value) {
-                enqueueSnackbar(value, {
-                    variant: 'success', anchorOrigin: {
-                        vertical: 'top',
-                        horizontal: 'center'
-                    },
-                    autoHideDuration: 1500
-                });
+                // enqueueSnackbar(value, {
+                //     variant: 'success', anchorOrigin: {
+                //         vertical: 'top',
+                //         horizontal: 'center'
+                //     },
+                //     autoHideDuration: 1500
+                // });
+                fetchPost();
             },
             error(err) {
                 setError(err.message)
@@ -182,13 +183,13 @@ export default function PostPage() {
     const handleRemovePostCategory = (post_id: number, category_id: number) => {
         removePostCategoryRequest(post_id, category_id).subscribe({
             next(value) {
-                enqueueSnackbar(value, {
-                    variant: 'success', anchorOrigin: {
-                        vertical: 'top',
-                        horizontal: 'center'
-                    },
-                    autoHideDuration: 1500
-                });
+                // enqueueSnackbar(value, {
+                //     variant: 'success', anchorOrigin: {
+                //         vertical: 'top',
+                //         horizontal: 'center'
+                //     },
+                //     autoHideDuration: 1500
+                // });
                 fetchPost();
             },
             error(err) {
@@ -226,7 +227,7 @@ export default function PostPage() {
                                                 p: 1,
                                                 width: 1,
                                             }}>
-                                                <Grid sx={{
+                                                <Grid item sx={{
                                                     display: 'flex',
                                                     flexDirection: 'row',
                                                     alignItems: 'center'
@@ -324,18 +325,11 @@ export default function PostPage() {
                                                         <Grid sx={{
                                                             display: 'flex',
                                                             flexWrap: 'wrap'
-
                                                         }}>
                                                             {post.categories.map(category =>
                                                                 <Chip label={category.title} key={category.id} sx={{ mb: 1, mr: 1 }} onDelete={() => handleRemovePostCategory(post.id.valueOf(), category.id)} variant="outlined"></Chip>
                                                             )}
-                                                            <Chip
-                                                                label="Add"
-                                                                onClick={() => { }}
-                                                                icon={<AddIcon />}
-                                                                variant="outlined"
-                                                                sx={{ mb: 1, mr: 1 }}
-                                                            />
+                                                            <CategoriesSelect AddCategory={(category_id: number) => handleAddPostCategory(post.id.valueOf(), category_id)} Categries={post.categories}></CategoriesSelect>
                                                         </Grid>
                                                     </>
                                                     :

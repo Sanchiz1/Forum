@@ -146,6 +146,7 @@
     <Compile Include="UseCases\Categories\Commands\CreateCategory.cs" />
     <Compile Include="UseCases\Categories\Commands\DeleteCategory.cs" />
     <Compile Include="UseCases\Categories\Commands\UpdateCategory.cs" />
+    <Compile Include="UseCases\Categories\Queries\GetAllCategories.cs" />
     <Compile Include="UseCases\Categories\Queries\GetCategories.cs" />
     <Compile Include="UseCases\Categories\Queries\GetCategoryById.cs" />
     <Compile Include="UseCases\Categories\Queries\GetPostCategories.cs" />

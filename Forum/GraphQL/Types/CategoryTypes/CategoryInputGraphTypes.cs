@@ -11,10 +11,17 @@ namespace Forum.GraphQL.Types.CategoryTypes
             Field(c => c.Title, type: typeof(StringGraphType));
         }
     }
+    public class GetAllCategoriesInputGraphType : InputObjectGraphType<GetAllCategoriesQuery>
+    {
+        public GetAllCategoriesInputGraphType()
+        {
+        }
+    }
     public class GetCategoriesInputGraphType : InputObjectGraphType<GetCategoriesQuery>
     {
         public GetCategoriesInputGraphType()
         {
+            Field(p => p.Search, type: typeof(StringGraphType), nullable: true);
             Field(p => p.Next, type: typeof(IntGraphType));
             Field(p => p.Offset, type: typeof(IntGraphType));
         }

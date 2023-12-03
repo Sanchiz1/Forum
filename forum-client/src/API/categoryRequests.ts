@@ -15,7 +15,32 @@ interface GraphqlCategories {
     }
 }
 
-export function requestCategories(offset: Number, next: Number) {
+export function requestAllCategories() {
+    return GetAjaxObservable<GraphqlCategories>(
+        `query{
+            categories{
+                categories:allCategories{
+                    id
+                    title
+                }
+              }
+            }`,
+        {
+            "Input": {
+            }
+        },
+        false
+    ).pipe(
+        map((value) => {
+            return value.response.data.categories.categories;
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}
+
+export function requestCategories(offset: Number, next: Number, search?: string) {
     return GetAjaxObservable<GraphqlCategories>(
         `query($Input:  GetCategoriesInput!){
             categories{
@@ -27,6 +52,7 @@ export function requestCategories(offset: Number, next: Number) {
             }`,
         {
             "Input": {
+                "search": search,
                 "offset": offset,
                 "next": next
             }

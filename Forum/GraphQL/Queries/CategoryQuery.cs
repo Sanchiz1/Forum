@@ -27,6 +27,14 @@ namespace Forum.GraphQL.Queries
                     };
                     return await _mediator.Send(getCategoriesQuery);
                 });
+
+            Field<ListGraphType<CategoryGraphType>>("allCategories")
+                .ResolveAsync(async context =>
+                {
+                    GetAllCategoriesQuery getAllCategoriesQuery = new GetAllCategoriesQuery();
+                    return await _mediator.Send(getAllCategoriesQuery);
+                });
+
             Field<CategoryGraphType>("category")
                 .Argument<NonNullGraphType<GetCategoryByIdInputGraphType>>("input")
                 .ResolveAsync(async context =>

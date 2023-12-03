@@ -15,6 +15,7 @@ namespace Application.UseCases.Categories.Queries
     {
         public int Next { get; set; }
         public int Offset { get; set; }
+        public string Search { get; set; } = "%";
     }
     public class GetCategoriesQueryHandler : IRequestHandler<GetCategoriesQuery, List<CategoryDto>>
     {
