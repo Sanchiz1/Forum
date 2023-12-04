@@ -14,7 +14,7 @@ interface GraphqlPosts {
     }
 }
 
-export function requestPosts(offset: Number, next: Number, order: String, user_timestamp: Date) {
+export function requestPosts(offset: Number, next: Number, order: String, user_timestamp: Date, categories?: number[]) {
     return GetAjaxObservable<GraphqlPosts>(
         `query($Input:  GetPostsInput!){
               posts{
@@ -37,7 +37,8 @@ export function requestPosts(offset: Number, next: Number, order: String, user_t
                 "offset": offset,
                 "next": next,
                 "order": order,
-                "user_Timestamp": user_timestamp.toISOString()
+                "user_Timestamp": user_timestamp.toISOString(),
+                "categories": categories
             }
         },
         false

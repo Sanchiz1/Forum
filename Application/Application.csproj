@@ -166,6 +166,7 @@
     <Compile Include="UseCases\Posts\Commands\RemovePostCategory.cs" />
     <Compile Include="UseCases\Posts\Commands\UpdatePost.cs" />
     <Compile Include="UseCases\Posts\Queries\GetPostById.cs" />
+    <Compile Include="UseCases\Posts\Queries\GetSearchedPosts.cs" />
     <Compile Include="UseCases\Posts\Queries\GetPosts.cs" />
     <Compile Include="UseCases\Posts\Queries\GetUserPosts.cs" />
     <Compile Include="UseCases\Replies\Commands\CreateReply.cs" />

@@ -15,12 +15,14 @@ import { Post } from '../Types/Post';
 import PostElement from './Posts/PostElement';
 import { User } from '../Types/User';
 import { BootstrapInput } from './UtilComponents/BootstrapInput';
+import CategoriesFilter from './Categories/CategoryFilter';
 
 export default function Main() {
   const next = 4;
   const [userTimestamp, setUserTimestamp] = useState(new Date());
   const [offset, setOffset] = useState(0);
   const [order, setOrder] = useState("Date_Created");
+  const [categories, setCategories] = useState<number[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
   const [hasMore, setHasMore] = useState(true);
 
@@ -33,13 +35,15 @@ export default function Main() {
   const Account: User = useSelector((state: RootState) => state.account.Account);
 
   useEffect(() => {
+    setHasMore(true);
     setPosts([]);
     setOffset(0);
     setUserTimestamp(new Date());
-  }, [order]);
+    fetchposts();
+  }, [order, categories]);
 
-  useEffect(() => {
-    requestPosts(offset, next, order, userTimestamp).subscribe({
+  const fetchposts = () => {
+    requestPosts(offset, next, order, userTimestamp, categories).subscribe({
       next(value) {
         if (value.length == 0) {
           setHasMore(false);
@@ -55,6 +59,9 @@ export default function Main() {
         dispatch(setGlobalError(err.message));
       },
     })
+  }
+  useEffect(() => {
+    fetchposts();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [offset]);
@@ -91,7 +98,7 @@ export default function Main() {
                 width: 1,
                 display: 'flex',
                 flexDirection: 'row',
-                alignItems: 'stretch',
+                alignItems: 'center',
               }}>
                 <Typography variant="caption" sx={{ fontSize: '15px', display: 'flex', alignItems: 'center' }}>
                   <Select
@@ -103,6 +110,7 @@ export default function Main() {
                     <MenuItem value={"Date_Created"}>New</MenuItem>
                   </Select>
                 </Typography>
+                <CategoriesFilter Categories={categories} SetCategories={setCategories}></CategoriesFilter>
                 <ButtonWithCheck sx={{ml: 'auto'}} variant='text' ActionWithCheck={() => { navigator('/CreatePost'); }}>Create Post</ButtonWithCheck>
               </Paper>
             </Grid>

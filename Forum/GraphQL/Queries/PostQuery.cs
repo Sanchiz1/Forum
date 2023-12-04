@@ -34,6 +34,7 @@ namespace Forum.GraphQL.Queries
                             Order = context.GetArgument<GetPostsQuery>("input").Order,
                             User_Id = AccountHelper.GetUserIdFromClaims(context.User!),
                             User_Timestamp = context.GetArgument<GetPostsQuery>("input").User_Timestamp,
+                            Categories = context.GetArgument<GetPostsQuery>("input").Categories,
                         };
                         return await _mediator.Send(getPostsQuery);
                     }

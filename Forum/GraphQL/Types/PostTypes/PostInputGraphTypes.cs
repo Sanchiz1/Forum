@@ -12,6 +12,18 @@ namespace Forum.GraphQL.Types.PostTypes
             Field(p => p.Offset, type: typeof(IntGraphType));
             Field(p => p.User_Timestamp, type: typeof(DateTimeGraphType));
             Field(p => p.Order, type: typeof(StringGraphType));
+            Field(p => p.Categories, type: typeof(ListGraphType<IntGraphType>));
+        }
+    }
+    public class GetSearchedPostsInputGraphType : InputObjectGraphType<GetSearchedPostsQuery>
+    {
+        public GetSearchedPostsInputGraphType()
+        {
+            Field(p => p.Next, type: typeof(IntGraphType));
+            Field(p => p.Offset, type: typeof(IntGraphType));
+            Field(p => p.User_Timestamp, type: typeof(DateTimeGraphType));
+            Field(p => p.Order, type: typeof(StringGraphType));
+            Field(p => p.Search, type: typeof(StringGraphType), nullable: true);
         }
     }
     public class GetUserPostsInputGraphType : InputObjectGraphType<GetUserPostsQuery>

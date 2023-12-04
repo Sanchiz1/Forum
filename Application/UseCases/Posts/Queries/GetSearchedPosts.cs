@@ -12,24 +12,24 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Posts.Queries
 {
-    public class GetPostsQuery : IRequest<List<PostViewModel>>
+    public class GetSearchedPostsQuery : IRequest<List<PostViewModel>>
     {
         public int Next { get; set; }
         public int Offset { get; set; }
         public DateTime User_Timestamp { get; set; }
         public int User_Id { get; set; } = 0;
         public string Order { get; set; } = "Date";
-        public int[] Categories { get; set; } = [];
+        public string Search { get; set; } = "%";
     }
-    public class GetPostsQueryHandler : IRequestHandler<GetPostsQuery, List<PostViewModel>>
+    public class GetSearchedPostsQueryHandler : IRequestHandler<GetSearchedPostsQuery, List<PostViewModel>>
     {
         private readonly IPostRepository _context;
 
-        public GetPostsQueryHandler(IPostRepository context)
+        public GetSearchedPostsQueryHandler(IPostRepository context)
         {
             _context = context;
         }
 
-        public async Task<List<PostViewModel>> Handle(GetPostsQuery request, CancellationToken cancellationToken) => await _context.GetPostsAsync(request);
+        public async Task<List<PostViewModel>> Handle(GetSearchedPostsQuery request, CancellationToken cancellationToken) => await _context.GetSearchedPostsAsync(request);
     }
 }

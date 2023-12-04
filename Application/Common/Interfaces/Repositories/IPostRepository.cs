@@ -14,6 +14,7 @@ namespace Application.Common.Interfaces.Repositories
 {
     public interface IPostRepository
     {
+        Task<List<PostViewModel>> GetSearchedPostsAsync(GetSearchedPostsQuery getSearchedPostsQuery);
         Task<List<PostViewModel>> GetPostsAsync(GetPostsQuery getPostsQuery);
         Task<List<PostViewModel>> GetUserPostsAsync(GetUserPostsQuery getUserPostsQuery);
         Task<PostViewModel> GetPostByIdAsync(GetPostByIdQuery getPostByIdQuery);

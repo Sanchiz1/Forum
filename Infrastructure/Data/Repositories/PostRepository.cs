@@ -23,6 +23,7 @@ namespace Infrastructure.Data.Repositories
             _dapperContext = context;
             _logger = logger;
         }
+
         public async Task<List<PostViewModel>> GetPostsAsync(GetPostsQuery getPostsQuery)
         {
             List<PostViewModel> result = null;
@@ -34,9 +35,10 @@ namespace Infrastructure.Data.Repositories
                     $" FROM Posts " +
                     $"  INNER JOIN Users ON Users.Id = Posts.User_Id" +
                     $"  LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id " +
+                    $"  LEFT JOIN Post_Category ON Post_Category.Post_Id = Posts.Id " +
                     $"  LEFT JOIN Comments ON Comments.Post_Id = Posts.Id " +
                     $"  LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id" +
-                    $" WHERE Posts.Date_Created < @User_Timestamp" +
+                    $" WHERE Posts.Date_Created < @User_Timestamp AND ({getPostsQuery.Categories.Length} = 0 OR Post_Category.Category_Id in @Categories) " +
                     $" GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id, users.Username" +
                     $" ORDER BY {getPostsQuery.Order} DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
 
@@ -76,6 +78,61 @@ namespace Infrastructure.Data.Repositories
 
             return result;
         }
+
+        public async Task<List<PostViewModel>> GetSearchedPostsAsync(GetSearchedPostsQuery getSearchedPostsQuery)
+        {
+            List<PostViewModel> result = null;
+            string query = $"SELECT Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id," +
+                    $" users.Username as User_Username," +
+                    $" Count(DISTINCT Post_Likes.User_Id) as Likes," +
+                    $" Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
+                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked" +
+                    $" FROM Posts " +
+                    $"  INNER JOIN Users ON Users.Id = Posts.User_Id" +
+                    $"  LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id " +
+                    $"  LEFT JOIN Comments ON Comments.Post_Id = Posts.Id " +
+                    $"  LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id" +
+                    $" WHERE Posts.Title LIKE '{getSearchedPostsQuery.Search}' OR Posts.Text LIKE '{getSearchedPostsQuery.Search}' AND Posts.Date_Created < @User_Timestamp " +
+                    $" GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id, users.Username" +
+                    $" ORDER BY {getSearchedPostsQuery.Order} DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+                result = (await connection.QueryAsync<dynamic>(query, getSearchedPostsQuery)).Select(item =>
+
+                    new PostViewModel()
+                    {
+                        Post = new PostDto()
+                        {
+                            Id = item.Id,
+                            Title = item.Title,
+                            Text = item.Text,
+                            User_Id = item.User_Id,
+                            Date_Created = item.Date_Created,
+                            Date_Edited = item.Date_Edited,
+                        },
+                        User_Username = item.User_Username,
+                        Likes = item.Likes,
+                        Comments = item.Comments,
+                        Liked = item.Liked,
+                    }
+                ).ToList();
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Getting posts");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Getting posts");
+                throw;
+            }
+
+            return result;
+        }
+
         public async Task<List<PostViewModel>> GetUserPostsAsync(GetUserPostsQuery getUserPostsQuery)
         {
             List<PostViewModel> result = null;
