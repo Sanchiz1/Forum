@@ -102,11 +102,12 @@ export default function CategoriesFilter(props: Props) {
                     'aria-labelledby': 'basic-button',
                 }}
             >
-                <List sx={{ maxHeight: 200 }}>
+                <List sx={{ maxHeight: 200, py: 0 }}>
                     {categories.map((category) => (
                         <ListItemButton
                             key={category.id}
                             onClick={() => handleSelect(category.id)}
+                            sx={{py: 0}}
                         >
                             <Checkbox
                                 edge="start"

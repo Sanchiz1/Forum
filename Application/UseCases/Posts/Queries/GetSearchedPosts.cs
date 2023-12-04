@@ -18,7 +18,7 @@ namespace Application.UseCases.Posts.Queries
         public int Offset { get; set; }
         public DateTime User_Timestamp { get; set; }
         public int User_Id { get; set; } = 0;
-        public string Order { get; set; } = "Date";
+        public string Order { get; set; } = "Date_Created";
         public string Search { get; set; } = "%";
     }
     public class GetSearchedPostsQueryHandler : IRequestHandler<GetSearchedPostsQuery, List<PostViewModel>>

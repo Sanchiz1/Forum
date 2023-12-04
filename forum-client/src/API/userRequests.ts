@@ -7,27 +7,45 @@ import { User, UserInput } from "../Types/User";
 
 const url = "https://localhost:7295/graphql";
 
+interface GraphqlSearchedUser {
+    users: {
+        searchedUsers: User[]
+    }
+}
 
-export function requestUsers(variables: {}) {
-    return GetAjaxObservable<{}>(`query{
+export function requestUsers(offset: Number, next: Number, user_timestamp: Date, search: string) {
+    return GetAjaxObservable<GraphqlSearchedUser>(`
+    query($Input:  GetSearchedUsersInput!){
         users{
-          id
-          username
-          email
-          bio
-          registered_At
-          role
-          role_Id
+            searchedUsers(input: $Input){
+                id
+                username
+                email
+                bio
+                registered_At
+                posts
+                comments
+                role
+                role_Id
+        }
       }
-    }`, {}).pipe(
-        map((value): string => {
-
-            return "/";
-        }),
-        catchError((error) => {
-            throw error
-        })
-    );
+    }`,
+        {
+            "Input": {
+                "offset": offset,
+                "next": next,
+                "user_Timestamp": user_timestamp.toISOString(),
+                "search": search
+            }
+        },
+        false).pipe(
+            map((value) => {
+                return value.response.data.users.searchedUsers;
+            }),
+            catchError((error) => {
+                throw error
+            })
+        );
 }
 
 interface GraphqlUser {
@@ -45,6 +63,8 @@ export function requestUserById(id: Number) {
           email
           bio
           registered_At
+          posts
+          comments
           role
           role_Id
       }
@@ -73,6 +93,8 @@ export function requestUserByUsername(usernaame: string) {
             email
             bio
             registered_At
+            posts
+            comments
             role
             role_Id
             }

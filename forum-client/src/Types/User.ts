@@ -4,6 +4,8 @@ export interface User {
     email?: string,
     bio: string,
     registered_At: Date,
+    posts: number
+    comments: number
     role_Id: number
     role: string
 }

@@ -1,12 +1,14 @@
 ﻿using Application.Common.DTOs;
 using Application.Common.Interfaces.Repositories;
 using Application.Common.ViewModels;
+using Application.UseCases.Posts.Queries;
 using Application.UseCases.Users.Commands;
 using Application.UseCases.Users.Queries;
 using Dapper;
 using Infrastructure.Helpers;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,16 +25,74 @@ namespace Infrastructure.Data.Repositories
             _dapperContext = context;
             _logger = logger;
         }
+        public async Task<List<UserViewModel>> GetSearchedUsersAsync(GetSearchedUsersQuery getSearchedUsersQuery)
+        {
+            List<UserViewModel> result = null;
+
+            string query = $"SELECT Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, " +
+                $"COALESCE(Roles.Name, 'User') AS Role, " +
+                $"COALESCE(Users.Role_Id, 0) AS Role_Id, " +
+                $"Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
+                $"Count(DISTINCT Posts.Id) as Posts " +
+                $"FROM Users " +
+                $"LEFT JOIN Roles ON Roles.Id = Users.Role_Id " +
+                $"LEFT JOIN Posts ON Posts.User_Id = Users.Id " +
+                $"LEFT JOIN Comments ON Comments.User_Id = Users.Id " +
+                $"LEFT JOIN Replies ON Replies.User_Id = Users.Id " +
+                $"WHERE Users.Registered_At < @User_Timestamp AND Users.Username LIKE '%{getSearchedUsersQuery.Search}%' " +
+                $"GROUP BY Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, Roles.Name, Role_Id " + 
+                $"ORDER BY Users.Username DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+                result = (await connection.QueryAsync<dynamic>(query, getSearchedUsersQuery)).Select(item =>
+                    new UserViewModel()
+                    {
+                        User = new UserDto()
+                        {
+                            Id = item.Id,
+                            Username = item.Username,
+                            Email = item.Email,
+                            Bio = item.Bio,
+                            Registered_At = item.Registered_At,
+                        },
+                        Posts = item.Posts,
+                        Comments = item.Comments,
+                        Role = item.Role,
+                        Role_Id = item.Role_Id,
+                    }
+                ).ToList();
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Getting searched users");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Getting searched users");
+                throw;
+            }
+
+            return result;
+        }
         public async Task<UserViewModel> GetUserByIdAsync(GetUserByIdQuery getUserByIdQuery)
         {
             UserViewModel result = null;
 
             string query = $"SELECT Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, " +
                 $"COALESCE(Roles.Name, 'User') AS Role, " +
-                $"COALESCE(Users.Role_Id, 0) AS Role_Id " +
+                $"COALESCE(Users.Role_Id, 0) AS Role_Id, " +
+                $"Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
+                $"Count(DISTINCT Posts.Id) as Posts " +
                 $"FROM Users " +
                 $"LEFT JOIN Roles ON Roles.Id = Users.Role_Id " +
-                $"WHERE Users.Id = @User_Id ";
+                $"LEFT JOIN Posts ON Posts.User_Id = Users.Id " +
+                $"LEFT JOIN Comments ON Comments.User_Id = Users.Id " +
+                $"LEFT JOIN Replies ON Replies.User_Id = Users.Id " +
+                $"WHERE Users.Id = @User_Id " +
+                $"GROUP BY Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, Roles.Name, Role_Id ";
 
             try
             {
@@ -48,6 +108,8 @@ namespace Infrastructure.Data.Repositories
                             Bio = item.Bio,
                             Registered_At = item.Registered_At,
                         },
+                        Posts = item.Posts,
+                        Comments = item.Comments,
                         Role = item.Role,
                         Role_Id = item.Role_Id,
                     }
@@ -72,10 +134,16 @@ namespace Infrastructure.Data.Repositories
 
             string query = $"SELECT Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, " +
                 $"COALESCE(Roles.Name, 'User') AS Role, " +
-                $"COALESCE(Users.Role_Id, 0) AS Role_Id " +
+                $"COALESCE(Users.Role_Id, 0) AS Role_Id, " +
+                $"Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
+                $"Count(DISTINCT Posts.Id) as Posts " +
                 $"FROM Users " +
                 $"LEFT JOIN Roles ON Roles.Id = Users.Role_Id " +
-                $"WHERE Users.Username = @Username";
+                $"LEFT JOIN Posts ON Posts.User_Id = Users.Id " +
+                $"LEFT JOIN Comments ON Comments.User_Id = Users.Id " +
+                $"LEFT JOIN Replies ON Replies.User_Id = Users.Id " +
+                $"WHERE Users.Username = @Username " +
+                $"GROUP BY Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, Roles.Name, Role_Id ";
 
             try
             {
@@ -91,6 +159,8 @@ namespace Infrastructure.Data.Repositories
                             Bio = item.Bio,
                             Registered_At = item.Registered_At,
                         },
+                        Posts = item.Posts,
+                        Comments = item.Comments,
                         Role = item.Role,
                         Role_Id = item.Role_Id,
                     }
@@ -115,10 +185,16 @@ namespace Infrastructure.Data.Repositories
 
             string query = $"SELECT Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, " +
                 $"COALESCE(Roles.Name, 'User') AS Role, " +
-                $"COALESCE(Users.Role_Id, 0) AS Role_Id " +
+                $"COALESCE(Users.Role_Id, 0) AS Role_Id, " +
+                $"Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
+                $"Count(DISTINCT Posts.Id) as Posts " +
                 $"FROM Users " +
                 $"LEFT JOIN Roles ON Roles.Id = Users.Role_Id " +
-                $"WHERE Users.Email = @Email ";
+                $"LEFT JOIN Posts ON Posts.User_Id = Users.Id " +
+                $"LEFT JOIN Comments ON Comments.User_Id = Users.Id " +
+                $"LEFT JOIN Replies ON Replies.User_Id = Users.Id " +
+                $"WHERE Users.Email = @Email " +
+                $"GROUP BY Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, Roles.Name, Role_Id ";
 
             try
             {
@@ -134,6 +210,8 @@ namespace Infrastructure.Data.Repositories
                             Bio = item.Bio,
                             Registered_At = item.Registered_At,
                         },
+                        Posts = item.Posts,
+                        Comments = item.Comments,
                         Role = item.Role,
                         Role_Id = item.Role_Id,
                     }

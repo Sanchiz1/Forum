@@ -38,6 +38,16 @@ export default function Header() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
+  
+  const [search, setSearch] = useState<string>('');
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if(search.trim() === '') return;
+    navigator("/search/" + search.trim());
+  }
+
+
   useEffect(() => {
     setCookie({ name: "refresh_sent", value: "false" })
     if (isSigned()) {
@@ -147,10 +157,13 @@ export default function Header() {
             sx={{ mr: 'auto', textDecoration: 'none', color: 'text.secondary' }}>
             Forum
           </Link>
-          <FormControl sx={{ mr: 'auto', textDecoration: 'none', color: 'text.secondary' }}>
+          <Box component="form" sx={{ mr: 'auto', textDecoration: 'none', color: 'text.secondary' }} onSubmit={(e) => handleSearch(e)}>
             <TextField
               size="small"
               variant="outlined"
+              value={search}
+              autoComplete='off'
+              onChange={(e) => setSearch(e.target.value)}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -159,7 +172,7 @@ export default function Header() {
                 )
               }}
             />
-          </FormControl>
+          </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
             {isSigned() ?
               <Link variant="subtitle1" align="center" color="text.primary" component="span" onClick={handleClick} sx={{ textDecoration: 'none', ":hover": { cursor: 'pointer' } }}>

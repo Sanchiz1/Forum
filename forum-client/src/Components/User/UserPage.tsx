@@ -373,10 +373,10 @@ export default function UserPage() {
                         >
                           <Grid item xs={12} sx={{ mb: 2 }}>
                             <Typography variant="subtitle1" color="text.primary" component="p">
-                              Posts
+                            {user.posts} posts 
                             </Typography>
                             <Typography variant="subtitle1" color="text.primary" component="p">
-                              Comments
+                            {user.comments} comments 
                             </Typography>
                           </Grid>
                           <Divider sx={{ mb: 1 }} />

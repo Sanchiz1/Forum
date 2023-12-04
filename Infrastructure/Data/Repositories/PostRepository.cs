@@ -92,7 +92,7 @@ namespace Infrastructure.Data.Repositories
                     $"  LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id " +
                     $"  LEFT JOIN Comments ON Comments.Post_Id = Posts.Id " +
                     $"  LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id" +
-                    $" WHERE Posts.Title LIKE '{getSearchedPostsQuery.Search}' OR Posts.Text LIKE '{getSearchedPostsQuery.Search}' AND Posts.Date_Created < @User_Timestamp " +
+                    $" WHERE (Posts.Title LIKE '%{getSearchedPostsQuery.Search}%' OR Posts.Text LIKE '%{getSearchedPostsQuery.Search}%') AND Posts.Date_Created < @User_Timestamp " +
                     $" GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id, users.Username" +
                     $" ORDER BY {getSearchedPostsQuery.Order} DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
 

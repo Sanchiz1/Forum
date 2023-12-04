@@ -21,6 +21,30 @@ namespace Forum.GraphQL.Queries
             _mediator = mediator;
             _logger = logger;
 
+            Field<ListGraphType<PostGraphType>>("searchedPosts")
+                .Argument<NonNullGraphType<GetSearchedPostsInputGraphType>>("input")
+                .ResolveAsync(async context =>
+                {
+                    try
+                    {
+                        GetSearchedPostsQuery getSearchedPostsQuery = new GetSearchedPostsQuery()
+                        {
+                            Next = context.GetArgument<GetSearchedPostsQuery>("input").Next,
+                            Offset = context.GetArgument<GetSearchedPostsQuery>("input").Offset,
+                            User_Id = AccountHelper.GetUserIdFromClaims(context.User!),
+                            User_Timestamp = context.GetArgument<GetSearchedPostsQuery>("input").User_Timestamp,
+                            Search = context.GetArgument<GetSearchedPostsQuery>("input").Search
+                        };
+                        return await _mediator.Send(getSearchedPostsQuery);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Getting searched posts");
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
+                });
+
             Field<ListGraphType<PostGraphType>>("posts")
                 .Argument<NonNullGraphType<GetPostsInputGraphType>>("input")
                 .ResolveAsync(async context =>

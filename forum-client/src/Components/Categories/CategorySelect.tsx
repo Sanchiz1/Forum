@@ -100,12 +100,13 @@ export default function CategoriesSelect(props: Props) {
                     'aria-labelledby': 'basic-button',
                 }}
             >
-                <List sx={{maxHeight: 200}}>
+                <List sx={{maxHeight: 200, py: 0}}>
                     {categories.map((category) => (
                         <ListItemButton
                             key={category.id}
                             onClick={() => handleSelect(category.id)}
                             disabled={props.Categries.find(c => c.id === category.id) !== undefined}
+                            sx={{py: 0}}
                         >
                             {category.title}
                         </ListItemButton>

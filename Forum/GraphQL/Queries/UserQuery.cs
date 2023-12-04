@@ -14,6 +14,14 @@ namespace Forum.GraphQL.Queries
         {
             _mediator = mediator;
 
+            Field<ListGraphType<UserGraphType>>("searchedUsers")
+                .Argument<NonNullGraphType<GetSearchedUsersInputGraphType>>("input")
+                .ResolveAsync(async context =>
+                {
+                    GetSearchedUsersQuery getSearchedUsersQuery = context.GetArgument<GetSearchedUsersQuery>("input");
+                    return await _mediator.Send(getSearchedUsersQuery);
+                });
+
             Field<UserGraphType>("userById")
                 .Argument<NonNullGraphType<GetUserByIdInputGraphType>>("input")
                 .ResolveAsync(async context =>

@@ -6,7 +6,7 @@ import { ThemeProvider } from '@emotion/react';
 import { Provider } from 'react-redux';
 import store from './Redux/store';
 import { SnackbarProvider } from 'notistack';
-import { orange } from '@mui/material/colors';
+import './index.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

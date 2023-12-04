@@ -1,12 +1,14 @@
 ﻿using Application.Common.ViewModels;
 using Application.UseCases.Users.Commands;
 using Application.UseCases.Users.Queries;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Application.Common.Interfaces.Repositories
 {
     public interface IUserRepository
     {
+        Task<List<UserViewModel>> GetSearchedUsersAsync(GetSearchedUsersQuery getSearchedUsersQuery);
         Task<UserViewModel> GetUserByIdAsync(GetUserByIdQuery getUserByIdQuery);
         Task<UserViewModel> GetUserByUsernameAsync(GetUserByUsernameQuery getUserByUsernameQuery);
         Task<UserViewModel> GetUserByEmailAsync(GetUserByEmailQuery getUserByEmailQuery);

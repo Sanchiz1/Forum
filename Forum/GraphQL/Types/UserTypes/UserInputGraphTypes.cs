@@ -5,6 +5,16 @@ using GraphQL.Types;
 
 namespace Forum.GraphQL.Types.UserTypes
 {
+    public class GetSearchedUsersInputGraphType : InputObjectGraphType<GetSearchedUsersQuery>
+    {
+        public GetSearchedUsersInputGraphType()
+        {
+            Field(p => p.Next, type: typeof(IntGraphType));
+            Field(p => p.Offset, type: typeof(IntGraphType));
+            Field(p => p.User_Timestamp, type: typeof(DateTimeGraphType));
+            Field(p => p.Search, type: typeof(StringGraphType));
+        }
+    }
     public class GetUserByIdInputGraphType : InputObjectGraphType<GetUserByIdQuery>
     {
         public GetUserByIdInputGraphType()

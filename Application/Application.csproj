@@ -179,6 +179,7 @@
     <Compile Include="UseCases\Users\Commands\CreateUser.cs" />
     <Compile Include="UseCases\Users\Commands\DeleteUser.cs" />
     <Compile Include="UseCases\Users\Commands\UpdateUser.cs" />
+    <Compile Include="UseCases\Users\Queries\GetSearchedUsers.cs" />
     <Compile Include="UseCases\Users\Queries\GetUserByCredentials.cs" />
     <Compile Include="UseCases\Users\Queries\GetUserByEmail.cs" />
     <Compile Include="UseCases\Users\Queries\GetUserById.cs" />

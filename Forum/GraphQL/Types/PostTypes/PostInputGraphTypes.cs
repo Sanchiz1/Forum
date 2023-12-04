@@ -23,7 +23,7 @@ namespace Forum.GraphQL.Types.PostTypes
             Field(p => p.Offset, type: typeof(IntGraphType));
             Field(p => p.User_Timestamp, type: typeof(DateTimeGraphType));
             Field(p => p.Order, type: typeof(StringGraphType));
-            Field(p => p.Search, type: typeof(StringGraphType), nullable: true);
+            Field(p => p.Search, type: typeof(StringGraphType));
         }
     }
     public class GetUserPostsInputGraphType : InputObjectGraphType<GetUserPostsQuery>

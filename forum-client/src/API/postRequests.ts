@@ -52,6 +52,43 @@ export function requestPosts(offset: Number, next: Number, order: String, user_t
     );
 }
 
+export function requestSearchedPosts(offset: Number, next: Number, user_timestamp: Date, search: string) {
+    return GetAjaxObservable<GraphqlPosts>(
+        `query($Input: GetSearchedPostsInput!){
+              posts{
+                posts:searchedPosts(input: $Input){
+                    id
+                    title
+                    text
+                    date_Created
+                    date_Edited
+                    user_Id
+                    user_Username
+                    likes
+                    comments
+                    liked
+                }
+              }
+            }`,
+        {
+            "Input": {
+                "offset": offset,
+                "next": next,
+                "user_Timestamp": user_timestamp.toISOString(),
+                "search": search
+            }
+        },
+        false
+    ).pipe(
+        map((value) => {
+            return value.response.data.posts.posts;
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}
+
 export function requestUserPosts(author_username: String, offset: Number, next: Number, order: String, user_timestamp: Date) {
     return GetAjaxObservable<GraphqlPosts>(
         `query($Input: GetUserPostsInput!){

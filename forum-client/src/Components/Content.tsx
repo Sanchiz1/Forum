@@ -15,6 +15,7 @@ import { RootState } from '../Redux/store';
 import AdminPage from './Admin/AdminPage';
 import { requestAccount } from '../API/userRequests';
 import CategoriesPage from './Categories/CategoriesPage';
+import Search from './Search';
 
 const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void) => createBrowserRouter([
     {
@@ -23,6 +24,10 @@ const router = (SignInErrorAction: () => void, PermissionErrorAction: () => void
             {
                 path: "/",
                 element: <Main />
+            },
+            {
+                path: "/Search/:search",
+                element: <Search />
             },
             {
                 path: "/user/:Username",
