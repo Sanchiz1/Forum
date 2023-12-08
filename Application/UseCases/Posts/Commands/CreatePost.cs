@@ -3,10 +3,12 @@ using System.Threading.Tasks;
 using System.Threading;
 using System;
 using Application.Common.Interfaces.Repositories;
+using FluentValidation;
+using Application.Common.Models;
 
 namespace Application.UseCases.Posts.Commands
 {
-    public class CreatePostCommand : IRequest
+    public class CreatePostCommand : ICommand
     {
         public string Title { get; set; }
         public string Text { get; set; }
@@ -22,5 +24,14 @@ namespace Application.UseCases.Posts.Commands
         }
 
         public async Task Handle(CreatePostCommand request, CancellationToken cancellationToken) => await _context.CreatePostAsync(request);
+    }
+    public class CreatePostCommandValidator : AbstractValidator<CreatePostCommand>
+    {
+        public CreatePostCommandValidator()
+        {
+            RuleFor(c => c.Title)
+                .MaximumLength(5)
+                .NotEmpty();
+        }
     }
 }

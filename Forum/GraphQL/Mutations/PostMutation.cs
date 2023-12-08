@@ -1,9 +1,11 @@
 ﻿using Application.UseCases.Posts.Commands;
+using FluentValidation;
 using Forum.GraphQL.Types.PostTypes;
 using Forum.Helpers;
 using GraphQL;
 using GraphQL.Types;
 using MediatR;
+using ValidationException = Application.Common.Exceptions.ValidationException;
 
 namespace Forum.GraphQL.Mutations
 {
@@ -19,10 +21,19 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<CreatePostInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    CreatePostCommand createPostCommand = context.GetArgument<CreatePostCommand>("input");
+                    try
+                    {
+                        CreatePostCommand createPostCommand = context.GetArgument<CreatePostCommand>("input");
 
-                    await _mediator.Send(createPostCommand);
-                    return "Post created successfully";
+                        await _mediator.Send(createPostCommand);
+                        return "Post created successfully";
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        context.Errors.Add(new ExecutionError(e.Message));
+                        return null;
+                    }
                 });
 
             Field<StringGraphType>("updatePost")

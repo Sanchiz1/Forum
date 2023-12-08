@@ -36,6 +36,12 @@
     <Reference Include="AutoMapper, Version=10.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.10.1.1\lib\net461\AutoMapper.dll</HintPath>
     </Reference>
+    <Reference Include="FluentValidation, Version=11.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidation.11.8.1\lib\netstandard2.0\FluentValidation.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentValidation.DependencyInjectionExtensions, Version=11.0.0.0, Culture=neutral, PublicKeyToken=7de548da2fbae0f0, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentValidation.DependencyInjectionExtensions.11.8.1\lib\netstandard2.0\FluentValidation.DependencyInjectionExtensions.dll</HintPath>
+    </Reference>
     <Reference Include="MediatR, Version=12.0.0.0, Culture=neutral, PublicKeyToken=bb9a41a5e8aaa7e2, processorArchitecture=MSIL">
       <HintPath>..\packages\MediatR.12.1.1\lib\netstandard2.0\MediatR.dll</HintPath>
     </Reference>
@@ -114,6 +120,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Behaviors\ValidationBehavior.cs" />
     <Compile Include="Common\DTOs\CategoryDto.cs" />
     <Compile Include="Common\DTOs\CommentDto.cs" />
     <Compile Include="Common\DTOs\MappingProfile.cs" />
@@ -124,6 +131,7 @@
     <Compile Include="Common\Exceptions\FailedLoginException.cs" />
     <Compile Include="Common\Exceptions\InvalidTokenException.cs" />
     <Compile Include="Common\Exceptions\UserAlreadyExistsException.cs" />
+    <Compile Include="Common\Exceptions\ValidationException.cs" />
     <Compile Include="Common\Interfaces\Repositories\ICategoryRepository.cs" />
     <Compile Include="Common\Interfaces\Repositories\ICommentRepository.cs" />
     <Compile Include="Common\Interfaces\Repositories\IPostRepository.cs" />
@@ -134,6 +142,7 @@
     <Compile Include="Common\Interfaces\Services\IIdentityService.cs" />
     <Compile Include="Common\Interfaces\Services\ITokenFactory.cs" />
     <Compile Include="Common\Interfaces\Services\ITokenValidator.cs" />
+    <Compile Include="Common\Models\ICommandBase.cs" />
     <Compile Include="Common\Models\LoginResponse.cs" />
     <Compile Include="Common\Models\Result.cs" />
     <Compile Include="Common\Models\Token.cs" />
