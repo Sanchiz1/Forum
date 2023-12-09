@@ -4,7 +4,7 @@ export interface Reply{
     date_Created: Date,
     date_Edited?: Date,
     comment_Id: Number,
-    reply_Id: Number
+    reply_User_Id: Number
     user_Id: Number,
     user_Username: string,
     reply_Username: string
@@ -16,5 +16,5 @@ export interface ReplyInput {
     text: string,
     user_Id: Number,
     comment_Id: Number,
-    reply_Id?: Number,
+    reply_User_Id?: Number,
 }

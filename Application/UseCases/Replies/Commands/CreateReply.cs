@@ -15,7 +15,7 @@ namespace Application.UseCases.Replies.Commands
     {
         public string Text { get; set; }
         public int Comment_Id { get; set; }
-        public int? Reply_Id { get; set; }
+        public int? Reply_User_Id { get; set; }
         public int User_Id { get; set; }
     }
     public class CreateReplyCommandHandler : IRequestHandler<CreateReplyCommand>

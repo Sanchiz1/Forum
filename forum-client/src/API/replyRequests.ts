@@ -21,7 +21,7 @@ export function requestReplies(comment_id: Number, offset: Number, next: Number,
                         date_Created
                         date_Edited
                         comment_Id
-                        reply_Id
+                        reply_User_Id
                         user_Id
                         user_Username
                         reply_Username
@@ -67,7 +67,7 @@ export function createReplyRequest(ReplyInput: ReplyInput) {
                 "comment_Id": ReplyInput.comment_Id,
                 "text": ReplyInput.text,
                 "user_Id": ReplyInput.user_Id,
-                "reply_Id": ReplyInput.reply_Id
+                "reply_User_Id": ReplyInput.reply_User_Id
             }
         }
     ).pipe(

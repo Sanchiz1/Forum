@@ -133,7 +133,7 @@ export default function ReplyElement(props: Props) {
               {props.reply.user_Username}
             </Link>
             {
-              props.reply.reply_Id && props.reply.reply_Username ?
+              props.reply.reply_User_Id && props.reply.reply_Username ?
                 <>
                   <Typography variant="caption" component="p" sx={{ mr: 0.5 }}>to</Typography>
                   <Link variant="caption" onClick={(e) => e.stopPropagation()} component={RouterLink} to={'/user/' + props.reply.user_Username} color="primary" sx={{
@@ -217,7 +217,7 @@ export default function ReplyElement(props: Props) {
                   if (e.trim() === '') return;
                   const replyInput: ReplyInput = {
                     comment_Id: props.reply.comment_Id,
-                    reply_Id: props.reply.id,
+                    reply_User_Id: props.reply.user_Id,
                     text: e,
                     user_Id: Account.id
                   }

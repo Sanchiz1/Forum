@@ -13,7 +13,7 @@ namespace Forum.GraphQL.Types.ReplyTypes
             Field(i => i.Reply.Date_Created, type: typeof(DateTimeGraphType));
             Field(i => i.Reply.Date_Edited, type: typeof(DateTimeGraphType), nullable: true);
             Field(i => i.Reply.Comment_Id, type: typeof(IntGraphType));
-            Field(i => i.Reply.Reply_Id, type: typeof(IntGraphType));
+            Field(i => i.Reply.Reply_User_Id, type: typeof(IntGraphType));
             Field(i => i.Reply.User_Id, type: typeof(IntGraphType), nullable: true);
             Field(i => i.User_Username, type: typeof(StringGraphType));
             Field(i => i.Reply_Username, type: typeof(StringGraphType), nullable: true);

@@ -28,7 +28,7 @@ namespace Forum.GraphQL.Types.ReplyTypes
         {
             Field(c => c.User_Id, type: typeof(IntGraphType));
             Field(c => c.Comment_Id, type: typeof(IntGraphType));
-            Field(c => c.Reply_Id, type: typeof(IntGraphType), nullable: true);
+            Field(c => c.Reply_User_Id, type: typeof(IntGraphType), nullable: true);
             Field(c => c.Text, type: typeof(StringGraphType));
         }
     }
