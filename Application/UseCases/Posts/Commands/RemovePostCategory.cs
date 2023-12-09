@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces.Repositories;
+using FluentValidation;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -24,5 +25,15 @@ namespace Application.UseCases.Posts.Commands
         }
 
         public async Task Handle(RemovePostCategoryCommand request, CancellationToken cancellationToken) => await _context.RemovePostCategoryAsync(request);
+    }
+    public class RemovePostCategoryCommandValidator : AbstractValidator<RemovePostCategoryCommand>
+    {
+        public RemovePostCategoryCommandValidator()
+        {
+            RuleFor(c => c.Post_Id)
+                .NotEmpty();
+            RuleFor(c => c.Category_Id)
+                .NotEmpty();
+        }
     }
 }

@@ -3,7 +3,6 @@ using Application.Common.DTOs;
 using Application.UseCases.Posts.Commands;
 using AutoMapper;
 using FluentValidation;
-using FluentValidation.DependencyInjectionExtensions;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -29,15 +28,12 @@ namespace Application
             services.AddSingleton(mapper);
 
             services.AddMediatR(cfg => {
-                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
-                cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
+                cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
             });
 
-            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-            foreach (var service in services)
-            {
-                Console.WriteLine($"Service: {service.ServiceType.FullName} \nLifetime: { service.Lifetime} \nInstance: { service.ImplementationType?.FullName} ");
-            }
+
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly(), ServiceLifetime.Transient);
             return services;
         }
     }

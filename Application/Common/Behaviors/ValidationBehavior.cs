@@ -1,4 +1,5 @@
 ﻿using Application.Common.Models;
+using Application.UseCases.Posts.Commands;
 using FluentValidation;
 using MediatR;
 using System;
@@ -12,20 +13,20 @@ using System.Windows.Input;
 namespace Application.Common.Behaviors
 {
     public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-        where TRequest : ICommandBase
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
 
-        public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
+        public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators) => _validators = validators;
+
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
-            _validators = validators;
-        }
-        public async Task<TResponse> Handle(
-            TRequest request,
-            RequestHandlerDelegate<TResponse> next,
-            CancellationToken cancellationToken)
-        {
+            if (!_validators.Any())
+            {
+                return await next();
+            }
+
             var context = new ValidationContext<TRequest>(request);
+
             var errorsDictionary = _validators
                 .Select(x => x.Validate(context))
                 .SelectMany(x => x.Errors)
@@ -39,10 +40,12 @@ namespace Application.Common.Behaviors
                         Values = errorMessages.Distinct().ToArray()
                     })
                 .ToDictionary(x => x.Key, x => x.Values);
+
             if (errorsDictionary.Any())
             {
-                throw new ValidationException("Error");
+                throw new ValidationException("Validation error");
             }
+
             return await next();
         }
     }

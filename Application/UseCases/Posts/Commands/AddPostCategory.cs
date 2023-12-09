@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces.Repositories;
+using FluentValidation;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -24,5 +25,15 @@ namespace Application.UseCases.Posts.Commands
         }
 
         public async Task Handle(AddPostCategoryCommand request, CancellationToken cancellationToken) => await _context.AddPostCategoryAsync(request);
+    }
+    public class AddPostCategoryCommandValidator : AbstractValidator<AddPostCategoryCommand>
+    {
+        public AddPostCategoryCommandValidator()
+        {
+            RuleFor(c => c.Post_Id)
+                .NotEmpty();
+            RuleFor(c => c.Category_Id)
+                .NotEmpty();
+        }
     }
 }

@@ -2,6 +2,8 @@
 using System.Threading.Tasks;
 using System.Threading;
 using Application.Common.Interfaces.Repositories;
+using Application.UseCases.Posts.Commands;
+using FluentValidation;
 
 namespace Application.UseCases.Comments.Commands
 {
@@ -21,5 +23,18 @@ namespace Application.UseCases.Comments.Commands
         }
 
         public async Task Handle(CreateCommentCommand request, CancellationToken cancellationToken) => await _context.CreateCommentAsync(request);
+    }
+    public class CreateCommentCommandValidator : AbstractValidator<CreateCommentCommand>
+    {
+        public CreateCommentCommandValidator()
+        {
+            RuleFor(c => c.Text)
+                .MaximumLength(500)
+                .NotEmpty();
+            RuleFor(c => c.Post_Id)
+                .NotEmpty();
+            RuleFor(c => c.User_Id)
+                .NotEmpty();
+        }
     }
 }

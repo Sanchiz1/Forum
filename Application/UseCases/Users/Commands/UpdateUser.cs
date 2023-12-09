@@ -1,6 +1,7 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces.Repositories;
 using Application.UseCases.Users.Queries;
+using FluentValidation;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace Application.UseCases.Users.Commands
         public int User_Id { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
-        public string? Bio { get; set; }
+        public string Bio { get; set; }
     }
     public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand>
     {
@@ -43,6 +44,24 @@ namespace Application.UseCases.Users.Commands
             }
 
             await _context.UpdateUserAsync(request);
+        }
+    }
+    public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
+    {
+        public UpdateUserCommandValidator()
+        {
+            RuleFor(c => c.User_Id)
+                .NotEmpty();
+            RuleFor(c => c.Username)
+                .Matches("[a-zA-Z0-9_.]+$")
+                .MaximumLength(50)
+                .NotEmpty();
+            RuleFor(c => c.Email)
+                .Matches("(?=.{0,64}$)[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")
+                .MaximumLength(50)
+                .NotEmpty();
+            RuleFor(c => c.Bio)
+                .MaximumLength(100);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces.Repositories;
+using FluentValidation;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -24,5 +25,16 @@ namespace Application.UseCases.Replies.Commands
         }
 
         public async Task Handle(UpdateReplyCommand request, CancellationToken cancellationToken) => await _context.UpdateReplyAsync(request);
+    }
+    public class UpdateReplyCommandValidator : AbstractValidator<UpdateReplyCommand>
+    {
+        public UpdateReplyCommandValidator()
+        {
+            RuleFor(c => c.Id)
+                .NotEmpty();
+            RuleFor(c => c.Text)
+                .MaximumLength(500)
+                .NotEmpty();
+        }
     }
 }

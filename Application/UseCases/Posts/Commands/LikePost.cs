@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Threading;
 using Application.Common.Interfaces.Repositories;
+using FluentValidation;
 
 namespace Application.UseCases.Posts.Commands
 {
@@ -20,5 +21,15 @@ namespace Application.UseCases.Posts.Commands
         }
 
         public async Task Handle(LikePostCommand request, CancellationToken cancellationToken) => await _context.LikePostAsync(request);
+    }
+    public class LikePostCommandValidator : AbstractValidator<LikePostCommand>
+    {
+        public LikePostCommandValidator()
+        {
+            RuleFor(c => c.Post_Id)
+                .NotEmpty();
+            RuleFor(c => c.User_Id)
+                .NotEmpty();
+        }
     }
 }

@@ -5,7 +5,6 @@ using Forum.Helpers;
 using GraphQL;
 using GraphQL.Types;
 using MediatR;
-using ValidationException = Application.Common.Exceptions.ValidationException;
 
 namespace Forum.GraphQL.Mutations
 {
@@ -21,19 +20,22 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<CreatePostInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
+                    CreatePostCommand createPostCommand = context.GetArgument<CreatePostCommand>("input");
                     try
                     {
-                        CreatePostCommand createPostCommand = context.GetArgument<CreatePostCommand>("input");
-
                         await _mediator.Send(createPostCommand);
-                        return "Post created successfully";
                     }
-                    catch (Exception e)
+                    catch (ValidationException ex)
                     {
-                        Console.WriteLine(e);
-                        context.Errors.Add(new ExecutionError(e.Message));
+                        context.Errors.Add(new ExecutionError("Invalid input"));
                         return null;
                     }
+                    catch (Exception ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
+                    return "Post created successfully";
                 });
 
             Field<StringGraphType>("updatePost")
@@ -41,7 +43,20 @@ namespace Forum.GraphQL.Mutations
                 .ResolveAsync(async context =>
                 {
                     UpdatePostCommand updatePostCommand = context.GetArgument<UpdatePostCommand>("input");
-                    await _mediator.Send(updatePostCommand);
+                    try
+                    {
+                        await _mediator.Send(updatePostCommand);
+                    }
+                    catch (ValidationException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Invalid input"));
+                        return null;
+                    }
+                    catch (Exception ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
                     return "Post updated successfully";
                 });
 
@@ -50,7 +65,20 @@ namespace Forum.GraphQL.Mutations
                 .ResolveAsync(async context =>
                 {
                     AddPostCategoryCommand addPostCategoryCommand = context.GetArgument<AddPostCategoryCommand>("input");
-                    await _mediator.Send(addPostCategoryCommand);
+                    try
+                    {
+                        await _mediator.Send(addPostCategoryCommand);
+                    }
+                    catch (ValidationException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Invalid input"));
+                        return null;
+                    }
+                    catch (Exception ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
                     return "Post category added successfully";
                 });
 
@@ -59,7 +87,20 @@ namespace Forum.GraphQL.Mutations
                 .ResolveAsync(async context =>
                 {
                     RemovePostCategoryCommand removePostCategoryCommand = context.GetArgument<RemovePostCategoryCommand>("input");
-                    await _mediator.Send(removePostCategoryCommand);
+                    try
+                    {
+                        await _mediator.Send(removePostCategoryCommand);
+                    }
+                    catch (ValidationException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Invalid input"));
+                        return null;
+                    }
+                    catch (Exception ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
                     return "Post category removed successfully";
                 });
             Field<StringGraphType>("deletePost")
@@ -67,7 +108,20 @@ namespace Forum.GraphQL.Mutations
                 .ResolveAsync(async context =>
                 {
                     DeletePostCommand deletePostCommand = context.GetArgument<DeletePostCommand>("input");
-                    await _mediator.Send(deletePostCommand);
+                    try
+                    {
+                        await _mediator.Send(deletePostCommand);
+                    }
+                    catch (ValidationException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Invalid input"));
+                        return null;
+                    }
+                    catch (Exception ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
 
                     return "Post deleted successfully";
                 });
@@ -80,7 +134,20 @@ namespace Forum.GraphQL.Mutations
                         Post_Id = context.GetArgument<LikePostCommand>("input").Post_Id,
                         User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
                     };
-                    await _mediator.Send(likePostCommand);
+                    try
+                    {
+                        await _mediator.Send(likePostCommand);
+                    }
+                    catch (ValidationException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Invalid input"));
+                        return null;
+                    }
+                    catch (Exception ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
 
                     return "Post liked successfully";
                 });

@@ -13,6 +13,7 @@ import {
     FormControl, Select, Stack, Container, CssBaseline, IconButton, LinearProgress,
     Toolbar, Collapse, TextField, Alert, Link, MenuItem, Button, Dialog, DialogTitle, DialogActions, Tooltip, Chip
 } from '@mui/material';
+import CategoryIcon from '@mui/icons-material/Category';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
@@ -106,6 +107,7 @@ export default function PostPage() {
 
     //edit
     const [openEdit, setOpenEdit] = useState(false);
+    const [openCategortyEdit, setOpenCategortyEdit] = useState(false);
     const [error, setError] = useState<String>('');
 
     const handleSubmitEdit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -283,6 +285,10 @@ export default function PostPage() {
                                                                 <EditIcon />
                                                                 Edit
                                                             </MenuItem>
+                                                            <MenuItem onClick={() => { setOpenCategortyEdit(true); handleCloseMenu(); }} disableRipple>
+                                                                <CategoryIcon />
+                                                                Categories
+                                                            </MenuItem>
                                                             <MenuItem onClick={() => { setOpenDelete(true); handleCloseMenu(); }} disableRipple>
                                                                 <DeleteIcon />
                                                                 Delete
@@ -322,21 +328,39 @@ export default function PostPage() {
                                                                 </Button>
                                                             </Box>
                                                         </Box>
-                                                        <Grid sx={{
-                                                            display: 'flex',
-                                                            flexWrap: 'wrap'
-                                                        }}>
-                                                            {post.categories.map(category =>
-                                                                <Chip label={category.title} key={category.id} sx={{ mb: 1, mr: 1 }} onDelete={() => handleRemovePostCategory(post.id.valueOf(), category.id)} variant="outlined"></Chip>
-                                                            )}
-                                                            <CategoriesSelect AddCategory={(category_id: number) => handleAddPostCategory(post.id.valueOf(), category_id)} Categries={post.categories}></CategoriesSelect>
-                                                        </Grid>
                                                     </>
                                                     :
                                                     <>
                                                         <Typography variant="subtitle1" component="p" sx={{ mt: 2, mb: 2, whiteSpace: 'pre-line', overflowWrap: 'break-word' }}>
                                                             {post.text}
                                                         </Typography>
+                                                    </>
+                                                }
+                                                {
+                                                    openCategortyEdit ?
+                                                        <>
+                                                            <Grid sx={{
+                                                                display: 'flex',
+                                                                flexWrap: 'wrap'
+                                                            }}>
+                                                                {post.categories.map(category =>
+                                                                    <Chip label={category.title} key={category.id} sx={{ mb: 1, mr: 1 }} onDelete={() => handleRemovePostCategory(post.id.valueOf(), category.id)} variant="outlined"></Chip>
+                                                                )}
+                                                                <CategoriesSelect AddCategory={(category_id: number) => handleAddPostCategory(post.id.valueOf(), category_id)} Categries={post.categories}></CategoriesSelect>
+                                                            </Grid>
+
+                                                            <Box sx={{ my: 1, display: 'flex' }}>
+                                                                <Button
+                                                                    color='secondary'
+                                                                    sx={{ ml: 'auto', mr: 1 }}
+                                                                    onClick={() => setOpenCategortyEdit(false)}
+                                                                    variant='outlined'
+                                                                >
+                                                                    Hide
+                                                                </Button>
+                                                            </Box>
+                                                        </>
+                                                        :
                                                         <Grid sx={{
                                                             display: 'flex',
                                                             flexWrap: 'wrap'
@@ -346,7 +370,6 @@ export default function PostPage() {
                                                                 <Chip label={category.title} key={category.id} sx={{ mb: 1, mr: 1 }} variant="outlined"></Chip>
                                                             )}
                                                         </Grid>
-                                                    </>
                                                 }
                                                 <Stack
                                                     direction="row"

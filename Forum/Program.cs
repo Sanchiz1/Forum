@@ -1,6 +1,10 @@
 using Application;
 using Application.Common.Constants;
+using Application.UseCases.Posts.Commands;
+using FluentValidation.AspNetCore;
+using Forum;
 using GraphQL;
+using GraphQL.Instrumentation;
 using Infrastructure;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,6 +24,8 @@ builder.Services.AddSingleton<ILogger>(svc => svc.GetRequiredService<ILogger<App
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddSingleton<InstrumentFieldsMiddleware>();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -59,8 +65,8 @@ builder.Services.AddGraphQL(c => c.AddSystemTextJson()
                                   .AddGraphTypes(typeof(IdentitySchema).Assembly)
                                   );
 
-var app = builder.Build();
 
+var app = builder.Build();
 
 app.UseCors(builder => builder.WithOrigins("http://localhost:3000")
                  //.AllowAnyOrigin()
@@ -103,7 +109,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.Run(); 
+app.Run();
 public class ApplicationLogs
 {
 }

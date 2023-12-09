@@ -1,5 +1,6 @@
 ﻿using Application.Common.Exceptions;
 using Application.UseCases.Users.Commands;
+using FluentValidation;
 using Forum.GraphQL.Types.UserTypes;
 using Forum.Helpers;
 using GraphQL;
@@ -25,6 +26,11 @@ namespace Forum.GraphQL.Mutations
                     try
                     {
                         await _mediator.Send(createUserCommand);
+                    }
+                    catch (ValidationException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Invalid input"));
+                        return null;
                     }
                     catch (UserAlreadyExistsException ex)
                     {
@@ -56,6 +62,11 @@ namespace Forum.GraphQL.Mutations
                     {
                         await _mediator.Send(updateUserCommand);
                     }
+                    catch (ValidationException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Invalid input"));
+                        return null;
+                    }
                     catch (UserAlreadyExistsException ex)
                     {
                         context.Errors.Add(new ExecutionError(ex.Message));
@@ -80,9 +91,9 @@ namespace Forum.GraphQL.Mutations
                     {
                         await _mediator.Send(addUserRoleCommand);
                     }
-                    catch (UserAlreadyExistsException ex)
+                    catch (ValidationException ex)
                     {
-                        context.Errors.Add(new ExecutionError(ex.Message));
+                        context.Errors.Add(new ExecutionError("Invalid input"));
                         return null;
                     }
                     catch

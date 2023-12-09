@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Application.Common.Interfaces.Repositories;
+using FluentValidation;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -25,5 +26,16 @@ namespace Application.UseCases.Comments.Commands
         }
 
         public async Task Handle(UpdateCommentCommand request, CancellationToken cancellationToken) => await _context.UpdateCommentAsync(request);
+    }
+    public class UpdateCommentCommandValidator : AbstractValidator<UpdateCommentCommand>
+    {
+        public UpdateCommentCommandValidator()
+        {
+            RuleFor(c => c.Text)
+                .MaximumLength(500)
+                .NotEmpty();
+            RuleFor(c => c.Id)
+                .NotEmpty();
+        }
     }
 }

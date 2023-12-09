@@ -1,5 +1,7 @@
 ﻿using Application.Common.Interfaces.Repositories;
 using Application.UseCases.Comments.Commands;
+using Application.UseCases.Replies.Commands;
+using FluentValidation;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -24,5 +26,14 @@ namespace Application.UseCases.Categories.Commands
         }
 
         public async Task Handle(CreateCategoryCommand request, CancellationToken cancellationToken) => await _context.CreateCategoryAsync(request);
+    }
+    public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCommand>
+    {
+        public CreateCategoryCommandValidator()
+        {
+            RuleFor(c => c.Title)
+                .MaximumLength(50)
+                .NotEmpty();
+        }
     }
 }

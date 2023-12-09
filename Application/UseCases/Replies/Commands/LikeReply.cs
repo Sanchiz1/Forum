@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces.Repositories;
+using FluentValidation;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -24,5 +25,15 @@ namespace Application.UseCases.Replies.Commands
         }
 
         public async Task Handle(LikeReplyCommand request, CancellationToken cancellationToken) => await _context.LikeReplyAsync(request);
+    }
+    public class LikeReplyCommandValidator : AbstractValidator<LikeReplyCommand>
+    {
+        public LikeReplyCommandValidator()
+        {
+            RuleFor(c => c.Reply_Id)
+                .NotEmpty();
+            RuleFor(c => c.User_Id)
+                .NotEmpty();
+        }
     }
 }

@@ -108,6 +108,7 @@ export default function CreatePost() {
                                         name="title"
                                         required
                                         fullWidth
+                                        inputProps={{ maxLength: 100 }}
                                         error={titleError != ''}
                                         onFocus={() => SetTitleError('')}
                                         helperText={titleError}
@@ -119,6 +120,7 @@ export default function CreatePost() {
                                         name="text"
                                         required
                                         fullWidth
+                                        inputProps={{ maxLength: 500 }}
                                         multiline
                                         minRows={4}
                                         error={textError != ''}

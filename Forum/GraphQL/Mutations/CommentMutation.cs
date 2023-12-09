@@ -1,5 +1,6 @@
 ﻿using Application.UseCases.Comments.Commands;
 using Application.UseCases.Posts.Commands;
+using FluentValidation;
 using Forum.GraphQL.Types.CommentTypes;
 using Forum.Helpers;
 using GraphQL;
@@ -21,8 +22,20 @@ namespace Forum.GraphQL.Mutations
                 .ResolveAsync(async context =>
                 {
                     CreateCommentCommand createCommentCommand = context.GetArgument<CreateCommentCommand>("input");
-
-                    await _mediator.Send(createCommentCommand);
+                    try
+                    {
+                        await _mediator.Send(createCommentCommand);
+                    }
+                    catch (ValidationException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Invalid input"));
+                        return null;
+                    }
+                    catch (Exception ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
                     return "Comment created successfully";
                 });
 
@@ -31,8 +44,20 @@ namespace Forum.GraphQL.Mutations
                 .ResolveAsync(async context =>
                 {
                     UpdateCommentCommand updateCommentCommand = context.GetArgument<UpdateCommentCommand>("input");
-
-                    await _mediator.Send(updateCommentCommand);
+                    try
+                    {
+                        await _mediator.Send(updateCommentCommand);
+                    }
+                    catch (ValidationException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Invalid input"));
+                        return null;
+                    }
+                    catch (Exception ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
                     return "Comment updated successfully";
                 });
 
@@ -41,8 +66,20 @@ namespace Forum.GraphQL.Mutations
                 .ResolveAsync(async context =>
                 {
                     DeleteCommentCommand deleteCommentCommand = context.GetArgument<DeleteCommentCommand>("input");
-
-                    await _mediator.Send(deleteCommentCommand);
+                    try
+                    {
+                        await _mediator.Send(deleteCommentCommand);
+                    }
+                    catch (ValidationException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Invalid input"));
+                        return null;
+                    }
+                    catch (Exception ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
                     return "Comment deleted successfully";
                 });
             Field<StringGraphType>("likeComment")
@@ -53,8 +90,20 @@ namespace Forum.GraphQL.Mutations
                     {
                         Comment_Id = context.GetArgument<LikeCommentCommand>("input").Comment_Id,
                         User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
-                    };
-                    await _mediator.Send(likeCommentCommand);
+                    }; try
+                    {
+                        await _mediator.Send(likeCommentCommand);
+                    }
+                    catch (ValidationException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Invalid input"));
+                        return null;
+                    }
+                    catch (Exception ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
 
                     return "Comment liked successfully";
                 });

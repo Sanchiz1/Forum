@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces.Repositories;
+using FluentValidation;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,5 +21,13 @@ namespace Application.UseCases.Users.Commands
         }
 
         public async Task Handle(UpdateUserRoleCommand request, CancellationToken cancellationToken) => await _context.UpdateUserRoleAsync(request);
+    }
+    public class UpdateUserRoleCommandValidator : AbstractValidator<UpdateUserRoleCommand>
+    {
+        public UpdateUserRoleCommandValidator()
+        {
+            RuleFor(c => c.User_Id)
+                .NotEmpty();
+        }
     }
 }

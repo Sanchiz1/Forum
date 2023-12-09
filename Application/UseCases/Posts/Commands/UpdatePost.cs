@@ -26,9 +26,10 @@ namespace Application.UseCases.Posts.Commands
     {
         public UpdatePostCommandValidator()
         {
-            RuleFor(c => c.Text)
-                .MaximumLength(5)
+            RuleFor(c => c.Id)
                 .NotEmpty();
+            RuleFor(c => c.Text)
+                .MaximumLength(500);
         }
     }
 }

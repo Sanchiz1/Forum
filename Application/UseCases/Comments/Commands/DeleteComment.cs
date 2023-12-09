@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces;
 using Application.Common.Interfaces.Repositories;
+using FluentValidation;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -24,5 +25,13 @@ namespace Application.UseCases.Comments.Commands
         }
 
         public async Task Handle(DeleteCommentCommand request, CancellationToken cancellationToken) => await _context.DeleteCommentAsync(request);
+    }
+    public class DeleteCommentCommandValidator : AbstractValidator<DeleteCommentCommand>
+    {
+        public DeleteCommentCommandValidator()
+        {
+            RuleFor(c => c.Id)
+                .NotEmpty();
+        }
     }
 }

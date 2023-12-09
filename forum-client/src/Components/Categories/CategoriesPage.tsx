@@ -166,6 +166,7 @@ export default function CategoriesPage() {
                                 required
                                 fullWidth
                                 multiline
+                                inputProps={{ maxLength: 50 }}
                                 minRows={1}
                                 sx={{ mb: 2 }}
                                 error={error != ''}

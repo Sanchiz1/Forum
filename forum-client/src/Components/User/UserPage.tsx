@@ -29,7 +29,6 @@ import PostElement from '../Posts/PostElement';
 
 const validUsernamePattern = /^[a-zA-Z0-9_.]+$/;
 const validEmailPattern = /^(?=.{0,64}$)[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-const validPasswordPattern = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[a-zA-Z]).{8,21}$/;
 
 const roles = {
   0: "User",
@@ -126,11 +125,13 @@ export default function UserPage() {
   const [order, setOrder] = useState("Date_Created");
   const [posts, setPosts] = useState<Post[]>([]);
   const [hasMore, setHasMore] = useState(true);
+  const [refresh, setRefresh] = useState(true);
 
   const refetchposts = () => {
     setPosts([]);
-    setOffset(0);
     setUserTimestamp(new Date());
+    setOffset(0);
+    setRefresh(!refresh);
   }
 
   useEffect(() => {
@@ -156,7 +157,7 @@ export default function UserPage() {
     })
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [offset]);
+  }, [offset, refresh]);
 
   function handleScroll() {
     if (window.innerHeight + document.documentElement.scrollTop <= document.documentElement.scrollHeight - 10 || !hasMore) return;
@@ -240,16 +241,14 @@ export default function UserPage() {
                               Joined: {GetDateString(new Date(user.registered_At))}
                             </Typography>
                             {
-                              user.bio ?
+                              user.bio &&
                                 <>
                                   <Typography variant="subtitle1" color="text.secondary" component="p" sx={{ mt: 2, whiteSpace: 'pre-line', overflowWrap: 'break-word' }}>
                                     {user.bio}
                                   </Typography>
                                 </>
-                                :
-                                <></>
                             }
-                            {(Account != null && user.id === Account.id) ?
+                            {(Account != null && user.id === Account.id) &&
                               <>
                                 <Divider sx={{ mt: 2 }} />
                                 <Button onClick={() => setOpenEdit(!openEdit)}>Edit</Button>
@@ -325,9 +324,8 @@ export default function UserPage() {
                                     </Button>
                                   </Box>
                                 </Collapse>
-                              </>
-                              : <></>}
-                            {(Account.role === 'Admin' && user.role !== 'Admin') ?
+                              </>}
+                            {(Account.role === 'Admin' && user.role !== 'Admin') &&
                               <>
                                 <Divider sx={{ mt: 2 }} />
                                 <Button onClick={() => setOpenEdit(!openEdit)}>Edit</Button>
@@ -354,8 +352,7 @@ export default function UserPage() {
                                     </Button>
                                   </Box>
                                 </Collapse>
-                              </>
-                              : <></>}
+                              </>}
                           </Grid>
                         </Paper>
                       </Grid>
@@ -414,7 +411,7 @@ export default function UserPage() {
                       }
                       <Grid item xs={12} md={12} lg={12}>
                         {
-                          hasMore ?
+                          hasMore &&
                             <Paper sx={{
                               p: 1,
                               width: 1,
@@ -427,8 +424,6 @@ export default function UserPage() {
                               <Divider />
                               <Skeleton animation="wave" height={40} />
                             </Paper>
-                            :
-                            <></>
                         }
                       </Grid>
                     </Grid>
