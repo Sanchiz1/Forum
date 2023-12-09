@@ -161,7 +161,7 @@ export default function CommentElement(props: Props) {
       onMouseOver={() => setShowButton(true)}
       onMouseOut={() => setShowButton(false)}
     >
-      <Grid item xs={12} md={12} lg={12} sx={{mb: 2}}>
+      <Grid item xs={12} md={12} lg={12} sx={{ mb: 2 }}>
         <Grid item xs={12} md={12} lg={12} sx={{
           display: 'flex',
           flexDirection: 'row',
@@ -277,7 +277,7 @@ export default function CommentElement(props: Props) {
             }
           </Grid>
           <Grid item xs={1} md={1} lg={1} sx={{ display: 'flex', mb: 'auto' }}>
-            {comment.user_Id == Account.id && showButton ? <>
+            {(comment.user_Id == Account.id || Account.role === 'Admin' || Account.role === 'Moderator') && showButton ? <>
               <IconButton
                 aria-label="more"
                 id="long-button"
@@ -298,10 +298,12 @@ export default function CommentElement(props: Props) {
                 open={open}
                 onClose={handleCloseMenu}
               >
-                <MenuItem onClick={() => { setOpenEdit(true); handleCloseMenu(); }} disableRipple>
-                  <EditIcon />
-                  Edit
-                </MenuItem>
+                {comment.user_Id == Account.id &&
+                  <MenuItem onClick={() => { setOpenEdit(true); handleCloseMenu(); }} disableRipple>
+                    <EditIcon />
+                    Edit
+                  </MenuItem>
+                }
                 <MenuItem onClick={() => { setOpenDelete(true); handleCloseMenu(); }} disableRipple>
                   <DeleteIcon />
                   Delete

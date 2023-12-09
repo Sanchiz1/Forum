@@ -131,6 +131,7 @@
     <Compile Include="Common\Constants\UserRoles.cs" />
     <Compile Include="Common\Exceptions\FailedLoginException.cs" />
     <Compile Include="Common\Exceptions\InvalidTokenException.cs" />
+    <Compile Include="Common\Exceptions\PermissionException.cs" />
     <Compile Include="Common\Exceptions\UserAlreadyExistsException.cs" />
     <Compile Include="Common\Interfaces\Repositories\ICategoryRepository.cs" />
     <Compile Include="Common\Interfaces\Repositories\ICommentRepository.cs" />

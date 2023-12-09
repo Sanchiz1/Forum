@@ -235,7 +235,7 @@ export default function ReplyElement(props: Props) {
             : <></>}
         </Grid>
         <Grid item xs={1} md={1} lg={1} sx={{ display: 'flex', mb: 'auto' }}>
-          {props.reply.user_Id == Account.id && showButton && <>
+          {(props.reply.user_Id == Account.id || Account.role === 'Admin' || Account.role === 'Moderator') && showButton && <>
             <IconButton
               aria-label="more"
               id="long-button"
@@ -256,10 +256,12 @@ export default function ReplyElement(props: Props) {
               open={open}
               onClose={handleCloseMenu}
             >
-              <MenuItem onClick={() => { setOpenEdit(true); handleCloseMenu(); }} disableRipple>
-                <EditIcon />
-                Edit
-              </MenuItem>
+              {props.reply.user_Id == Account.id &&
+                <MenuItem onClick={() => { setOpenEdit(true); handleCloseMenu(); }} disableRipple>
+                  <EditIcon />
+                  Edit
+                </MenuItem>
+              }
               <MenuItem onClick={() => { setOpenDelete(true); handleCloseMenu(); }} disableRipple>
                 <DeleteIcon />
                 Delete

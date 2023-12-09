@@ -260,7 +260,7 @@ export default function PostPage() {
                                                         :
                                                         <>
                                                         </>}
-                                                    {post.user_Id == Account.id ? <>
+                                                    {(post.user_Id == Account.id || Account.role === 'Admin' || Account.role === 'Moderator') ? <>
                                                         <IconButton
                                                             aria-label="more"
                                                             id="long-button"
@@ -281,10 +281,12 @@ export default function PostPage() {
                                                             open={open}
                                                             onClose={handleCloseMenu}
                                                         >
-                                                            <MenuItem onClick={() => { setOpenEdit(true); handleCloseMenu(); }} disableRipple>
-                                                                <EditIcon />
-                                                                Edit
-                                                            </MenuItem>
+                                                            {post.user_Id == Account.id &&
+                                                                <MenuItem onClick={() => { setOpenEdit(true); handleCloseMenu(); }} disableRipple>
+                                                                    <EditIcon />
+                                                                    Edit
+                                                                </MenuItem>
+                                                            }
                                                             <MenuItem onClick={() => { setOpenCategortyEdit(true); handleCloseMenu(); }} disableRipple>
                                                                 <CategoryIcon />
                                                                 Categories

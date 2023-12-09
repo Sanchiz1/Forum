@@ -21,6 +21,7 @@ export default function ReplyInputElement(Props: ReplyInputProps) {
         event.preventDefault();
         Props.Action(comment!.toString())
         setComment('');
+        Props.setState(false);
     }
 
     return (
