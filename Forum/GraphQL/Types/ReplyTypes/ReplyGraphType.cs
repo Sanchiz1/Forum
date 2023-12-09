@@ -19,7 +19,6 @@ namespace Forum.GraphQL.Types.ReplyTypes
             Field(i => i.Reply_Username, type: typeof(StringGraphType), nullable: true);
             Field(i => i.Likes, type: typeof(IntGraphType));
             Field(i => i.Liked, type: typeof(BooleanGraphType));
-            Field(i => i.Is_Deleted, type: typeof(BooleanGraphType));
         }
     }
 }

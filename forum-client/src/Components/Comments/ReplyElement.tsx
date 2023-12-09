@@ -55,7 +55,6 @@ export default function ReplyElement(props: Props) {
   const [error, setError] = useState<String>('');
 
   const handleSubmitEdit = (text: string) => {
-    if (props.reply.is_Deleted) return;
     if (text.trim().length === 0) {
       setError('Comment cannot be empty');
       return;
@@ -85,7 +84,6 @@ export default function ReplyElement(props: Props) {
   const [openDelete, setOpenDelete] = useState(false);
 
   const handleSubmitDelete = () => {
-    if (props.reply.is_Deleted) return;
     deleteReplyRequest(props.reply.id).subscribe({
       next(value) {
         enqueueSnackbar(value, {
@@ -96,6 +94,7 @@ export default function ReplyElement(props: Props) {
           autoHideDuration: 1500
         });
         setOpenDelete(false);
+        props.refreshComment();
       },
       error(err) {
         setError(err.message)
@@ -154,7 +153,7 @@ export default function ReplyElement(props: Props) {
             <Typography variant="caption" color="text.disabled" component="p" sx={{ mr: 0.5 }}>
               {timeSince(GetLocalDate(new Date(props.reply.date_Created)))}
             </Typography>
-            {props.reply.date_Edited && !props.reply.is_Deleted ?
+            {props.reply.date_Edited ?
               <>
                 <Tooltip title={timeSince(GetLocalDate(new Date(props.reply.date_Edited)))} sx={{ m: 0 }} placement="right" arrow>
                   <Typography variant="caption" color="text.disabled" component="p">
@@ -170,17 +169,10 @@ export default function ReplyElement(props: Props) {
             <ReplyInputElement Action={(e) => {
               handleSubmitEdit(e)
             }} Reply={props.reply.text} setState={setOpenEdit}></ReplyInputElement>
-            : <>
-              {props.reply.is_Deleted ?
-                <Typography variant="subtitle1" component="p" color="text.disabled" sx={{ pl: 0.5, whiteSpace: 'pre-line', overflowWrap: 'break-word' }}>
-                  {props.reply.text}
-                </Typography>
-                :
-                <Typography variant="subtitle1" component="p" sx={{ pl: 0.5, whiteSpace: 'pre-line', overflowWrap: 'break-word' }}>
-                  {props.reply.text}
-                </Typography>
-              }
-            </>
+            :
+            <Typography variant="subtitle1" component="p" sx={{ pl: 0.5, whiteSpace: 'pre-line', overflowWrap: 'break-word' }}>
+              {props.reply.text}
+            </Typography>
           }
           <Grid lg={1} md={2} xs={3} item sx={{
             display: 'flex',
@@ -203,11 +195,10 @@ export default function ReplyElement(props: Props) {
               </IconButtonWithCheck>
               {likes.toString()}
             </Typography>
-            {props.reply.is_Deleted ? <></> :
-              <ButtonWithCheck variant='text' sx={{ color: "text.secondary" }} ActionWithCheck={() => {
-                setOpenReplyInput(!openReplyInput);
-              }
-              }>Reply</ButtonWithCheck>}
+            <ButtonWithCheck variant='text' sx={{ color: "text.secondary" }} ActionWithCheck={() => {
+              setOpenReplyInput(!openReplyInput);
+            }
+            }>Reply</ButtonWithCheck>
           </Grid>
           {openReplyInput ?
             <Box>
@@ -244,7 +235,7 @@ export default function ReplyElement(props: Props) {
             : <></>}
         </Grid>
         <Grid item xs={1} md={1} lg={1} sx={{ display: 'flex', mb: 'auto' }}>
-          {props.reply.user_Id == Account.id && showButton && !props.reply.is_Deleted ? <>
+          {props.reply.user_Id == Account.id && showButton && <>
             <IconButton
               aria-label="more"
               id="long-button"
@@ -274,7 +265,7 @@ export default function ReplyElement(props: Props) {
                 Delete
               </MenuItem>
             </StyledMenu>
-          </> : <></>}
+          </>}
         </Grid>
       </Grid>
       <Dialog

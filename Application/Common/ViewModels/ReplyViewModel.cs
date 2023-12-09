@@ -15,6 +15,5 @@ namespace Application.Common.ViewModels
         public string Reply_Username { get; set; }
         public int Likes { get; set; }
         public bool Liked { get; set; }
-        public bool Is_Deleted { get; set; }
     }
 }

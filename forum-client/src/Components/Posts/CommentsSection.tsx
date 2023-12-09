@@ -60,6 +60,7 @@ export default function CommentsSection(Props: CommentsSectionProps) {
 
     const [hasMore, setHasMore] = useState(true);
 
+    const [refresh, setRefresh] = useState(true);
     const next = 4;
     const [userTimestamp, setUserTimestamp] = useState(new Date());
     const [offset, setOffset] = useState(0);
@@ -74,9 +75,11 @@ export default function CommentsSection(Props: CommentsSectionProps) {
 
 
     const refetchComments = () => {
+        setHasMore(true)
         setComments([]);
         setUserTimestamp(new Date())
         setOffset(0);
+        setRefresh(!refresh);
     }
 
     const fetchComments = () => {
@@ -101,7 +104,7 @@ export default function CommentsSection(Props: CommentsSectionProps) {
         fetchComments()
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [offset])
+    }, [offset, refresh])
 
     useEffect(() => {
         refetchComments()
@@ -172,7 +175,7 @@ export default function CommentsSection(Props: CommentsSectionProps) {
                             {
 
                                 comments?.map((comment, index) =>
-                                    <CommentElement comment={comment} key={index}></CommentElement>
+                                    <CommentElement comment={comment} key={index} refreshComments={refetchComments}></CommentElement>
                                 )
                             }
                         </>

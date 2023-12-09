@@ -27,7 +27,6 @@ export function requestReplies(comment_id: Number, offset: Number, next: Number,
                         reply_Username
                         likes
                         liked
-                        is_Deleted
                     }
                 }
             }`,

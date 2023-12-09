@@ -9,8 +9,7 @@ export interface Reply{
     user_Username: string,
     reply_Username: string
     likes: Number,
-    liked: boolean,
-    is_Deleted: boolean
+    liked: boolean
 }
 export interface ReplyInput {
     text: string,

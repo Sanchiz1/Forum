@@ -29,6 +29,7 @@ import IconButtonWithCheck from '../UtilComponents/IconButtonWithCheck';
 
 interface Props {
   comment: Comment;
+  refreshComments: () => void
 }
 
 export default function CommentElement(props: Props) {
@@ -112,6 +113,7 @@ export default function CommentElement(props: Props) {
           autoHideDuration: 1500
         });
         setOpenDelete(false);
+        props.refreshComments();
       },
       error(err) {
         setError(err.message)
