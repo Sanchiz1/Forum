@@ -210,7 +210,6 @@ export default function ReplyElement(props: Props) {
                     comment_Id: props.reply.comment_Id,
                     reply_User_Id: props.reply.user_Id,
                     text: e,
-                    user_Id: Account.id
                   }
                   createReplyRequest(replyInput).subscribe(
                     {

@@ -12,7 +12,6 @@ export interface Comment{
 }
 
 export interface CommentInput {
-    post_Id: Number
-    text: string,
-    user_Id: Number
+    post_Id: Number,
+    text: string
 }

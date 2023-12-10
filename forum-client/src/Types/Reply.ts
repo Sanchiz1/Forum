@@ -13,7 +13,6 @@ export interface Reply{
 }
 export interface ReplyInput {
     text: string,
-    user_Id: Number,
     comment_Id: Number,
     reply_User_Id?: Number,
 }

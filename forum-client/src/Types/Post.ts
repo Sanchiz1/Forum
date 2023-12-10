@@ -16,6 +16,5 @@ export interface Post{
 
 export interface PostInput {
     title: string,
-    text?: string,
-    user_Id: Number
+    text?: string
 }

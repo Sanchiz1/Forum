@@ -285,8 +285,8 @@ namespace Infrastructure.Data.Repositories
         {
             string salt = PasswordHashHelper.GenerateSalt();
             createUserCommand.Password = PasswordHashHelper.ComputeHash(createUserCommand.Password, salt);
-
-            string query = $"INSERT INTO Users (Username, Email, Bio, Password, Salt) VALUES (@Username, @Email, @Bio, @Password, @salt)";
+            createUserCommand.PasswordSalt = salt;
+            string query = $"INSERT INTO Users (Username, Email, Bio, Password, Salt) VALUES (@Username, @Email, @Bio, @Password, @PasswordSalt)";
 
             try
             {

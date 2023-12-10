@@ -78,8 +78,17 @@ namespace Infrastructure.Data.Repositories
         public async Task<ReplyViewModel> GetReplyByIdAsync(GetReplyByIdQuery getReplyByIdQuery)
         {
             ReplyViewModel result = null;
-            string query = $"SELECT Replies.Id as Id, Text, Date_Created, Date_Edited, User_Id, Comment_Id, users.Username as User_Username" +
-               $" FROM Replies INNER JOIN Users ON Users.Id = Replies.User_Id WHERE Replies.Id = @Id";
+            string query = $"SELECT Replies.Id, Replies.Text, Replies.Date_Created, Replies.Date_Edited, Replies.User_Id, Replies.Comment_Id, Replies.Reply_User_Id, " +
+                    $" Users.Username as User_Username, ReplyToUsers.Username as Reply_Username, " +
+                    $" Count(DISTINCT Reply_Likes.User_Id) as Likes, " +
+                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Reply_Likes WHERE Reply_Likes.Reply_Id = Replies.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked " +
+                    $" FROM Replies " +
+                    $" INNER JOIN Users ON Users.Id = Replies.User_Id " +
+                    $" LEFT JOIN Users ReplyToUsers ON ReplyToUsers.Id = Replies.Reply_User_Id " +
+                    $" LEFT JOIN Reply_Likes ON Reply_Likes.Reply_Id = Replies.Id " +
+                    $" WHERE Replies.Id = @Id " +
+                    $" GROUP BY Replies.Id, Replies.Text, Replies.Date_Created, Replies.Date_Edited, Replies.Comment_Id, Replies.User_Id, users.Username, " +
+                    $" ReplyToUsers.Username, Replies.Reply_User_Id, Replies.Reply_User_Id ";
 
             try
             {

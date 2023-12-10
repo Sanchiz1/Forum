@@ -4,6 +4,7 @@ using System.Threading;
 using Application.Common.Interfaces.Repositories;
 using Application.UseCases.Posts.Commands;
 using FluentValidation;
+using Application.Common.Exceptions;
 
 namespace Application.UseCases.Comments.Commands
 {
@@ -22,7 +23,14 @@ namespace Application.UseCases.Comments.Commands
             _context = context;
         }
 
-        public async Task Handle(CreateCommentCommand request, CancellationToken cancellationToken) => await _context.CreateCommentAsync(request);
+        public async Task Handle(CreateCommentCommand request, CancellationToken cancellationToken)
+        {
+            if (request.User_Id == 0)
+            {
+                throw new PermissionException();
+            }
+            await _context.CreateCommentAsync(request);
+        }
     }
     public class CreateCommentCommandValidator : AbstractValidator<CreateCommentCommand>
     {

@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces.Repositories;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces.Repositories;
 using FluentValidation;
 using MediatR;
 using System;
@@ -14,6 +15,8 @@ namespace Application.UseCases.Replies.Commands
     {
         public int Id { get; set; }
         public string Text { get; set; }
+        public int Account_Id { get; set; } = 0;
+        public string Account_Role { get; set; } = "";
     }
     public class UpdateReplyCommandHandler : IRequestHandler<UpdateReplyCommand>
     {
@@ -24,7 +27,17 @@ namespace Application.UseCases.Replies.Commands
             _context = context;
         }
 
-        public async Task Handle(UpdateReplyCommand request, CancellationToken cancellationToken) => await _context.UpdateReplyAsync(request);
+        public async Task Handle(UpdateReplyCommand request, CancellationToken cancellationToken)
+        {
+            var post = await _context.GetReplyByIdAsync(new Queries.GetReplyByIdQuery() { Id = request.Id });
+
+            if (post.Reply.User_Id != request.Account_Id)
+            {
+                throw new PermissionException();
+            }
+
+            await _context.UpdateReplyAsync(request);
+        }
     }
     public class UpdateReplyCommandValidator : AbstractValidator<UpdateReplyCommand>
     {

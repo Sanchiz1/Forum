@@ -10,7 +10,7 @@ namespace TimeTracker.GraphQL.Schemas
         public MainShema(IServiceProvider provider) : base(provider)
         {
             Query = provider.GetRequiredService<MainQuery>();
-            Mutation = provider.GetRequiredService<MainMutation>().AuthorizeWithPolicy("Authorized");
+            Mutation = provider.GetRequiredService<MainMutation>();
         }
     }
 }

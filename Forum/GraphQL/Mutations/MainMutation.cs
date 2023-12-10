@@ -10,11 +10,11 @@ namespace Forum.GraphQL.Mutations
             Field<UserMutation>("user")
             .Resolve(context => new { });
             Field<PostMutation>("post")
-            .Resolve(context => new { });
+            .Resolve(context => new { }).AuthorizeWithPolicy("Authorized");
             Field<CommentMutation>("comment")
-            .Resolve(context => new { });
+            .Resolve(context => new { }).AuthorizeWithPolicy("Authorized");
             Field<ReplyMutation>("reply")
-            .Resolve(context => new { });
+            .Resolve(context => new { }).AuthorizeWithPolicy("Authorized");
             Field<CategoryMutation>("category")
             .Resolve(context => new { }).AuthorizeWithPolicy("AdminPolicy");
         }

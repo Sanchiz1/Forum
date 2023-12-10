@@ -65,7 +65,6 @@ export function createReplyRequest(ReplyInput: ReplyInput) {
             "Input": {
                 "comment_Id": ReplyInput.comment_Id,
                 "text": ReplyInput.text,
-                "user_Id": ReplyInput.user_Id,
                 "reply_User_Id": ReplyInput.reply_User_Id
             }
         }
