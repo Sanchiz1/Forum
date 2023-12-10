@@ -1,4 +1,5 @@
-﻿using Application.UseCases.Categories.Commands;
+﻿using Application.Common.Exceptions;
+using Application.UseCases.Categories.Commands;
 using Application.UseCases.Comments.Commands;
 using FluentValidation;
 using Forum.GraphQL.Types.CategoryTypes;
@@ -22,10 +23,20 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<CreateCategoryInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    CreateCategoryCommand createCategoryCommand = context.GetArgument<CreateCategoryCommand>("input");
+                    CreateCategoryCommand createCategoryCommand = new CreateCategoryCommand()
+                    {
+                        Title = context.GetArgument<CreateCategoryCommand>("input").Title,
+                        Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
+                    };
+
                     try
                     {
                         await _mediator.Send(createCategoryCommand);
+                    }
+                    catch (PermissionException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
+                        return null;
                     }
                     catch (ValidationException ex)
                     {
@@ -44,10 +55,21 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<UpdateCategoryInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    UpdateCategoryCommand updateCategoryCommand = context.GetArgument<UpdateCategoryCommand>("input");
+                    UpdateCategoryCommand updateCategoryCommand = new UpdateCategoryCommand()
+                    {
+                        Id = context.GetArgument<UpdateCategoryCommand>("input").Id,
+                        Title = context.GetArgument<UpdateCategoryCommand>("input").Title,
+                        Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
+                    };
+
                     try
                     {
                         await _mediator.Send(updateCategoryCommand);
+                    }
+                    catch (PermissionException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
+                        return null;
                     }
                     catch (ValidationException ex)
                     {
@@ -66,10 +88,20 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<DeleteCategoryInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    DeleteCategoryCommand deleteCategoryCommand = context.GetArgument<DeleteCategoryCommand>("input");
+                    DeleteCategoryCommand deleteCategoryCommand = new DeleteCategoryCommand()
+                    {
+                        Id = context.GetArgument<UpdateCategoryCommand>("input").Id,
+                        Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
+                    };
+
                     try
                     {
                         await _mediator.Send(deleteCategoryCommand);
+                    }
+                    catch (PermissionException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
+                        return null;
                     }
                     catch (ValidationException ex)
                     {

@@ -246,7 +246,6 @@ export default function CommentElement(props: Props) {
                     const replyInput: ReplyInput = {
                       comment_Id: props.comment.id,
                       text: e,
-                      user_Id: Account.id
                     }
                     createReplyRequest(replyInput).subscribe(
                       {

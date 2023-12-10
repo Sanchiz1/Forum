@@ -1,4 +1,5 @@
-﻿using Application.UseCases.Comments.Commands;
+﻿using Application.Common.Exceptions;
+using Application.UseCases.Comments.Commands;
 using Application.UseCases.Posts.Commands;
 using Application.UseCases.Replies.Commands;
 using FluentValidation;
@@ -22,10 +23,21 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<CreateReplyInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    CreateReplyCommand createReplyCommand = context.GetArgument<CreateReplyCommand>("input");
+                    CreateReplyCommand createReplyCommand = new CreateReplyCommand()
+                    {
+                        Text = context.GetArgument<CreateReplyCommand>("input").Text,
+                        Comment_Id = context.GetArgument<CreateReplyCommand>("input").Comment_Id,
+                        Reply_User_Id = context.GetArgument<CreateReplyCommand>("input").Reply_User_Id,
+                        User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
+                    };
                     try
                     {
                         await _mediator.Send(createReplyCommand);
+                    }
+                    catch (PermissionException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
+                        return null;
                     }
                     catch (ValidationException ex)
                     {
@@ -44,10 +56,21 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<UpdateReplyInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    UpdateReplyCommand updateReplyCommand = context.GetArgument<UpdateReplyCommand>("input");
+                    UpdateReplyCommand updateReplyCommand = new UpdateReplyCommand()
+                    {
+                        Id = context.GetArgument<UpdateReplyCommand>("input").Id,
+                        Text = context.GetArgument<UpdateReplyCommand>("input").Text,
+                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
+                        Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
+                    };
                     try
                     {
                         await _mediator.Send(updateReplyCommand);
+                    }
+                    catch (PermissionException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
+                        return null;
                     }
                     catch (ValidationException ex)
                     {
@@ -66,10 +89,20 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<DeleteReplyInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    DeleteReplyCommand deleteReplyCommand = context.GetArgument<DeleteReplyCommand>("input");
+                    DeleteReplyCommand deleteReplyCommand = new DeleteReplyCommand()
+                    {
+                        Id = context.GetArgument<DeleteReplyCommand>("input").Id,
+                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
+                        Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
+                    };
                     try
                     {
                         await _mediator.Send(deleteReplyCommand);
+                    }
+                    catch (PermissionException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
+                        return null;
                     }
                     catch (ValidationException ex)
                     {
@@ -92,9 +125,15 @@ namespace Forum.GraphQL.Mutations
                     {
                         Reply_Id = context.GetArgument<LikeReplyCommand>("input").Reply_Id,
                         User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
-                    }; try
+                    };
+                    try
                     {
                         await _mediator.Send(likeReplyCommand);
+                    }
+                    catch (PermissionException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
+                        return null;
                     }
                     catch (ValidationException ex)
                     {

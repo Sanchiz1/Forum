@@ -5,6 +5,7 @@ using System;
 using Application.Common.Interfaces.Repositories;
 using FluentValidation;
 using Application.Common.Models;
+using Application.Common.Exceptions;
 
 namespace Application.UseCases.Posts.Commands
 {
@@ -23,7 +24,13 @@ namespace Application.UseCases.Posts.Commands
             _context = context;
         }
 
-        public async Task Handle(CreatePostCommand request, CancellationToken cancellationToken) => await _context.CreatePostAsync(request);
+        public async Task Handle(CreatePostCommand request, CancellationToken cancellationToken) { 
+            if(request.User_Id == 0)
+            {
+                throw new PermissionException();
+            }
+            await _context.CreatePostAsync(request); 
+        }
     }
     public class CreatePostCommandValidator : AbstractValidator<CreatePostCommand>
     {

@@ -8,7 +8,6 @@ namespace Forum.GraphQL.Types.CommentTypes
     {
         public CreateCommentInputGraphType()
         {
-            Field(c => c.User_Id, type: typeof(IntGraphType));
             Field(c => c.Post_Id, type: typeof(IntGraphType));
             Field(c => c.Text, type: typeof(StringGraphType));
         }

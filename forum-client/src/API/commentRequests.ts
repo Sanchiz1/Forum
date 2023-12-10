@@ -104,7 +104,6 @@ export function createCommentRequest(CommentInput: CommentInput) {
             "Input": {
                 "post_Id": CommentInput.post_Id,
                 "text": CommentInput.text,
-                "user_Id": CommentInput.user_Id
             }
         }
     ).pipe(

@@ -8,6 +8,7 @@ using GraphQL.Instrumentation;
 using Infrastructure;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -49,8 +50,6 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddCors();
-
-
 
 builder.Services.AddGraphQL(c => c.AddSystemTextJson()
                                   .AddSchema<MainShema>()

@@ -14,6 +14,7 @@ namespace Application.UseCases.Replies.Queries
     public class GetReplyByIdQuery : IRequest<ReplyViewModel>
     {
         public int Id { get; set; }
+        public int User_Id { get; set; } = 0;
     }
     public class GetReplyByIdQueryHandler : IRequestHandler<GetReplyByIdQuery, ReplyViewModel>
     {

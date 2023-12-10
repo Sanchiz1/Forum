@@ -1,4 +1,6 @@
-﻿using Application.UseCases.Posts.Commands;
+﻿using Application.Common.Exceptions;
+using Application.UseCases.Categories.Commands;
+using Application.UseCases.Posts.Commands;
 using FluentValidation;
 using Forum.GraphQL.Types.PostTypes;
 using Forum.Helpers;
@@ -20,10 +22,20 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<CreatePostInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    CreatePostCommand createPostCommand = context.GetArgument<CreatePostCommand>("input");
+                    CreatePostCommand createPostCommand = new CreatePostCommand()
+                    {
+                        Title = context.GetArgument<CreatePostCommand>("input").Title,
+                        Text = context.GetArgument<CreatePostCommand>("input").Text,
+                        User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
+                    };
                     try
                     {
                         await _mediator.Send(createPostCommand);
+                    }
+                    catch (PermissionException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
+                        return null;
                     }
                     catch (ValidationException ex)
                     {
@@ -42,10 +54,21 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<UpdatePostInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    UpdatePostCommand updatePostCommand = context.GetArgument<UpdatePostCommand>("input");
+                    UpdatePostCommand updatePostCommand = new UpdatePostCommand()
+                    {
+                        Id = context.GetArgument<UpdatePostCommand>("input").Id,
+                        Text = context.GetArgument<UpdatePostCommand>("input").Text,
+                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
+                        Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
+                    };
                     try
                     {
                         await _mediator.Send(updatePostCommand);
+                    }
+                    catch (PermissionException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
+                        return null;
                     }
                     catch (ValidationException ex)
                     {
@@ -64,10 +87,21 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<AddPostCategoryInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    AddPostCategoryCommand addPostCategoryCommand = context.GetArgument<AddPostCategoryCommand>("input");
+                    AddPostCategoryCommand addPostCategoryCommand = new AddPostCategoryCommand()
+                    {
+                        Post_Id = context.GetArgument<AddPostCategoryCommand>("input").Post_Id,
+                        Category_Id = context.GetArgument<AddPostCategoryCommand>("input").Category_Id,
+                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
+                        Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
+                    };
                     try
                     {
                         await _mediator.Send(addPostCategoryCommand);
+                    }
+                    catch (PermissionException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
+                        return null;
                     }
                     catch (ValidationException ex)
                     {
@@ -86,10 +120,21 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<RemovePostCategoryInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    RemovePostCategoryCommand removePostCategoryCommand = context.GetArgument<RemovePostCategoryCommand>("input");
+                    RemovePostCategoryCommand removePostCategoryCommand = new RemovePostCategoryCommand()
+                    {
+                        Post_Id = context.GetArgument<RemovePostCategoryCommand>("input").Post_Id,
+                        Category_Id = context.GetArgument<RemovePostCategoryCommand>("input").Category_Id,
+                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
+                        Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
+                    };
                     try
                     {
                         await _mediator.Send(removePostCategoryCommand);
+                    }
+                    catch (PermissionException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
+                        return null;
                     }
                     catch (ValidationException ex)
                     {
@@ -107,10 +152,20 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<DeletePostInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    DeletePostCommand deletePostCommand = context.GetArgument<DeletePostCommand>("input");
+                    DeletePostCommand deletePostCommand = new DeletePostCommand()
+                    {
+                        Id = context.GetArgument<DeletePostCommand>("input").Id,
+                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
+                        Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
+                    };
                     try
                     {
                         await _mediator.Send(deletePostCommand);
+                    }
+                    catch (PermissionException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
+                        return null;
                     }
                     catch (ValidationException ex)
                     {

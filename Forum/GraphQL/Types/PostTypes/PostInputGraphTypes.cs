@@ -48,7 +48,6 @@ namespace Forum.GraphQL.Types.PostTypes
     {
         public CreatePostInputGraphType()
         {
-            Field(c => c.User_Id, type: typeof(IntGraphType));
             Field(c => c.Title, type: typeof(StringGraphType));
             Field(c => c.Text, type: typeof(StringGraphType));
         }

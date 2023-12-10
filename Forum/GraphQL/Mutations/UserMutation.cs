@@ -1,4 +1,5 @@
 ﻿using Application.Common.Exceptions;
+using Application.UseCases.Replies.Commands;
 using Application.UseCases.Users.Commands;
 using FluentValidation;
 using Forum.GraphQL.Types.UserTypes;
@@ -79,17 +80,21 @@ namespace Forum.GraphQL.Mutations
                     }
 
                     return "Account updated successfully";
-                });
+                }).AuthorizeWithPolicy("Authorized");
 
             Field<StringGraphType>("updateUserRole")
                 .Argument<NonNullGraphType<UpdateUserRoleInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    UpdateUserRoleCommand addUserRoleCommand = context.GetArgument<UpdateUserRoleCommand>("input");
-
+                    UpdateUserRoleCommand updateUserRoleCommand = new UpdateUserRoleCommand()
+                    {
+                        User_Id = context.GetArgument<UpdateUserRoleCommand>("input").User_Id,
+                        Role_Id = context.GetArgument<UpdateUserRoleCommand>("input").Role_Id,
+                        Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
+                    };
                     try
                     {
-                        await _mediator.Send(addUserRoleCommand);
+                        await _mediator.Send(updateUserRoleCommand);
                     }
                     catch (ValidationException ex)
                     {

@@ -15,6 +15,7 @@ namespace Application.UseCases.Users.Commands
         public string Email { get; set; }
         public string Bio { get; set; }
         public string Password { get; set; }
+        public string PasswordSalt { get; set; } = string.Empty;
     }
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand>
     {

@@ -1,4 +1,5 @@
-﻿using Application.Common.Interfaces.Repositories;
+﻿using Application.Common.Exceptions;
+using Application.Common.Interfaces.Repositories;
 using Application.UseCases.Comments.Commands;
 using FluentValidation;
 using MediatR;
@@ -27,7 +28,14 @@ namespace Application.UseCases.Replies.Commands
             _context = context;
         }
 
-        public async Task Handle(CreateReplyCommand request, CancellationToken cancellationToken) => await _context.CreateReplyAsync(request);
+        public async Task Handle(CreateReplyCommand request, CancellationToken cancellationToken)
+        {
+            if (request.User_Id == 0)
+            {
+                throw new PermissionException();
+            }
+            await _context.CreateReplyAsync(request);
+        }
     }
     public class CreateReplyCommandValidator : AbstractValidator<CreateReplyCommand>
     {

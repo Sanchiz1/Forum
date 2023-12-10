@@ -188,8 +188,7 @@ export function createPostRequest(PostInput: PostInput) {
         {
             "Input": {
                 "title": PostInput.title,
-                "text": PostInput.text,
-                "user_Id": PostInput.user_Id
+                "text": PostInput.text
             }
         }
     ).pipe(

@@ -127,7 +127,8 @@ export default function PostPage() {
                     autoHideDuration: 1500
                 });
                 setError('');
-                navigator("/post/" + post?.id!);
+                setOpenEdit(false);
+                fetchPost();
             },
             error(err) {
                 setError(err.message)

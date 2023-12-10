@@ -48,8 +48,7 @@ export default function CreatePost() {
         }
         const postInput: PostInput = {
             title: title,
-            text: text,
-            user_Id: Account.id
+            text: text
         }
         createPostRequest(postInput).subscribe({
             next(value) {
