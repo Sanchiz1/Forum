@@ -3,6 +3,7 @@ using Application.Common.Interfaces.Repositories;
 using Application.Common.ViewModels;
 using Application.UseCases.Replies.Commands;
 using Application.UseCases.Replies.Queries;
+using Application.UseCases.Users.Queries;
 using Dapper;
 using Microsoft.Extensions.Logging;
 using System;
@@ -26,10 +27,10 @@ namespace Infrastructure.Data.Repositories
         public async Task<List<ReplyViewModel>> GetRepliesAsync(GetRepliesQuery getRepliesQuery)
         {
             List<ReplyViewModel> result = null;
-            string query = $"SELECT Replies.Id, Replies.Text, Replies.Date_Created, Replies.Date_Edited, Replies.User_Id, Replies.Comment_Id, Replies.Reply_User_Id, " +
-                    $" Users.Username as User_Username, ReplyToUsers.Username as Reply_Username, " +
+            string query = $"SELECT Users.Username as User_Username, ReplyToUsers.Username as Reply_Username, " +
                     $" Count(DISTINCT Reply_Likes.User_Id) as Likes, " +
-                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Reply_Likes WHERE Reply_Likes.Reply_Id = Replies.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked " +
+                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Reply_Likes WHERE Reply_Likes.Reply_Id = Replies.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked, " +
+                    $" Replies.Id, Replies.Text, Replies.Date_Created, Replies.Date_Edited, Replies.User_Id, Replies.Comment_Id, Replies.Reply_User_Id " +
                     $"FROM Replies " +
                     $" INNER JOIN Users ON Users.Id = Replies.User_Id " +
                     $" LEFT JOIN Users ReplyToUsers ON ReplyToUsers.Id = Replies.Reply_User_Id " +
@@ -42,25 +43,12 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<dynamic>(query, getRepliesQuery)).Select(item =>
-                    new ReplyViewModel()
-                    {
-                        Reply = new ReplyDto()
-                        {
-                            Id = item.Id,
-                            Text = item.Text,
-                            Comment_Id = item.Comment_Id,
-                            User_Id = item.User_Id,
-                            Date_Created = item.Date_Created,
-                            Date_Edited = item.Date_Edited,
-                            Reply_User_Id = item.Reply_User_Id,
-                        },
-                        Reply_Username = item.Reply_Username,
-                        User_Username = item.User_Username,
-                        Likes = item.Likes,
-                        Liked = item.Liked
-                    }
-                ).ToList();
+                result = (await connection.QueryAsync<ReplyViewModel, ReplyDto, ReplyViewModel>(query, (replyViewModel, reply) =>
+                {
+                    replyViewModel.Reply = reply;
+
+                    return replyViewModel;
+                }, getRepliesQuery, splitOn: "Id")).ToList();
             }
             catch (SqlException ex)
             {
@@ -78,10 +66,11 @@ namespace Infrastructure.Data.Repositories
         public async Task<ReplyViewModel> GetReplyByIdAsync(GetReplyByIdQuery getReplyByIdQuery)
         {
             ReplyViewModel result = null;
-            string query = $"SELECT Replies.Id, Replies.Text, Replies.Date_Created, Replies.Date_Edited, Replies.User_Id, Replies.Comment_Id, Replies.Reply_User_Id, " +
+            string query = $"SELECT " +
                     $" Users.Username as User_Username, ReplyToUsers.Username as Reply_Username, " +
                     $" Count(DISTINCT Reply_Likes.User_Id) as Likes, " +
-                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Reply_Likes WHERE Reply_Likes.Reply_Id = Replies.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked " +
+                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Reply_Likes WHERE Reply_Likes.Reply_Id = Replies.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked, " +
+                    $" Replies.Id, Replies.Text, Replies.Date_Created, Replies.Date_Edited, Replies.User_Id, Replies.Comment_Id, Replies.Reply_User_Id " +
                     $" FROM Replies " +
                     $" INNER JOIN Users ON Users.Id = Replies.User_Id " +
                     $" LEFT JOIN Users ReplyToUsers ON ReplyToUsers.Id = Replies.Reply_User_Id " +
@@ -93,25 +82,12 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<dynamic>(query, getReplyByIdQuery)).Select(item =>
-                     new ReplyViewModel()
-                     {
-                         Reply = new ReplyDto()
-                         {
-                             Id = item.Id,
-                             Text = item.Text,
-                             Comment_Id = item.Comment_Id,
-                             User_Id = item.User_Id,
-                             Date_Created = item.Date_Created,
-                             Date_Edited = item.Date_Edited,
-                             Reply_User_Id = item.Reply_User_Id,
-                         },
-                         Reply_Username = item.Reply_Username,
-                         User_Username = item.User_Username,
-                         Likes = item.Likes,
-                         Liked = item.Liked
-                     }
-                ).First();
+                result = (await connection.QueryAsync<ReplyViewModel, ReplyDto, ReplyViewModel>(query, (replyViewModel, reply) =>
+                {
+                    replyViewModel.Reply = reply;
+
+                    return replyViewModel;
+                }, getReplyByIdQuery, splitOn: "Id")).FirstOrDefault();
             }
             catch (SqlException ex)
             {

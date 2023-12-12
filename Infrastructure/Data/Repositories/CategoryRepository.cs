@@ -33,13 +33,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<dynamic>(query, getAllCategoriesQuery)).Select(item =>
-                    new CategoryDto()
-                    {
-                        Id = item.Id,
-                        Title = item.Title,
-                    }
-                ).ToList();
+                result = (await connection.QueryAsync<CategoryDto>(query, getAllCategoriesQuery)).ToList();
             }
             catch (SqlException ex)
             {
@@ -66,13 +60,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<dynamic>(query, getCategoriesQuery)).Select(item =>
-                    new CategoryDto()
-                    {
-                        Id = item.Id,
-                        Title = item.Title,
-                    }
-                ).ToList();
+                result = (await connection.QueryAsync<CategoryDto>(query, getCategoriesQuery)).ToList();
             }
             catch (SqlException ex)
             {
@@ -98,13 +86,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<dynamic>(query, getPostCategoriesQuery)).Select(item =>
-                    new CategoryDto()
-                    {
-                        Id = item.Id,
-                        Title = item.Title,
-                    }
-                ).ToList();
+                result = (await connection.QueryAsync<CategoryDto>(query, getPostCategoriesQuery)).ToList();
             }
             catch (SqlException ex)
             {
@@ -129,13 +111,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<dynamic>(query, getCategoryByIdQuery)).Select(item =>
-                    new CategoryDto()
-                    {
-                        Id = item.Id,
-                        Title = item.Title,
-                    }
-                ).FirstOrDefault();
+                result = (await connection.QueryAsync<CategoryDto>(query, getCategoryByIdQuery)).FirstOrDefault();
             }
             catch (SqlException ex)
             {

@@ -1,0 +1,34 @@
+version: '3.4'
+
+networks:
+    forumbackendapp:
+
+
+services:
+  forumdb:
+    container_name: forum-db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+        - 8002:1433 
+    environment:
+    - ACCEPT_EULA=Y
+    - MSSQL_SA_PASSWORD=password123!
+    networks:
+    - forumbackendapp
+  forumbackendapp:
+    container_name: forum-backend-app
+    image: ${DOCKER_REGISTRY-}forum
+    build:
+      context: .
+      dockerfile: Forum/Dockerfile
+    ports:
+        - 8001:80
+    depends_on:
+        - forumdb
+    environment:
+     - DB_HOST=forumdb
+     - DB_NAME=forumbackendapp
+     - DB_SA_PASSWORD=password123!
+    networks:
+    - forumbackendapp
+

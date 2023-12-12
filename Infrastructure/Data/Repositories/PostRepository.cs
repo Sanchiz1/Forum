@@ -27,11 +27,11 @@ namespace Infrastructure.Data.Repositories
         public async Task<List<PostViewModel>> GetPostsAsync(GetPostsQuery getPostsQuery)
         {
             List<PostViewModel> result = null;
-            string query = $"SELECT Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id," +
-                    $" users.Username as User_Username," +
+            string query = $"SELECT users.Username as User_Username, " +
                     $" Count(DISTINCT Post_Likes.User_Id) as Likes," +
                     $" Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked" +
+                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked, " +
+                    $" Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id " +
                     $" FROM Posts " +
                     $"  INNER JOIN Users ON Users.Id = Posts.User_Id" +
                     $"  LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id " +
@@ -45,25 +45,12 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<dynamic>(query, getPostsQuery)).Select(item =>
+                result = (await connection.QueryAsync<PostViewModel, PostDto, PostViewModel>(query, (postViewModel, post) =>
+                {
+                    postViewModel.Post = post;
 
-                    new PostViewModel()
-                    {
-                        Post = new PostDto()
-                        {
-                            Id = item.Id,
-                            Title = item.Title,
-                            Text = item.Text,
-                            User_Id = item.User_Id,
-                            Date_Created = item.Date_Created,
-                            Date_Edited = item.Date_Edited,
-                        },
-                        User_Username = item.User_Username,
-                        Likes = item.Likes,
-                        Comments = item.Comments,
-                        Liked = item.Liked,
-                    }
-                ).ToList();
+                    return postViewModel;
+                }, getPostsQuery, splitOn: "Id")).ToList();
             }
             catch (SqlException ex)
             {
@@ -82,11 +69,11 @@ namespace Infrastructure.Data.Repositories
         public async Task<List<PostViewModel>> GetSearchedPostsAsync(GetSearchedPostsQuery getSearchedPostsQuery)
         {
             List<PostViewModel> result = null;
-            string query = $"SELECT Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id," +
-                    $" users.Username as User_Username," +
+            string query = $"SELECT users.Username as User_Username," +
                     $" Count(DISTINCT Post_Likes.User_Id) as Likes," +
                     $" Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked" +
+                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked, " +
+                    $" Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id " +
                     $" FROM Posts " +
                     $"  INNER JOIN Users ON Users.Id = Posts.User_Id" +
                     $"  LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id " +
@@ -99,25 +86,12 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<dynamic>(query, getSearchedPostsQuery)).Select(item =>
+                result = (await connection.QueryAsync<PostViewModel, PostDto, PostViewModel>(query, (postViewModel, post) =>
+                {
+                    postViewModel.Post = post;
 
-                    new PostViewModel()
-                    {
-                        Post = new PostDto()
-                        {
-                            Id = item.Id,
-                            Title = item.Title,
-                            Text = item.Text,
-                            User_Id = item.User_Id,
-                            Date_Created = item.Date_Created,
-                            Date_Edited = item.Date_Edited,
-                        },
-                        User_Username = item.User_Username,
-                        Likes = item.Likes,
-                        Comments = item.Comments,
-                        Liked = item.Liked,
-                    }
-                ).ToList();
+                    return postViewModel;
+                }, getSearchedPostsQuery, splitOn: "Id")).ToList();
             }
             catch (SqlException ex)
             {
@@ -136,11 +110,11 @@ namespace Infrastructure.Data.Repositories
         public async Task<List<PostViewModel>> GetUserPostsAsync(GetUserPostsQuery getUserPostsQuery)
         {
             List<PostViewModel> result = null;
-            string query = $"SELECT Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id," +
-                    $" Users.Username as User_Username," +
+            string query = $"SELECT Users.Username as User_Username, " +
                     $" Count(DISTINCT Post_Likes.User_Id) as Likes," +
                     $" Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked" +
+                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked, " +
+                    $" Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id " +
                     $" FROM Posts " +
                     $"  INNER JOIN Users ON Users.Id = Posts.User_Id" +
                     $"  LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id " +
@@ -153,25 +127,12 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<dynamic>(query, getUserPostsQuery)).Select(item =>
+                result = (await connection.QueryAsync<PostViewModel, PostDto, PostViewModel>(query, (postViewModel, post) =>
+                {
+                    postViewModel.Post = post;
 
-                    new PostViewModel()
-                    {
-                        Post = new PostDto()
-                        {
-                            Id = item.Id,
-                            Title = item.Title,
-                            Text = item.Text,
-                            User_Id = item.User_Id,
-                            Date_Created = item.Date_Created,
-                            Date_Edited = item.Date_Edited,
-                        },
-                        User_Username = item.User_Username,
-                        Likes = item.Likes,
-                        Comments = item.Comments,
-                        Liked = item.Liked,
-                    }
-                ).ToList();
+                    return postViewModel;
+                }, getUserPostsQuery, splitOn: "Id")).ToList();
             }
             catch (SqlException ex)
             {
@@ -189,11 +150,11 @@ namespace Infrastructure.Data.Repositories
         public async Task<PostViewModel> GetPostByIdAsync(GetPostByIdQuery getPostByIdQuery)
         {
             PostViewModel result = null;
-            string query = $"SELECT Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id," +
-                    $" users.Username as User_Username," +
+            string query = $"SELECT users.Username as User_Username, " +
                     $" Count(DISTINCT Post_Likes.User_Id) as Likes," +
                     $" Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked" +
+                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked, " +
+                    $" Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id " +
                     $"  FROM Posts " +
                     $"  INNER JOIN Users ON Users.Id = Posts.User_Id" +
                     $"  LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id " +
@@ -205,25 +166,12 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<dynamic>(query, getPostByIdQuery)).Select(item =>
+                result = (await connection.QueryAsync<PostViewModel, PostDto, PostViewModel>(query, (postViewModel, post) =>
+                {
+                    postViewModel.Post = post;
 
-                    new PostViewModel()
-                    {
-                        Post = new PostDto()
-                        {
-                            Id = item.Id,
-                            Title = item.Title,
-                            Text = item.Text,
-                            User_Id = item.User_Id,
-                            Date_Created = item.Date_Created,
-                            Date_Edited = item.Date_Edited,
-                        },
-                        User_Username = item.User_Username,
-                        Likes = item.Likes,
-                        Comments = item.Comments,
-                        Liked = item.Liked,
-                    }
-                ).First();
+                    return postViewModel;
+                }, getPostByIdQuery, splitOn: "Id")).First();
             }
             catch (SqlException ex)
             {

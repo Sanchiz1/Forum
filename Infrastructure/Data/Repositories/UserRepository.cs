@@ -29,11 +29,11 @@ namespace Infrastructure.Data.Repositories
         {
             List<UserViewModel> result = null;
 
-            string query = $"SELECT Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, " +
-                $"COALESCE(Roles.Name, 'User') AS Role, " +
+            string query = $"SELECT COALESCE(Roles.Name, 'User') AS Role, " +
                 $"COALESCE(Users.Role_Id, 0) AS Role_Id, " +
                 $"Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                $"Count(DISTINCT Posts.Id) as Posts " +
+                $"Count(DISTINCT Posts.Id) as Posts, " +
+                $" Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At " +
                 $"FROM Users " +
                 $"LEFT JOIN Roles ON Roles.Id = Users.Role_Id " +
                 $"LEFT JOIN Posts ON Posts.User_Id = Users.Id " +
@@ -46,23 +46,12 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<dynamic>(query, getSearchedUsersQuery)).Select(item =>
-                    new UserViewModel()
-                    {
-                        User = new UserDto()
-                        {
-                            Id = item.Id,
-                            Username = item.Username,
-                            Email = item.Email,
-                            Bio = item.Bio,
-                            Registered_At = item.Registered_At,
-                        },
-                        Posts = item.Posts,
-                        Comments = item.Comments,
-                        Role = item.Role,
-                        Role_Id = item.Role_Id,
-                    }
-                ).ToList();
+                result = (await connection.QueryAsync<UserViewModel, UserDto, UserViewModel>(query, (userViewModel, user) =>
+                {
+                    userViewModel.User = user;
+
+                    return userViewModel;
+                }, getSearchedUsersQuery, splitOn: "Id")).ToList();
             }
             catch (SqlException ex)
             {
@@ -81,11 +70,11 @@ namespace Infrastructure.Data.Repositories
         {
             UserViewModel result = null;
 
-            string query = $"SELECT Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, " +
-                $"COALESCE(Roles.Name, 'User') AS Role, " +
+            string query = $"SELECT COALESCE(Roles.Name, 'User') AS Role, " +
                 $"COALESCE(Users.Role_Id, 0) AS Role_Id, " +
                 $"Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                $"Count(DISTINCT Posts.Id) as Posts " +
+                $"Count(DISTINCT Posts.Id) as Posts," +
+                $"Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At " +
                 $"FROM Users " +
                 $"LEFT JOIN Roles ON Roles.Id = Users.Role_Id " +
                 $"LEFT JOIN Posts ON Posts.User_Id = Users.Id " +
@@ -97,23 +86,12 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<dynamic>(query, getUserByIdQuery)).Select(item =>
-                    new UserViewModel()
-                    {
-                        User = new UserDto()
-                        {
-                            Id = item.Id,
-                            Username = item.Username,
-                            Email = item.Email,
-                            Bio = item.Bio,
-                            Registered_At = item.Registered_At,
-                        },
-                        Posts = item.Posts,
-                        Comments = item.Comments,
-                        Role = item.Role,
-                        Role_Id = item.Role_Id,
-                    }
-                ).FirstOrDefault();
+                result = (await connection.QueryAsync<UserViewModel, UserDto, UserViewModel>(query, (userViewModel, user) =>
+                {
+                    userViewModel.User = user;
+
+                    return userViewModel;
+                }, getUserByIdQuery, splitOn: "Id")).FirstOrDefault();
             }
             catch (SqlException ex)
             {
@@ -132,11 +110,11 @@ namespace Infrastructure.Data.Repositories
         {
             UserViewModel result = null;
 
-            string query = $"SELECT Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, " +
-                $"COALESCE(Roles.Name, 'User') AS Role, " +
+            string query = $"SELECT COALESCE(Roles.Name, 'User') AS Role, " +
                 $"COALESCE(Users.Role_Id, 0) AS Role_Id, " +
                 $"Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                $"Count(DISTINCT Posts.Id) as Posts " +
+                $"Count(DISTINCT Posts.Id) as Posts," +
+                $"Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At " +
                 $"FROM Users " +
                 $"LEFT JOIN Roles ON Roles.Id = Users.Role_Id " +
                 $"LEFT JOIN Posts ON Posts.User_Id = Users.Id " +
@@ -148,23 +126,12 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<dynamic>(query, getUserByEmailQuery)).Select(item =>
-                    new UserViewModel()
-                    {
-                        User = new UserDto()
-                        {
-                            Id = item.Id,
-                            Username = item.Username,
-                            Email = item.Email,
-                            Bio = item.Bio,
-                            Registered_At = item.Registered_At,
-                        },
-                        Posts = item.Posts,
-                        Comments = item.Comments,
-                        Role = item.Role,
-                        Role_Id = item.Role_Id,
-                    }
-                ).FirstOrDefault();
+                result = (await connection.QueryAsync<UserViewModel, UserDto, UserViewModel>(query, (userViewModel, user) =>
+                {
+                    userViewModel.User = user;
+
+                    return userViewModel;
+                }, getUserByEmailQuery, splitOn: "Id")).FirstOrDefault();
             }
             catch (SqlException ex)
             {
@@ -183,11 +150,11 @@ namespace Infrastructure.Data.Repositories
         {
             UserViewModel result = null;
 
-            string query = $"SELECT Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, " +
-                $"COALESCE(Roles.Name, 'User') AS Role, " +
+            string query = $"SELECT COALESCE(Roles.Name, 'User') AS Role, " +
                 $"COALESCE(Users.Role_Id, 0) AS Role_Id, " +
                 $"Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                $"Count(DISTINCT Posts.Id) as Posts " +
+                $"Count(DISTINCT Posts.Id) as Posts, " +
+                $"Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At " +
                 $"FROM Users " +
                 $"LEFT JOIN Roles ON Roles.Id = Users.Role_Id " +
                 $"LEFT JOIN Posts ON Posts.User_Id = Users.Id " +
@@ -199,23 +166,12 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<dynamic>(query, getUserByEmailQuery)).Select(item =>
-                    new UserViewModel()
-                    {
-                        User = new UserDto()
-                        {
-                            Id = item.Id,
-                            Username = item.Username,
-                            Email = item.Email,
-                            Bio = item.Bio,
-                            Registered_At = item.Registered_At,
-                        },
-                        Posts = item.Posts,
-                        Comments = item.Comments,
-                        Role = item.Role,
-                        Role_Id = item.Role_Id,
-                    }
-                ).FirstOrDefault();
+                result = (await connection.QueryAsync<UserViewModel, UserDto, UserViewModel>(query, (userViewModel, user) =>
+                {
+                    userViewModel.User = user;
+
+                    return userViewModel;
+                }, getUserByEmailQuery, splitOn: "Id")).FirstOrDefault();
             }
             catch (SqlException ex)
             {
@@ -234,9 +190,10 @@ namespace Infrastructure.Data.Repositories
         {
             UserViewModel result = null;
 
-            string query = $"SELECT Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, " +
+            string query = $"SELECT " +
                 $"COALESCE(Roles.Name, 'User') AS Role, " +
-                $"COALESCE(Users.Role_Id, 0) AS Role_Id " +
+                $"COALESCE(Users.Role_Id, 0) AS Role_Id," +
+                $"Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At " +
                 $"FROM Users " +
                 $"LEFT JOIN Roles ON Roles.Id = Users.Role_Id " +
                 $"WHERE (Users.Username = @Username_Or_Email OR Users.Email = @Username_Or_Email) AND Users.Password = @Password";
@@ -252,21 +209,12 @@ namespace Infrastructure.Data.Repositories
 
                 getUserByCredentialsQuery.Password = PasswordHashHelper.ComputeHash(getUserByCredentialsQuery.Password, salt);
 
-                result = (await connection.QueryAsync<dynamic>(query, getUserByCredentialsQuery)).Select(item =>
-                    new UserViewModel()
-                    {
-                        User = new UserDto()
-                        {
-                            Id = item.Id,
-                            Username = item.Username,
-                            Email = item.Email,
-                            Bio = item.Bio,
-                            Registered_At = item.Registered_At,
-                        },
-                        Role = item.Role,
-                        Role_Id = item.Role_Id,
-                    }
-                ).FirstOrDefault();
+                result = (await connection.QueryAsync<UserViewModel, UserDto, UserViewModel>(query, (userViewModel, user) =>
+                {
+                    userViewModel.User = user;
+
+                    return userViewModel;
+                }, getUserByCredentialsQuery, splitOn: "Id")).FirstOrDefault();
             }
             catch (SqlException ex)
             {

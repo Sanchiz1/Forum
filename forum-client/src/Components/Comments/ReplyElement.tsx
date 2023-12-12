@@ -135,14 +135,14 @@ export default function ReplyElement(props: Props) {
               props.reply.reply_User_Id && props.reply.reply_Username ?
                 <>
                   <Typography variant="caption" component="p" sx={{ mr: 0.5 }}>to</Typography>
-                  <Link variant="caption" onClick={(e) => e.stopPropagation()} component={RouterLink} to={'/user/' + props.reply.user_Username} color="primary" sx={{
+                  <Link variant="caption" onClick={(e) => e.stopPropagation()} component={RouterLink} to={'/user/' + props.reply.reply_Username} color="primary" sx={{
                     mr: 0.5, textDecoration: 'none', cursor: 'pointer', color: 'white',
                     ":hover": {
                       textDecoration: 'underline'
                     }
                   }
                   } >
-                    {props.reply.user_Username}
+                    {props.reply.reply_Username}
                   </Link>
                 </>
                 : <></>
