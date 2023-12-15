@@ -42,7 +42,7 @@ namespace Application.UseCases.Replies.Commands
         public CreateReplyCommandValidator()
         {
             RuleFor(c => c.Text)
-                .MaximumLength(500)
+                .MaximumLength(1000)
                 .NotEmpty();
             RuleFor(c => c.Comment_Id)
                 .NotEmpty();

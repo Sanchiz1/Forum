@@ -35,7 +35,7 @@ export default function CommentInputElement(Props: CommentInputProps) {
                 name="comment"
                 required
                 fullWidth
-                inputProps={{ maxLength: 500 }}
+                inputProps={{ maxLength: 1000 }}
                 multiline
                 minRows={1}
                 sx={{ mb: 2 }}

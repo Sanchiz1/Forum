@@ -37,7 +37,7 @@ namespace Application.UseCases.Comments.Commands
         public CreateCommentCommandValidator()
         {
             RuleFor(c => c.Text)
-                .MaximumLength(500)
+                .MaximumLength(1000)
                 .NotEmpty();
             RuleFor(c => c.Post_Id)
                 .NotEmpty();

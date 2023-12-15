@@ -119,7 +119,7 @@ export default function CreatePost() {
                                         name="text"
                                         required
                                         fullWidth
-                                        inputProps={{ maxLength: 500 }}
+                                        inputProps={{ maxLength: 1000 }}
                                         multiline
                                         minRows={4}
                                         error={textError != ''}

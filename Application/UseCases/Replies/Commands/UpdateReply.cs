@@ -46,7 +46,7 @@ namespace Application.UseCases.Replies.Commands
             RuleFor(c => c.Id)
                 .NotEmpty();
             RuleFor(c => c.Text)
-                .MaximumLength(500)
+                .MaximumLength(1000)
                 .NotEmpty();
         }
     }

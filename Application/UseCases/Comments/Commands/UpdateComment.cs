@@ -46,7 +46,7 @@ namespace Application.UseCases.Comments.Commands
         public UpdateCommentCommandValidator()
         {
             RuleFor(c => c.Text)
-                .MaximumLength(500)
+                .MaximumLength(1000)
                 .NotEmpty();
             RuleFor(c => c.Id)
                 .NotEmpty();

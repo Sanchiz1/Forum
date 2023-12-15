@@ -43,7 +43,7 @@ namespace Application.UseCases.Posts.Commands
             RuleFor(c => c.Id)
                 .NotEmpty();
             RuleFor(c => c.Text)
-                .MaximumLength(500);
+                .MaximumLength(2000);
         }
     }
 }
