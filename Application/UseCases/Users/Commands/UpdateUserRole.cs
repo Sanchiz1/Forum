@@ -1,5 +1,6 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces.Repositories;
+using Domain.Constants;
 using FluentValidation;
 using MediatR;
 using System.Threading;
@@ -24,7 +25,7 @@ namespace Application.UseCases.Users.Commands
 
         public async Task Handle(UpdateUserRoleCommand request, CancellationToken cancellationToken)
         {
-            if (request.Account_Role != "Admin")
+            if (request.Account_Role !=  Roles.Admin)
             {
                 throw new PermissionException();
             }

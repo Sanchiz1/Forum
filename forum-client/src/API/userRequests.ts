@@ -258,3 +258,64 @@ export function updateUserRoleRequest(user_id: number, role_id: number | null) {
         })
     );
 }
+
+export function changeUserPasswordRequest(user_id: number, password: string, new_password: string) {
+    return GetAjaxObservable<GraphqlUpdateUser>(`
+        mutation($Input: ChangeUserPasswordInput!){
+            user{
+                user:changeUserPassword(input: $Input)
+            }
+          }`,
+        {
+            "Input": {
+                "user_Id": user_id,
+                "password": password,
+                "new_Password": new_password,
+            }
+        }
+    ).pipe(
+        map((value) => {
+
+            if (value.response.errors) {
+
+                throw new Error(value.response.errors[0].message);
+            }
+
+            return value.response.data.user.user;
+
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}
+
+export function DeleteUserRequest(user_id: number, password?: string) {
+    return GetAjaxObservable<GraphqlUpdateUser>(`
+        mutation($Input: DeleteUserInput!){
+            user{
+                user:deleteUser(input: $Input)
+            }
+          }`,
+        {
+            "Input": {
+                "user_Id": user_id,
+                "password": password
+            }
+        }
+    ).pipe(
+        map((value) => {
+
+            if (value.response.errors) {
+
+                throw new Error(value.response.errors[0].message);
+            }
+
+            return value.response.data.user.user;
+
+        }),
+        catchError((error) => {
+            throw error
+        })
+    );
+}

@@ -38,12 +38,12 @@ export default function Header() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-  
+
   const [search, setSearch] = useState<string>('');
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if(search.trim() === '') return;
+    if (search.trim() === '') return;
     navigator("/search/" + search.trim());
   }
 
@@ -223,13 +223,14 @@ export default function Header() {
               <Avatar /> My account
             </MenuItem>
             <Divider />
-            {User?.role === "Admin" && <MenuItem onClick={() => { navigator('/AdminPanel'); handleClose(); }} hidden={!(User?.role === "Admin")}>
-              <ListItemIcon>
-                <SupervisorAccountIcon fontSize="small" />
-              </ListItemIcon>
-              Admin panel
-            </MenuItem>}
-            <MenuItem onClick={handleClose}>
+            {User?.role === "Admin" &&
+              <MenuItem onClick={() => { navigator('/AdminPanel'); handleClose(); }} hidden={!(User?.role === "Admin")}>
+                <ListItemIcon>
+                  <SupervisorAccountIcon fontSize="small" />
+                </ListItemIcon>
+                Admin panel
+              </MenuItem>}
+            <MenuItem onClick={() => { navigator('/Settings'); handleClose(); }}>
               <ListItemIcon>
                 <Settings fontSize="small" />
               </ListItemIcon>

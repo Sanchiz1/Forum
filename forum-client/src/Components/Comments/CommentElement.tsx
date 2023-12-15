@@ -317,7 +317,7 @@ export default function CommentElement(props: Props) {
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">
+            <DialogTitle id="alert-dialog-title" sx={{pb: 0}}>
               {"Are You sure you want to delete this comment?"}
             </DialogTitle>
             <DialogActions>

@@ -1,5 +1,6 @@
 ﻿using Application.Common.DTOs;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.Models;
 using Application.Common.ViewModels;
 using Application.UseCases.Posts.Queries;
 using Application.UseCases.Users.Commands;
@@ -229,6 +230,32 @@ namespace Infrastructure.Data.Repositories
 
             return result;
         }
+        public async Task<bool> CheckUserPasswordAsync(string password, int user_id)
+        {
+            bool result = false;
+            string query = $"SELECT Password, Salt FROM Users WHERE Id = @user_id";
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+
+                HashedPassword hashedPassword = (await connection.QueryAsync<HashedPassword>(query, new { user_id })).FirstOrDefault();
+
+                result = hashedPassword.Password == PasswordHashHelper.ComputeHash(password, hashedPassword.Salt);
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Getting checking user password");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Getting checking user password");
+                throw;
+            }
+
+            return result;
+        }
         public async Task CreateUserAsync(CreateUserCommand createUserCommand)
         {
             string salt = PasswordHashHelper.GenerateSalt();
@@ -289,6 +316,28 @@ namespace Infrastructure.Data.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Adding user role");
+                throw;
+            }
+        }
+        public async Task ChangeUserPasswordAsync(ChangeUserPasswordCommand changeUserPasswordCommand)
+        {
+            string query = $"UPDATE Users SET Password = @Password, Salt = @Salt WHERE Id = @User_Id";
+
+            try
+            {
+                var Salt = PasswordHashHelper.GenerateSalt();
+                var Password = PasswordHashHelper.ComputeHash(changeUserPasswordCommand.New_Password, Salt);
+                using var connection = _dapperContext.CreateConnection();
+                await connection.ExecuteAsync(query, new { Salt, Password, changeUserPasswordCommand.User_Id});
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Changing user password");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Changing user password");
                 throw;
             }
         }

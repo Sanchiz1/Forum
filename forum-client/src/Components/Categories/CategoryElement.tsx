@@ -171,7 +171,7 @@ export default function CategoryElement(props: Props) {
                         noValidate sx={{ m: 0 }}
                         onSubmit={handleSubmitEdit}
                     >
-                        <DialogTitle id="alert-dialog-title">
+                        <DialogTitle id="alert-dialog-title" sx={{pb: 0}}>
                             <TextField
                                 variant="standard"
                                 placeholder='Add a category'
@@ -202,7 +202,7 @@ export default function CategoryElement(props: Props) {
                     aria-describedby="alert-dialog-description"
                     fullWidth
                 >
-                    <DialogTitle id="alert-dialog-title">
+                    <DialogTitle id="alert-dialog-title" sx={{pb: 0}}>
                         {"Are You sure you want to delete this category?"}
                     </DialogTitle>
                     <DialogActions>

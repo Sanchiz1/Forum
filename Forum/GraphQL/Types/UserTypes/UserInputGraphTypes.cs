@@ -73,10 +73,20 @@ namespace Forum.GraphQL.Types.UserTypes
             Field(c => c.Role_Id, type: typeof(IntGraphType), nullable: true);
         }
     }
+    public class ChangeUserPasswordInputGraphType : InputObjectGraphType<ChangeUserPasswordCommand>
+    {
+        public ChangeUserPasswordInputGraphType()
+        {
+            Field(c => c.Password, type: typeof(StringGraphType));
+            Field(c => c.New_Password, type: typeof(StringGraphType));
+            Field(c => c.User_Id, type: typeof(IntGraphType));
+        }
+    }
     public class DeleteUserInputGraphType : InputObjectGraphType<DeleteUserCommand>
     {
         public DeleteUserInputGraphType()
         {
+            Field(c => c.Password, type: typeof(StringGraphType), nullable: true);
             Field(c => c.User_Id, type: typeof(IntGraphType));
         }
     }

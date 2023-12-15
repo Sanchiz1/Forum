@@ -109,6 +109,79 @@ namespace Forum.GraphQL.Mutations
 
                     return "Role updated successfully";
                 }).AuthorizeWithPolicy("AdminPolicy");
+
+            Field<StringGraphType>("deleteUser")
+                .Argument<NonNullGraphType<DeleteUserInputGraphType>>("input")
+                .ResolveAsync(async context =>
+                {
+                    DeleteUserCommand deleteUserCommand = new DeleteUserCommand()
+                    {
+                        User_Id = context.GetArgument<DeleteUserCommand>("input").User_Id,
+                        Password = context.GetArgument<DeleteUserCommand>("input").Password,
+                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
+                        Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
+                    };
+                    try
+                    {
+                        await _mediator.Send(deleteUserCommand);
+                    }
+                    catch (PermissionException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
+                        return null;
+                    }
+                    catch (WrongPasswordException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Wrong password"));
+                        return null;
+                    }
+                    catch (ValidationException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Invalid input"));
+                        return null;
+                    }
+                    catch
+                    {
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
+
+                    return "Role updated successfully";
+                }).AuthorizeWithPolicy("Authorized");
+
+
+            Field<StringGraphType>("changeUserPassword")
+                .Argument<NonNullGraphType<ChangeUserPasswordInputGraphType>>("input")
+                .ResolveAsync(async context =>
+                {
+                    ChangeUserPasswordCommand changeUserPasswordCommand = new ChangeUserPasswordCommand()
+                    {
+                        User_Id = AccountHelper.GetUserIdFromClaims(context.User!),
+                        Password = context.GetArgument<ChangeUserPasswordCommand>("input").Password,
+                        New_Password = context.GetArgument<ChangeUserPasswordCommand>("input").New_Password,
+                    };
+                    try
+                    {
+                        await _mediator.Send(changeUserPasswordCommand);
+                    }
+                    catch (WrongPasswordException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Wrong password"));
+                        return null;
+                    }
+                    catch (ValidationException ex)
+                    {
+                        context.Errors.Add(new ExecutionError("Invalid input"));
+                        return null;
+                    }
+                    catch
+                    {
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
+
+                    return "Password changed successfully";
+                }).AuthorizeWithPolicy("Authorized");
         }
     }
 }

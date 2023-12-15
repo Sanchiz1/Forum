@@ -49,6 +49,12 @@
     <Reference Include="MediatR.Contracts, Version=2.0.1.0, Culture=neutral, PublicKeyToken=bb9a41a5e8aaa7e2, processorArchitecture=MSIL">
       <HintPath>..\packages\MediatR.Contracts.2.0.1\lib\netstandard2.0\MediatR.Contracts.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.AspNetCore.Cryptography.Internal, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Cryptography.Internal.8.0.0\lib\net462\Microsoft.AspNetCore.Cryptography.Internal.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNetCore.Cryptography.KeyDerivation.8.0.0\lib\net462\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
@@ -133,6 +139,7 @@
     <Compile Include="Common\Exceptions\InvalidTokenException.cs" />
     <Compile Include="Common\Exceptions\PermissionException.cs" />
     <Compile Include="Common\Exceptions\UserAlreadyExistsException.cs" />
+    <Compile Include="Common\Exceptions\WrongPasswordException.cs" />
     <Compile Include="Common\Interfaces\Repositories\ICategoryRepository.cs" />
     <Compile Include="Common\Interfaces\Repositories\ICommentRepository.cs" />
     <Compile Include="Common\Interfaces\Repositories\IPostRepository.cs" />
@@ -143,6 +150,7 @@
     <Compile Include="Common\Interfaces\Services\IIdentityService.cs" />
     <Compile Include="Common\Interfaces\Services\ITokenFactory.cs" />
     <Compile Include="Common\Interfaces\Services\ITokenValidator.cs" />
+    <Compile Include="Common\Models\HashedPassword.cs" />
     <Compile Include="Common\Models\LoginResponse.cs" />
     <Compile Include="Common\Models\Result.cs" />
     <Compile Include="Common\Models\Token.cs" />
@@ -184,6 +192,7 @@
     <Compile Include="UseCases\Replies\Commands\UpdateReply.cs" />
     <Compile Include="UseCases\Replies\Queries\GetReplies.cs" />
     <Compile Include="UseCases\Replies\Queries\GetReplyById.cs" />
+    <Compile Include="UseCases\Users\Commands\ChangeUserPassword.cs" />
     <Compile Include="UseCases\Users\Commands\UpdateUserRole.cs" />
     <Compile Include="UseCases\Users\Commands\CreateUser.cs" />
     <Compile Include="UseCases\Users\Commands\DeleteUser.cs" />

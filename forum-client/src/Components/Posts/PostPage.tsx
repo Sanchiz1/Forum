@@ -408,7 +408,7 @@ export default function PostPage() {
                                         aria-labelledby="alert-dialog-title"
                                         aria-describedby="alert-dialog-description"
                                     >
-                                        <DialogTitle id="alert-dialog-title">
+                                        <DialogTitle id="alert-dialog-title" sx={{pb: 0}}>
                                             {"Are You sure you want to delete this post?"}
                                         </DialogTitle>
                                         <DialogActions>

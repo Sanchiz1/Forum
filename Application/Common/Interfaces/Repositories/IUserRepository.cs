@@ -13,8 +13,10 @@ namespace Application.Common.Interfaces.Repositories
         Task<UserViewModel> GetUserByUsernameAsync(GetUserByUsernameQuery getUserByUsernameQuery);
         Task<UserViewModel> GetUserByEmailAsync(GetUserByEmailQuery getUserByEmailQuery);
         Task<UserViewModel> GetUserByCredentialsAsync(GetUserByCredentialsQuery getUserByCredentialsQuery);
+        Task<bool> CheckUserPasswordAsync(string password, int user_id);
         Task CreateUserAsync(CreateUserCommand createUserCommand);
         Task UpdateUserAsync(UpdateUserCommand updateUserCommand);
+        Task ChangeUserPasswordAsync(ChangeUserPasswordCommand changeUserPasswordCommand);
         Task UpdateUserRoleAsync(UpdateUserRoleCommand updateUserRoleCommand);
         Task DeleteUserAsync(DeleteUserCommand deleteUserCommand);
     }

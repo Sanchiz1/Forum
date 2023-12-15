@@ -158,7 +158,7 @@ export default function CategoriesPage() {
                         noValidate sx={{ m: 0 }}
                         onSubmit={handleSubmitCreate}
                     >
-                        <DialogTitle id="alert-dialog-title">
+                        <DialogTitle id="alert-dialog-title" sx={{pb: 0}}>
                             <TextField
                                 variant="standard"
                                 placeholder='Add a category'
