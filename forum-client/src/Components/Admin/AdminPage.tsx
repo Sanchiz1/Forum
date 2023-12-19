@@ -24,28 +24,50 @@ import { BootstrapInput } from '../UtilComponents/BootstrapInput';
 import { Post } from '../../Types/Post';
 import { requestUserPosts } from '../../API/postRequests';
 import PostElement from '../Posts/PostElement';
+import { BarChart } from '@mui/x-charts';
+import { requestMonthlyPosts, requestMonthlyUsers } from '../../API/statisticsRequests';
+import { setGlobalError } from '../../Redux/Reducers/AccountReducer';
 
-const validUsernamePattern = /^[a-zA-Z0-9_.]+$/;
-const validEmailPattern = /^(?=.{0,64}$)[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-const validPasswordPattern = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[a-zA-Z]).{8,21}$/;
-
-const roles = {
-    0: "User",
-    1: "Admin",
-    2: "Moderator",
-};
+const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 export default function AdminPage() {
-    const [user, setUser] = useState<User>();
-    const [role, setRole] = useState(0);
-    const [userExists, setUserExists] = useState(true);
-    const [openEdit, setOpenEdit] = useState(false);
-    let { Username } = useParams();
     const dispatch = useDispatch();
     const navigator = useNavigate();
-    const { state } = useLocation()
+
+    const [posts, setPosts] = useState<number[]>(Array<number>(12).fill(0));
+    const [users, setUsers] = useState<number[]>(Array<number>(12).fill(0));
+    const [postsYear, setPostsYear] = useState(new Date().getFullYear());
+    const [usersYear, setUsersYear] = useState(new Date().getFullYear());
 
     const Account = useSelector((state: RootState) => state.account.Account);
+
+    const fetchMonthlyPosts = () => {
+        requestMonthlyPosts(postsYear).subscribe({
+            next(posts) {
+                setPosts(posts);
+            },
+            error(err) {
+                dispatch(setGlobalError(err.message));
+            },
+        })
+    }
+    const fetchMonthlyUsers = () => {
+        requestMonthlyUsers(usersYear).subscribe({
+            next(users) {
+                setUsers(users);
+            },
+            error(err) {
+                dispatch(setGlobalError(err.message));
+            },
+        })
+    }
+    useEffect(() => {
+        fetchMonthlyPosts();
+    }, [postsYear])
+
+    useEffect(() => {
+        fetchMonthlyUsers();
+    }, [usersYear])
 
     return (
         <Box
@@ -64,8 +86,69 @@ export default function AdminPage() {
             <Container maxWidth='lg' sx={{
                 mt: 4, mb: 4, width: 1
             }}>
-                <Grid container spacing={2}>
-                    <Button onClick={() => navigator("/Categories")}>Categories</Button>
+                <Grid container spacing={0}>
+                    <Grid item xs={12} sx={{ mb: 5 }}>
+                        <Button onClick={() => navigator("/Categories")}>Categories</Button>
+                    </Grid>
+                    <Grid item xs={12}>
+
+                        <Grid item xs={12} sx={{display: 'flex'}}>
+                            <Typography variant='h5'>Posts</Typography>
+                            <TextField
+                                sx={{ml: 'auto'}}
+                                size='small'
+                                type='number'
+                                InputProps={{ inputProps: { min: 2023, max: 2900 } }}
+                                value={postsYear}
+                                onChange={(e) => setPostsYear(parseInt(e.target.value)!)}>
+
+                            </TextField>
+                        </Grid>
+                        <BarChart
+                            xAxis={[
+                                {
+                                    id: 'barPosts',
+                                    data: months,
+                                    scaleType: 'band',
+                                },
+                            ]}
+                            series={[
+                                {
+                                    data: posts,
+                                },
+                            ]}
+                            height={300}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Grid item xs={12} sx={{display: 'flex'}}>
+                            <Typography variant='h5'>Users</Typography>
+                            <TextField
+                                sx={{ml: 'auto'}}
+                                size='small'
+                                type='number'
+                                InputProps={{ inputProps: { min: 2023, max: 2900 } }}
+                                value={usersYear}
+                                onChange={(e) => setUsersYear(parseInt(e.target.value)!)}>
+
+                            </TextField>
+                        </Grid>
+                        <BarChart
+                            xAxis={[
+                                {
+                                    id: 'barUsers',
+                                    data: months,
+                                    scaleType: 'band',
+                                },
+                            ]}
+                            series={[
+                                {
+                                    data: users,
+                                },
+                            ]}
+                            height={300}
+                        />
+                    </Grid>
                 </Grid>
             </Container>
         </Box>

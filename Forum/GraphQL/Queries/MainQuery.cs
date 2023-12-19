@@ -21,6 +21,9 @@ namespace Forum.GraphQL.Queries
 
             Field<CategoryQuery>("categories")
                 .Resolve(context => new { });
+
+            Field<StatisticsQuery>("statistics")
+                .Resolve(context => new { });
         }
     }
 }

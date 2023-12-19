@@ -60,10 +60,7 @@ export default function PostPage() {
     const [post, setPost] = useState<Post>();
     const [liked, SetLiked] = useState(false);
     const [likes, setLikes] = useState(0);
-    const [comments, setComments] = useState<Comment[]>([]);
     const [postExists, setPostExists] = useState(true);
-
-    const [hasMore, setHasMore] = useState(true);
 
 
     let { PostId } = useParams();

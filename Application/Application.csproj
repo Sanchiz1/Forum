@@ -144,6 +144,7 @@
     <Compile Include="Common\Interfaces\Repositories\ICommentRepository.cs" />
     <Compile Include="Common\Interfaces\Repositories\IPostRepository.cs" />
     <Compile Include="Common\Interfaces\Repositories\IReplyRepository.cs" />
+    <Compile Include="Common\Interfaces\Repositories\IStatisticsRepository.cs" />
     <Compile Include="Common\Interfaces\Repositories\ITokenRepository.cs" />
     <Compile Include="Common\Interfaces\Repositories\IUserRepository.cs" />
     <Compile Include="Common\Interfaces\Services\IDbContext.cs" />
@@ -192,6 +193,8 @@
     <Compile Include="UseCases\Replies\Commands\UpdateReply.cs" />
     <Compile Include="UseCases\Replies\Queries\GetReplies.cs" />
     <Compile Include="UseCases\Replies\Queries\GetReplyById.cs" />
+    <Compile Include="UseCases\Statistics\Queries\GetMonthlyPosts.cs" />
+    <Compile Include="UseCases\Statistics\Queries\GetMonthlyUsers.cs" />
     <Compile Include="UseCases\Users\Commands\ChangeUserPassword.cs" />
     <Compile Include="UseCases\Users\Commands\UpdateUserRole.cs" />
     <Compile Include="UseCases\Users\Commands\CreateUser.cs" />
