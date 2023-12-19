@@ -12,13 +12,13 @@ import { getUserAccount } from '../../Redux/Epics/AccountEpics';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { RootState } from '../../Redux/store';
-import { Backdrop, Badge, CircularProgress, Container, CssBaseline, IconButton, LinearProgress, Toolbar, Collapse, TextField, Alert, Select, MenuItem, Skeleton, SelectChangeEvent } from '@mui/material';
+import { Backdrop, Badge, CircularProgress, Container, CssBaseline, IconButton, LinearProgress, Toolbar, Collapse, TextField, Alert, Select, MenuItem, Skeleton, SelectChangeEvent, Dialog, DialogTitle, DialogActions } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MenuIcon from '@mui/icons-material/Menu';
 import { GetDateString } from '../../Helpers/DateFormatHelper';
 import { User, UserInput } from '../../Types/User';
-import { updateUserRoleRequest, requestUserByUsername, updateUserRequest } from '../../API/userRequests';
+import { updateUserRoleRequest, requestUserByUsername, updateUserRequest, DeleteUserRequest } from '../../API/userRequests';
 import UserNotFoundPage from './UserNotFoundPage';
 import { getAccount, setGlobalError } from '../../Redux/Reducers/AccountReducer';
 import { SnackbarProvider, VariantType, enqueueSnackbar, useSnackbar } from 'notistack';
@@ -172,9 +172,9 @@ export default function UserPage() {
 
   const handleSubmitEditRole = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
+
     let role_id: number | null = role;
-    if(role === 0){
+    if (role === 0) {
       role_id = null;
     }
     updateUserRoleRequest(user?.id!, role_id).subscribe({
@@ -194,6 +194,34 @@ export default function UserPage() {
         setError(err.message)
       },
     })
+  }
+
+
+  // delete
+  const [openDeleteAccount, setOpenDeleteAccount] = useState(false);
+  const handleSubmitDeleteUser = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const password = data.get('password')!.toString();
+    if (password == '') {
+      setError('Fill password field');
+      return;
+    }
+    DeleteUserRequest(user!.id, password).subscribe({
+      next(value) {
+        enqueueSnackbar(value, {
+          variant: 'success', anchorOrigin: {
+            vertical: 'top',
+            horizontal: 'center'
+          },
+          autoHideDuration: 1500
+        });
+        navigator('/');
+      },
+      error(err) {
+        setError(err.message);
+      },
+    });
   }
 
   return (
@@ -242,11 +270,11 @@ export default function UserPage() {
                             </Typography>
                             {
                               user.bio &&
-                                <>
-                                  <Typography variant="subtitle1" color="text.secondary" component="p" sx={{ mt: 2, whiteSpace: 'pre-line', overflowWrap: 'break-word' }}>
-                                    {user.bio}
-                                  </Typography>
-                                </>
+                              <>
+                                <Typography variant="subtitle1" color="text.secondary" component="p" sx={{ mt: 2, whiteSpace: 'pre-line', overflowWrap: 'break-word' }}>
+                                  {user.bio}
+                                </Typography>
+                              </>
                             }
                             {(Account != null && user.id === Account.id) &&
                               <>
@@ -328,16 +356,16 @@ export default function UserPage() {
                             {(Account.role === 'Admin' && user.role !== 'Admin') &&
                               <>
                                 <Divider sx={{ mt: 2 }} />
-                                <Button onClick={() => setOpenEdit(!openEdit)}>Edit</Button>
+                                <Button onClick={() => setOpenEdit(!openEdit)}>Settings</Button>
                                 <Collapse in={openEdit}>
-                                  <Box component="form" onSubmit={handleSubmitEditRole} noValidate sx={{ mt: 1 }}>
+                                  <Box component="form" onSubmit={handleSubmitEditRole} noValidate sx={{ mt: 1, mb: 3 }}>
                                     <Select
                                       labelId="role-label"
                                       id="role"
                                       value={role.toString()}
                                       fullWidth
                                       onChange={handleChange}
-                                      sx={{mb: 2}}
+                                      sx={{ mb: 2 }}
                                     >
                                       <MenuItem value={0}>User</MenuItem>
                                       <MenuItem value={1}>Moderator</MenuItem>
@@ -351,6 +379,7 @@ export default function UserPage() {
                                       Submit
                                     </Button>
                                   </Box>
+                                  <Button color='error' sx={{ width: "100%" }} onClick={() => {setOpenDeleteAccount(true)}}>Delete user</Button>
                                 </Collapse>
                               </>}
                           </Grid>
@@ -370,10 +399,10 @@ export default function UserPage() {
                         >
                           <Grid item xs={12} sx={{ mb: 2 }}>
                             <Typography variant="subtitle1" color="text.primary" component="p">
-                            {user.posts} posts 
+                              {user.posts} posts
                             </Typography>
                             <Typography variant="subtitle1" color="text.primary" component="p">
-                            {user.comments} comments 
+                              {user.comments} comments
                             </Typography>
                           </Grid>
                           <Divider sx={{ mb: 1 }} />
@@ -412,24 +441,64 @@ export default function UserPage() {
                       <Grid item xs={12} md={12} lg={12}>
                         {
                           hasMore &&
-                            <Paper sx={{
-                              p: 1,
-                              width: 1,
-                              ":hover": {
-                                boxShadow: 5
-                              }
-                            }}>
-                              <Skeleton width="10%" animation="wave" sx={{ fontSize: '10px' }} />
-                              <Skeleton width="30%" animation="wave" />
-                              <Divider />
-                              <Skeleton animation="wave" height={40} />
-                            </Paper>
+                          <Paper sx={{
+                            p: 1,
+                            width: 1,
+                            ":hover": {
+                              boxShadow: 5
+                            }
+                          }}>
+                            <Skeleton width="10%" animation="wave" sx={{ fontSize: '10px' }} />
+                            <Skeleton width="30%" animation="wave" />
+                            <Divider />
+                            <Skeleton animation="wave" height={40} />
+                          </Paper>
                         }
                       </Grid>
                     </Grid>
                   </Grid>
                 </Container>
               </Box>
+
+              <Dialog
+                open={openDeleteAccount}
+                onClose={() => setOpenDeleteAccount(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                fullWidth
+              >
+                <Box component="form"
+                  noValidate sx={{ m: 0 }}
+                  onSubmit={handleSubmitDeleteUser}
+                >
+                  <DialogTitle id="alert-dialog-title" sx={{ pb: 0 }}>
+                    <Typography sx={{ mb: 2 }}>
+                      Are You sure You want to delete this user? There is no going back.
+                    </Typography>
+                    <TextField
+                      variant='outlined'
+                      size='small'
+                      placeholder='Password'
+                      name="password"
+                      type='password'
+                      required
+                      fullWidth
+                      inputProps={{ maxLength: 50 }}
+                      minRows={1}
+                      sx={{ mb: 2 }}
+                      error={error != ''}
+                      onFocus={() => setError('')}
+                      helperText={error}
+                    />
+                  </DialogTitle>
+                  <DialogActions>
+                    <Button onClick={() => setOpenDeleteAccount(false)}>Cancel</Button>
+                    <Button type='submit' autoFocus>
+                      Delete
+                    </Button>
+                  </DialogActions>
+                </Box>
+              </Dialog>
             </Box>
             :
             <Box sx={{ width: '100%' }}>

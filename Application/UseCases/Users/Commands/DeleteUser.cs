@@ -30,16 +30,11 @@ namespace Application.UseCases.Users.Commands
 
         public async Task Handle(DeleteUserCommand request, CancellationToken cancellationToken) 
         {
-            if(request.Account_Role == Role.Admin)
-            {
-                await _context.DeleteUserAsync(request);
-                return;
-            }
-            if(request.User_Id != request.Account_Id)
+            if (request.Account_Role != Role.Admin && request.User_Id != request.Account_Id)
             {
                 throw new PermissionException();
             }
-            if(!(await _context.CheckUserPasswordAsync(request.Password, request.User_Id)))
+            if(!(await _context.CheckUserPasswordAsync(request.Password, request.Account_Id)))
             {
                 throw new WrongPasswordException();
             }

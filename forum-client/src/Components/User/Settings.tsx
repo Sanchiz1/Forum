@@ -36,9 +36,6 @@ export default function Settings() {
 
     const Account = useSelector((state: RootState) => state.account.Account);
 
-    useEffect(() => {
-    }, [])
-
     const handleSubmitChangePassword = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);

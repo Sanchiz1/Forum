@@ -100,7 +100,7 @@ export default function CreatePost() {
                                 width: 1,
                             }}>
 
-                                <Box component="form" onSubmit={handlePostSubmit} noValidate sx={{ mt: 1 }}>
+                                <Box component="form" onSubmit={handlePostSubmit} noValidate sx={{ mt: 1, display: 'flex', flexDirection: 'column' }}>
                                     <TextField
                                         id="outlined-multiline-flexible"
                                         label="Title"
@@ -149,6 +149,7 @@ export default function CreatePost() {
                                         type="submit"
                                         fullWidth
                                         variant="outlined"
+                                        sx={{ml: 'auto', width:'fit-content'}}
                                     >
                                         Post
                                     </Button>

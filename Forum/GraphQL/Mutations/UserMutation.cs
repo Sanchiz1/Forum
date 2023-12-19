@@ -146,7 +146,7 @@ namespace Forum.GraphQL.Mutations
                         return null;
                     }
 
-                    return "Role updated successfully";
+                    return "User deleted successfully";
                 }).AuthorizeWithPolicy("Authorized");
 
 
