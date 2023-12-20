@@ -51,11 +51,12 @@ export default function UserPage() {
   useEffect(() => {
     requestUserByUsername(Username!).subscribe({
       next(user) {
-        setUser(user);
-        setRole(user.role_Id)
         if (user === null) {
           setUserExists(false);
+          return;
         }
+        setUser(user);
+        setRole(user.role_Id)
         refetchposts()
       },
       error(err) {
@@ -434,7 +435,7 @@ export default function UserPage() {
                             post={post}
                             key={index}
                             customClickEvent={(event: React.MouseEvent<HTMLDivElement>) => navigator('/post/' + post.id, { state: state })}
-                            sx={{ mb: 2 }}
+                            sx={{ mb: 1 }}
                           ></PostElement>
                         )
                       }

@@ -21,7 +21,6 @@ export default function Main() {
   const next = 4;
   const [userTimestamp, setUserTimestamp] = useState(new Date());
   const [offset, setOffset] = useState(0);
-  const [refresh, setRefresh] = useState(true);
   const [order, setOrder] = useState("Date_Created");
   const [categories, setCategories] = useState<number[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
@@ -40,7 +39,6 @@ export default function Main() {
     setPosts([]);
     setUserTimestamp(new Date());
     setOffset(0);
-    setRefresh(!refresh);
   }, [order, categories]);
 
   const fetchposts = () => {
@@ -65,7 +63,7 @@ export default function Main() {
     fetchposts();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [offset, refresh]);
+  }, [offset, userTimestamp]);
 
   function handleScroll() {
     if (window.innerHeight + document.documentElement.scrollTop <= document.documentElement.scrollHeight - 10 || !hasMore) return;

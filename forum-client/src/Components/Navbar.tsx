@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Toolbar from '@mui/material/Toolbar';
-import { Outlet, useLocation, useNavigate, Link as RouterLink } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate, Link as RouterLink, ScrollRestoration } from 'react-router-dom';
 import { LogoutRequest, isSigned } from '../API/loginRequests';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
@@ -246,6 +246,7 @@ export default function Header() {
         </Toolbar>
       </AppBar>
       <Outlet />
+      <ScrollRestoration />
     </React.Fragment>
   );
 }

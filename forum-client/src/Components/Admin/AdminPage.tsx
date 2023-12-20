@@ -109,12 +109,12 @@ export default function AdminPage() {
                                 {
                                     id: 'barPosts',
                                     data: months,
-                                    scaleType: 'band',
+                                    scaleType: 'band'
                                 },
                             ]}
                             series={[
                                 {
-                                    data: posts,
+                                    data: posts
                                 },
                             ]}
                             height={300}

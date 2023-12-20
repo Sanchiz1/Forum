@@ -104,7 +104,16 @@ namespace Forum.GraphQL.Queries
                         Id = context.GetArgument<GetPostByIdQuery>("input").Id,
                         User_id = AccountHelper.GetUserIdFromClaims(context.User!)
                     };
-                    return await _mediator.Send(getPostByIdQuery);
+                    try
+                    {
+                        return await _mediator.Send(getPostByIdQuery);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Getting user posts");
+                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
+                        return null;
+                    }
                 });
         }
     }

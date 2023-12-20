@@ -171,7 +171,7 @@ namespace Infrastructure.Data.Repositories
                     postViewModel.Post = post;
 
                     return postViewModel;
-                }, getPostByIdQuery, splitOn: "Id")).First();
+                }, getPostByIdQuery, splitOn: "Id")).FirstOrDefault();
             }
             catch (SqlException ex)
             {

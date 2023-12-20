@@ -30,6 +30,7 @@ namespace Application.UseCases.Posts.Queries
         public async Task<PostViewModel> Handle(GetPostByIdQuery request, CancellationToken cancellationToken)
         {
             var post = await _postContext.GetPostByIdAsync(request);
+            if (post == null) return post;
             post.Categories = await _categoryContext.GetPostCategoriesAsync(new Categories.Queries.GetPostCategoriesQuery { Post_Id = post.Post.Id });
             return post;
         }
