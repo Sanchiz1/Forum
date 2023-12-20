@@ -30,19 +30,19 @@ namespace Infrastructure.Data.Repositories
         {
             List<UserViewModel> result = null;
 
-            string query = $"SELECT COALESCE(Roles.Name, 'User') AS Role, " +
-                $"COALESCE(Users.Role_Id, 0) AS Role_Id, " +
-                $"Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                $"Count(DISTINCT Posts.Id) as Posts, " +
-                $" Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At " +
-                $"FROM Users " +
-                $"LEFT JOIN Roles ON Roles.Id = Users.Role_Id " +
-                $"LEFT JOIN Posts ON Posts.User_Id = Users.Id " +
-                $"LEFT JOIN Comments ON Comments.User_Id = Users.Id " +
-                $"LEFT JOIN Replies ON Replies.User_Id = Users.Id " +
-                $"WHERE Users.Registered_At < @User_Timestamp AND Users.Username LIKE '%{getSearchedUsersQuery.Search}%' " +
-                $"GROUP BY Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, Roles.Name, Role_Id " + 
-                $"ORDER BY Users.Username DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
+            string query = $@"SELECT COALESCE(Roles.Name, 'User') AS Role,
+                COALESCE(Users.Role_Id, 0) AS Role_Id,
+                Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments,
+                Count(DISTINCT Posts.Id) as Posts,
+                 Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At
+                FROM Users
+                LEFT JOIN Roles ON Roles.Id = Users.Role_Id
+                LEFT JOIN Posts ON Posts.User_Id = Users.Id
+                LEFT JOIN Comments ON Comments.User_Id = Users.Id
+                LEFT JOIN Replies ON Replies.User_Id = Users.Id
+                WHERE Users.Registered_At < @User_Timestamp AND Users.Username LIKE '%{getSearchedUsersQuery.Search}%'
+                GROUP BY Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, Roles.Name, Role_Id
+                ORDER BY Users.Username DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
 
             try
             {
@@ -71,18 +71,18 @@ namespace Infrastructure.Data.Repositories
         {
             UserViewModel result = null;
 
-            string query = $"SELECT COALESCE(Roles.Name, 'User') AS Role, " +
-                $"COALESCE(Users.Role_Id, 0) AS Role_Id, " +
-                $"Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                $"Count(DISTINCT Posts.Id) as Posts," +
-                $"Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At " +
-                $"FROM Users " +
-                $"LEFT JOIN Roles ON Roles.Id = Users.Role_Id " +
-                $"LEFT JOIN Posts ON Posts.User_Id = Users.Id " +
-                $"LEFT JOIN Comments ON Comments.User_Id = Users.Id " +
-                $"LEFT JOIN Replies ON Replies.User_Id = Users.Id " +
-                $"WHERE Users.Id = @User_Id " +
-                $"GROUP BY Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, Roles.Name, Role_Id ";
+            string query = $@"SELECT COALESCE(Roles.Name, 'User') AS Role,
+                COALESCE(Users.Role_Id, 0) AS Role_Id,
+                Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments,
+                Count(DISTINCT Posts.Id) as Posts,
+                Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At
+                FROM Users
+                LEFT JOIN Roles ON Roles.Id = Users.Role_Id
+                LEFT JOIN Posts ON Posts.User_Id = Users.Id
+                LEFT JOIN Comments ON Comments.User_Id = Users.Id
+                LEFT JOIN Replies ON Replies.User_Id = Users.Id
+                WHERE Users.Id = @User_Id
+                GROUP BY Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, Roles.Name, Role_Id ";
 
             try
             {
@@ -111,18 +111,18 @@ namespace Infrastructure.Data.Repositories
         {
             UserViewModel result = null;
 
-            string query = $"SELECT COALESCE(Roles.Name, 'User') AS Role, " +
-                $"COALESCE(Users.Role_Id, 0) AS Role_Id, " +
-                $"Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                $"Count(DISTINCT Posts.Id) as Posts," +
-                $"Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At " +
-                $"FROM Users " +
-                $"LEFT JOIN Roles ON Roles.Id = Users.Role_Id " +
-                $"LEFT JOIN Posts ON Posts.User_Id = Users.Id " +
-                $"LEFT JOIN Comments ON Comments.User_Id = Users.Id " +
-                $"LEFT JOIN Replies ON Replies.User_Id = Users.Id " +
-                $"WHERE Users.Username = @Username " +
-                $"GROUP BY Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, Roles.Name, Role_Id ";
+            string query = $@"SELECT COALESCE(Roles.Name, 'User') AS Role,
+                COALESCE(Users.Role_Id, 0) AS Role_Id,
+                Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments,
+                Count(DISTINCT Posts.Id) as Posts,
+                Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At
+                FROM Users
+                LEFT JOIN Roles ON Roles.Id = Users.Role_Id
+                LEFT JOIN Posts ON Posts.User_Id = Users.Id
+                LEFT JOIN Comments ON Comments.User_Id = Users.Id
+                LEFT JOIN Replies ON Replies.User_Id = Users.Id
+                WHERE Users.Username = @Username
+                GROUP BY Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, Roles.Name, Role_Id";
 
             try
             {
@@ -151,18 +151,18 @@ namespace Infrastructure.Data.Repositories
         {
             UserViewModel result = null;
 
-            string query = $"SELECT COALESCE(Roles.Name, 'User') AS Role, " +
-                $"COALESCE(Users.Role_Id, 0) AS Role_Id, " +
-                $"Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                $"Count(DISTINCT Posts.Id) as Posts, " +
-                $"Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At " +
-                $"FROM Users " +
-                $"LEFT JOIN Roles ON Roles.Id = Users.Role_Id " +
-                $"LEFT JOIN Posts ON Posts.User_Id = Users.Id " +
-                $"LEFT JOIN Comments ON Comments.User_Id = Users.Id " +
-                $"LEFT JOIN Replies ON Replies.User_Id = Users.Id " +
-                $"WHERE Users.Email = @Email " +
-                $"GROUP BY Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, Roles.Name, Role_Id ";
+            string query = $@"SELECT COALESCE(Roles.Name, 'User') AS Role,
+                COALESCE(Users.Role_Id, 0) AS Role_Id,
+                Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments,
+                Count(DISTINCT Posts.Id) as Posts,
+                Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At
+                FROM Users
+                LEFT JOIN Roles ON Roles.Id = Users.Role_Id
+                LEFT JOIN Posts ON Posts.User_Id = Users.Id
+                LEFT JOIN Comments ON Comments.User_Id = Users.Id
+                LEFT JOIN Replies ON Replies.User_Id = Users.Id
+                WHERE Users.Email = @Email
+                GROUP BY Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, Roles.Name, Role_Id ";
 
             try
             {
@@ -191,13 +191,13 @@ namespace Infrastructure.Data.Repositories
         {
             UserViewModel result = null;
 
-            string query = $"SELECT " +
-                $"COALESCE(Roles.Name, 'User') AS Role, " +
-                $"COALESCE(Users.Role_Id, 0) AS Role_Id," +
-                $"Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At " +
-                $"FROM Users " +
-                $"LEFT JOIN Roles ON Roles.Id = Users.Role_Id " +
-                $"WHERE (Users.Username = @Username_Or_Email OR Users.Email = @Username_Or_Email) AND Users.Password = @Password";
+            string query = $@"SELECT
+                COALESCE(Roles.Name, 'User') AS Role,
+                COALESCE(Users.Role_Id, 0) AS Role_Id,
+                Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At
+                FROM Users
+                LEFT JOIN Roles ON Roles.Id = Users.Role_Id
+                WHERE (Users.Username = @Username_Or_Email OR Users.Email = @Username_Or_Email) AND Users.Password = @Password";
 
             try
             {
@@ -233,7 +233,7 @@ namespace Infrastructure.Data.Repositories
         public async Task<bool> CheckUserPasswordAsync(string password, int user_id)
         {
             bool result = false;
-            string query = $"SELECT Password, Salt FROM Users WHERE Id = @user_id";
+            string query = $@"SELECT Password, Salt FROM Users WHERE Id = @user_id";
 
             try
             {
@@ -261,7 +261,7 @@ namespace Infrastructure.Data.Repositories
             string salt = PasswordHashHelper.GenerateSalt();
             createUserCommand.Password = PasswordHashHelper.ComputeHash(createUserCommand.Password, salt);
             createUserCommand.PasswordSalt = salt;
-            string query = $"INSERT INTO Users (Username, Email, Bio, Password, Salt) VALUES (@Username, @Email, @Bio, @Password, @PasswordSalt)";
+            string query = $@"INSERT INTO Users (Username, Email, Bio, Password, Salt) VALUES (@Username, @Email, @Bio, @Password, @PasswordSalt)";
 
             try
             {
@@ -281,7 +281,7 @@ namespace Infrastructure.Data.Repositories
         }
         public async Task UpdateUserAsync(UpdateUserCommand updateUserCommand)
         {
-            string query = $"UPDATE Users SET Username = @Username, Email = @Email, Bio = @Bio WHERE Id = @User_Id";
+            string query = $@"UPDATE Users SET Username = @Username, Email = @Email, Bio = @Bio WHERE Id = @User_Id";
 
             try
             {
@@ -301,7 +301,7 @@ namespace Infrastructure.Data.Repositories
         }
         public async Task UpdateUserRoleAsync(UpdateUserRoleCommand updateUserRoleCommand)
         {
-            string query = $"UPDATE Users SET Role_Id = @Role_Id WHERE Id = @User_Id";
+            string query = $@"UPDATE Users SET Role_Id = @Role_Id WHERE Id = @User_Id";
 
             try
             {
@@ -321,7 +321,7 @@ namespace Infrastructure.Data.Repositories
         }
         public async Task ChangeUserPasswordAsync(ChangeUserPasswordCommand changeUserPasswordCommand)
         {
-            string query = $"UPDATE Users SET Password = @Password, Salt = @Salt WHERE Id = @User_Id";
+            string query = $@"UPDATE Users SET Password = @Password, Salt = @Salt WHERE Id = @User_Id";
 
             try
             {
@@ -343,7 +343,7 @@ namespace Infrastructure.Data.Repositories
         }
         public async Task DeleteUserAsync(DeleteUserCommand deleteUserCommand)
         {
-            string query = $"DELETE FROM Users WHERE Id = @User_Id";
+            string query = $@"DELETE FROM Users WHERE Id = @User_Id";
 
             try
             {

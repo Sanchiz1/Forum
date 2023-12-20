@@ -27,8 +27,8 @@ namespace Infrastructure.Data.Repositories
         {
             List<CategoryDto> result = null;
 
-            string query = $"SELECT * FROM Categories " +
-                $"ORDER BY Title";
+            string query = $@"SELECT * FROM Categories
+                ORDER BY Title";
 
             try
             {
@@ -52,10 +52,10 @@ namespace Infrastructure.Data.Repositories
         {
             List<CategoryDto> result = null;
 
-            string query = $"SELECT * FROM Categories " +
-                $"WHERE Title LIKE '{getCategoriesQuery.Search}' " +
-                $"ORDER BY Title " +
-                $"OFFSET @offset ROWS FETCH NEXT @next ROWS ONLY ";
+            string query = $@"SELECT * FROM Categories
+                WHERE Title LIKE '{getCategoriesQuery.Search}'
+                ORDER BY Title
+                OFFSET @offset ROWS FETCH NEXT @next ROWS ONLY";
 
             try
             {
@@ -79,9 +79,9 @@ namespace Infrastructure.Data.Repositories
         {
             List<CategoryDto> result = null;
 
-            string query = $"SELECT Categories.Id, Categories.Title FROM Post_Category " +
-                $"JOIN Categories ON Categories.Id = Post_Category.Category_Id " +
-                $"WHERE Post_Category.Post_Id = @Post_Id";
+            string query = $@"SELECT Categories.Id, Categories.Title FROM Post_Category
+                JOIN Categories ON Categories.Id = Post_Category.Category_Id
+                WHERE Post_Category.Post_Id = @Post_Id";
 
             try
             {
@@ -106,7 +106,7 @@ namespace Infrastructure.Data.Repositories
         {
             CategoryDto result = null;
 
-            string query = $"SELECT * FROM Categories WHERE Id = @Id";
+            string query = $@"SELECT * FROM Categories WHERE Id = @Id";
 
             try
             {
@@ -129,7 +129,7 @@ namespace Infrastructure.Data.Repositories
 
         public async Task CreateCategoryAsync(CreateCategoryCommand createCategoryCommand)
         {
-            string query = $"INSERT INTO Categories (Title) VALUES(@Title)";
+            string query = $@"INSERT INTO Categories (Title) VALUES(@Title)";
 
             try
             {
@@ -150,7 +150,7 @@ namespace Infrastructure.Data.Repositories
 
         public async Task UpdateCategoryAsync(UpdateCategoryCommand updateCategoryCommand)
         {
-            string query = $"UPDATE Categories SET Title = @Title WHERE Id = @Id";
+            string query = $@"UPDATE Categories SET Title = @Title WHERE Id = @Id";
             try
             {
                 using var connection = _dapperContext.CreateConnection();
@@ -170,7 +170,7 @@ namespace Infrastructure.Data.Repositories
 
         public async Task DeleteCategoryAsync(DeleteCategoryCommand deleteCategoryCommand)
         {
-            string query = $"DELETE FROM Categories WHERE Id = @Id";
+            string query = $@"DELETE FROM Categories WHERE Id = @Id";
 
             try
             {

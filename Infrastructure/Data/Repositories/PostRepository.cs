@@ -27,20 +27,20 @@ namespace Infrastructure.Data.Repositories
         public async Task<List<PostViewModel>> GetPostsAsync(GetPostsQuery getPostsQuery)
         {
             List<PostViewModel> result = null;
-            string query = $"SELECT users.Username as User_Username, " +
-                    $" Count(DISTINCT Post_Likes.User_Id) as Likes," +
-                    $" Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked, " +
-                    $" Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id " +
-                    $" FROM Posts " +
-                    $"  INNER JOIN Users ON Users.Id = Posts.User_Id" +
-                    $"  LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id " +
-                    $"  LEFT JOIN Post_Category ON Post_Category.Post_Id = Posts.Id " +
-                    $"  LEFT JOIN Comments ON Comments.Post_Id = Posts.Id " +
-                    $"  LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id" +
-                    $" WHERE Posts.Date_Created < @User_Timestamp AND ({getPostsQuery.Categories.Length} = 0 OR Post_Category.Category_Id in @Categories) " +
-                    $" GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id, users.Username" +
-                    $" ORDER BY {getPostsQuery.Order} DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
+            string query = $@"SELECT users.Username as User_Username, 
+                    Count(DISTINCT Post_Likes.User_Id) as Likes,
+                    Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments,
+                    CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked,
+                    Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id
+                    FROM Posts 
+                    INNER JOIN Users ON Users.Id = Posts.User_Id
+                    LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id
+                    LEFT JOIN Post_Category ON Post_Category.Post_Id = Posts.Id 
+                    LEFT JOIN Comments ON Comments.Post_Id = Posts.Id 
+                    LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id
+                    WHERE Posts.Date_Created < @User_Timestamp AND ({getPostsQuery.Categories.Length} = 0 OR Post_Category.Category_Id in @Categories) 
+                    GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id, users.Username
+                    ORDER BY {getPostsQuery.Order} DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
 
             try
             {
@@ -69,19 +69,19 @@ namespace Infrastructure.Data.Repositories
         public async Task<List<PostViewModel>> GetSearchedPostsAsync(GetSearchedPostsQuery getSearchedPostsQuery)
         {
             List<PostViewModel> result = null;
-            string query = $"SELECT users.Username as User_Username," +
-                    $" Count(DISTINCT Post_Likes.User_Id) as Likes," +
-                    $" Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked, " +
-                    $" Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id " +
-                    $" FROM Posts " +
-                    $"  INNER JOIN Users ON Users.Id = Posts.User_Id" +
-                    $"  LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id " +
-                    $"  LEFT JOIN Comments ON Comments.Post_Id = Posts.Id " +
-                    $"  LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id" +
-                    $" WHERE (Posts.Title LIKE '%{getSearchedPostsQuery.Search}%' OR Posts.Text LIKE '%{getSearchedPostsQuery.Search}%') AND Posts.Date_Created < @User_Timestamp " +
-                    $" GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id, users.Username" +
-                    $" ORDER BY {getSearchedPostsQuery.Order} DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
+            string query = $@"SELECT users.Username as User_Username,
+                    Count(DISTINCT Post_Likes.User_Id) as Likes,
+                    Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments,
+                    CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked,
+                    Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id
+                    FROM Posts
+                    INNER JOIN Users ON Users.Id = Posts.User_Id
+                    LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id
+                    LEFT JOIN Comments ON Comments.Post_Id = Posts.Id
+                    LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id
+                    WHERE (Posts.Title LIKE '%{getSearchedPostsQuery.Search}%' OR Posts.Text LIKE '%{getSearchedPostsQuery.Search}%') AND Posts.Date_Created < @User_Timestamp
+                    GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id, users.Username
+                    ORDER BY {getSearchedPostsQuery.Order} DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
 
             try
             {
@@ -110,19 +110,19 @@ namespace Infrastructure.Data.Repositories
         public async Task<List<PostViewModel>> GetUserPostsAsync(GetUserPostsQuery getUserPostsQuery)
         {
             List<PostViewModel> result = null;
-            string query = $"SELECT Users.Username as User_Username, " +
-                    $" Count(DISTINCT Post_Likes.User_Id) as Likes," +
-                    $" Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked, " +
-                    $" Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id " +
-                    $" FROM Posts " +
-                    $"  INNER JOIN Users ON Users.Id = Posts.User_Id" +
-                    $"  LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id " +
-                    $"  LEFT JOIN Comments ON Comments.Post_Id = Posts.Id " +
-                    $"  LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id" +
-                    $" WHERE Posts.Date_Created < @User_Timestamp AND users.Username = @Author_Username" +
-                    $" GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id, users.Username" +
-                    $" ORDER BY {getUserPostsQuery.Order} DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
+            string query = $@"SELECT Users.Username as User_Username,
+                    Count(DISTINCT Post_Likes.User_Id) as Likes,
+                    Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments,
+                    CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked,
+                    Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id
+                    FROM Posts
+                    INNER JOIN Users ON Users.Id = Posts.User_Id
+                    LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id
+                    LEFT JOIN Comments ON Comments.Post_Id = Posts.Id
+                    LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id
+                    WHERE Posts.Date_Created < @User_Timestamp AND users.Username = @Author_Username
+                    GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id, users.Username
+                    ORDER BY {getUserPostsQuery.Order} DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
 
             try
             {
@@ -150,18 +150,18 @@ namespace Infrastructure.Data.Repositories
         public async Task<PostViewModel> GetPostByIdAsync(GetPostByIdQuery getPostByIdQuery)
         {
             PostViewModel result = null;
-            string query = $"SELECT users.Username as User_Username, " +
-                    $" Count(DISTINCT Post_Likes.User_Id) as Likes," +
-                    $" Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments, " +
-                    $" CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked, " +
-                    $" Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id " +
-                    $"  FROM Posts " +
-                    $"  INNER JOIN Users ON Users.Id = Posts.User_Id" +
-                    $"  LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id " +
-                    $"  LEFT JOIN Comments ON Comments.Post_Id = Posts.Id " +
-                    $"  LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id" +
-                    $" WHERE Posts.Id = @Id" +
-                    $" GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id, users.Username";
+            string query = $@"SELECT users.Username as User_Username,
+                    Count(DISTINCT Post_Likes.User_Id) as Likes,
+                    Count(DISTINCT Comments.Id) + Count(DISTINCT Replies.Id) as Comments,
+                    CAST(CASE WHEN EXISTS (SELECT * FROM Post_Likes WHERE Post_Likes.Post_Id = Posts.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked,
+                    Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id
+                    FROM Posts
+                    INNER JOIN Users ON Users.Id = Posts.User_Id
+                    LEFT JOIN Post_Likes ON Post_Likes.Post_Id = Posts.Id
+                    LEFT JOIN Comments ON Comments.Post_Id = Posts.Id
+                    LEFT JOIN Replies ON Replies.Comment_Id = Comments.Id
+                    WHERE Posts.Id = @Id
+                    GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id, users.Username";
 
             try
             {
@@ -188,7 +188,7 @@ namespace Infrastructure.Data.Repositories
         }
         public async Task CreatePostAsync(CreatePostCommand createPostCommand)
         {
-            string query = $"INSERT INTO Posts (Title, Text, User_Id) VALUES (@Title, @Text, @User_Id)";
+            string query = $@"INSERT INTO Posts (Title, Text, User_Id) VALUES (@Title, @Text, @User_Id)";
 
             try
             {
@@ -208,7 +208,7 @@ namespace Infrastructure.Data.Repositories
         }
         public async Task UpdatePostAsync(UpdatePostCommand updatePostCommand)
         {
-            string query = $"UPDATE Posts set Text = @Text WHERE Id = @Id";
+            string query = $@"UPDATE Posts set Text = @Text WHERE Id = @Id";
 
             try
             {
@@ -228,7 +228,7 @@ namespace Infrastructure.Data.Repositories
         }
         public async Task AddPostCategoryAsync(AddPostCategoryCommand addPostCategoryCommand)
         {
-            string query = $"INSERT INTO Post_Category (Post_Id, Category_Id) VALUES (@Post_Id, @Category_Id)";
+            string query = $@"INSERT INTO Post_Category (Post_Id, Category_Id) VALUES (@Post_Id, @Category_Id)";
 
             try
             {
@@ -248,7 +248,7 @@ namespace Infrastructure.Data.Repositories
         }
         public async Task RemovePostCategoryAsync(RemovePostCategoryCommand removePostCategoryCommand)
         {
-            string query = $"DELETE FROM Post_Category WHERE Post_Id = @Post_Id AND Category_Id = @Category_Id";
+            string query = $@"DELETE FROM Post_Category WHERE Post_Id = @Post_Id AND Category_Id = @Category_Id";
 
             try
             {
@@ -268,7 +268,7 @@ namespace Infrastructure.Data.Repositories
         }
         public async Task DeletePostAsync(DeletePostCommand deletePostCommand)
         {
-            string query = $"Delete FROM Posts WHERE Id = @Id";
+            string query = $@"Delete FROM Posts WHERE Id = @Id";
 
             try
             {
@@ -288,9 +288,9 @@ namespace Infrastructure.Data.Repositories
         }
         public async Task LikePostAsync(LikePostCommand likePostCommand)
         {
-            string query = $"IF EXISTS (SELECT * FROM Post_Likes WHERE Post_Id = @Post_Id AND User_Id = @User_Id)" +
-                $" BEGIN DELETE FROM Post_Likes WHERE Post_Id = @Post_Id AND User_Id = @User_Id END" +
-                $" ELSE BEGIN INSERT INTO Post_Likes (Post_Id, User_Id) VALUES(@Post_Id, @User_Id) END";
+            string query = $@"IF EXISTS (SELECT * FROM Post_Likes WHERE Post_Id = @Post_Id AND User_Id = @User_Id)
+                BEGIN DELETE FROM Post_Likes WHERE Post_Id = @Post_Id AND User_Id = @User_Id END
+                ELSE BEGIN INSERT INTO Post_Likes (Post_Id, User_Id) VALUES(@Post_Id, @User_Id) END";
 
             try
             {

@@ -23,6 +23,7 @@ export default function CommentInputElement(Props: CommentInputProps) {
         event.preventDefault();
         Props.Action(comment!.toString())
         setComment('');
+        setFocuse(false);
     }
     return (
         <Box component="form"
