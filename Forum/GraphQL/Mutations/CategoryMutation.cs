@@ -90,7 +90,7 @@ namespace Forum.GraphQL.Mutations
                 {
                     DeleteCategoryCommand deleteCategoryCommand = new DeleteCategoryCommand()
                     {
-                        Id = context.GetArgument<UpdateCategoryCommand>("input").Id,
+                        Id = context.GetArgument<DeleteCategoryCommand>("input").Id,
                         Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
                     };
 

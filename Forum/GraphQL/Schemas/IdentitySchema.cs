@@ -1,7 +1,7 @@
 ﻿using Forum.GraphQL.Queries;
 using GraphQL.Types;
 
-namespace TimeTracker.GraphQL.Schemas
+namespace Forum.GraphQL.Schemas
 {
     public class IdentitySchema : Schema
         {

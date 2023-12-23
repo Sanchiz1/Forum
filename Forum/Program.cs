@@ -14,7 +14,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
-using TimeTracker.GraphQL.Schemas;
+using Forum.GraphQL.Schemas;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +62,7 @@ builder.Services.AddGraphQL(c => c.AddSystemTextJson()
                                   })
                                   .AddGraphTypes(typeof(MainShema).Assembly)
                                   .AddGraphTypes(typeof(IdentitySchema).Assembly)
+                                  .AddErrorInfoProvider(opt => opt.ExposeExceptionDetails = true)
                                   );
 
 
