@@ -9,7 +9,7 @@ namespace Application.Common.Interfaces.Services
 {
     public interface ITokenValidator
     {
-        bool ValidateRefreshToken(string refreshToken);
+        Task<bool> ValidateRefreshTokenAsync(string refreshToken);
         bool ValidateToken(string token);
         JwtSecurityToken ReadJwtToken(string token);
     }

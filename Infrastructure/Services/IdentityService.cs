@@ -59,7 +59,7 @@ namespace Infrastructure.Services
         }
         public async Task<LoginResponse> RefreshToken(RefreshTokenQuery refreshTokenQuery)
         {
-            if (refreshTokenQuery.Token == null || !_tokenValidator.ValidateRefreshToken(refreshTokenQuery.Token))
+            if (refreshTokenQuery.Token == null || !(await _tokenValidator.ValidateRefreshTokenAsync(refreshTokenQuery.Token)))
             {
                 throw new InvalidTokenException();
             }

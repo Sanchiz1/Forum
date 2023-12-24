@@ -241,12 +241,19 @@ export function GetAjaxObservable<T>(query: string, variables: {}, authorized = 
       catchError(error => {
         setLogInError(error.message)
         if (error.message == "Invalid token") {
-          Logout()
+          Logout();
         }
         return throwError(() => new Error(error.message));
       }),
       mergeMap(() => {
-        const token: TokenType = JSON.parse(getCookie("access_token")!)
+        let token: TokenType = {} as TokenType;
+        try {
+          token = JSON.parse(getCookie("access_token")!)
+        }
+        catch {
+          return throwError(() => new Error("Invalid token"));
+        }
+        if (token === null) return throwError(() => new Error("Invalid token"));
         return ajax<response<T>>({
           url: requestUrl,
           method: "POST",

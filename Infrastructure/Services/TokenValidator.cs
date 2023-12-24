@@ -23,7 +23,7 @@ namespace Infrastructure.Services
             _configuration = configuration;
             _tokenRepository = tokenRepository;
         }
-        public bool ValidateRefreshToken(string refreshToken)
+        public async Task<bool> ValidateRefreshTokenAsync(string refreshToken)
         {
             JwtSecurityToken objRefreshToken = ReadJwtToken(refreshToken);
 
@@ -32,7 +32,7 @@ namespace Infrastructure.Services
 
             if (!isRefresh) return false;
 
-            var savedToken = _tokenRepository.GetRefreshTokenAsync(refreshToken);
+            var savedToken = await _tokenRepository.GetRefreshTokenAsync(refreshToken);
 
             if (savedToken == null) return false;
 

@@ -13,31 +13,12 @@ import {
     FormControl, Select, Stack, Container, CssBaseline, IconButton, LinearProgress,
     Toolbar, Collapse, TextField, Alert, Link, MenuItem, Button, Dialog, DialogTitle, DialogActions
 } from '@mui/material';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import CloseIcon from '@mui/icons-material/Close';
-import { Link as RouterLink } from 'react-router-dom';
 import { Post } from '../../Types/Post';
-import { deletePostRequest, requestPostById, updatePostRequest } from '../../API/postRequests';
-import { GetLocalDate, timeSince } from '../../Helpers/TimeHelper';
-import EditIcon from '@mui/icons-material/Edit';
-import Divider from '@mui/material/Divider';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ArchiveIcon from '@mui/icons-material/Archive';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { StyledMenu } from '../UtilComponents/StyledMenu';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { enqueueSnackbar } from 'notistack';
-import { Reply } from '../../Types/Reply';
-import { requestReplies } from '../../API/replyRequests';
-import ReplyElement from '../Comments/ReplyElement';
 import { createCommentRequest, requestComments } from '../../API/commentRequests';
 import { Comment, CommentInput } from '../../Types/Comment';
 import CommentElement from '../Comments/CommentElement';
 import { BootstrapInput } from '../UtilComponents/BootstrapInput';
-import { isSigned } from '../../API/loginRequests';
 import { setGlobalError, setLogInError } from '../../Redux/Reducers/AccountReducer';
 import { User } from '../../Types/User';
 import CommentInputElement from '../UtilComponents/CommentInputElement';
@@ -60,7 +41,6 @@ export default function CommentsSection(Props: CommentsSectionProps) {
 
     const [hasMore, setHasMore] = useState(true);
 
-    const [refresh, setRefresh] = useState(true);
     const next = 4;
     const [userTimestamp, setUserTimestamp] = useState(new Date());
     const [offset, setOffset] = useState(0);
@@ -79,7 +59,6 @@ export default function CommentsSection(Props: CommentsSectionProps) {
         setComments([]);
         setUserTimestamp(new Date())
         setOffset(0);
-        setRefresh(!refresh);
     }
 
     const fetchComments = () => {
@@ -104,7 +83,7 @@ export default function CommentsSection(Props: CommentsSectionProps) {
         fetchComments()
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [offset, refresh])
+    }, [offset, userTimestamp])
 
     useEffect(() => {
         refetchComments()
