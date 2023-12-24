@@ -1,6 +1,6 @@
 USE [master]
 GO
-/****** Object:  Database [Forum]    Script Date: 12/11/2023 5:12:43 PM ******/
+/****** Object:  Database [Forum]    Script Date: 12/24/2023 9:38:28 PM ******/
 CREATE DATABASE [Forum]
 GO
 ALTER DATABASE [Forum] SET COMPATIBILITY_LEVEL = 150
@@ -54,7 +54,7 @@ ALTER DATABASE [Forum] SET READ_COMMITTED_SNAPSHOT OFF
 GO
 ALTER DATABASE [Forum] SET HONOR_BROKER_PRIORITY OFF 
 GO
-ALTER DATABASE [Forum] SET RECOVERY SIMPLE 
+ALTER DATABASE [Forum] SET RECOVERY FULL 
 GO
 ALTER DATABASE [Forum] SET  MULTI_USER 
 GO
@@ -74,7 +74,19 @@ ALTER DATABASE [Forum] SET QUERY_STORE = OFF
 GO
 USE [Forum]
 GO
-/****** Object:  Table [dbo].[Categories]    Script Date: 12/11/2023 5:12:43 PM ******/
+/****** Object:  User [test2_loginu]    Script Date: 12/24/2023 9:38:28 PM ******/
+CREATE USER [test2_loginu] FOR LOGIN [test2_login] WITH DEFAULT_SCHEMA=[test2_loginu]
+GO
+/****** Object:  DatabaseRole [df]    Script Date: 12/24/2023 9:38:28 PM ******/
+CREATE ROLE [df]
+GO
+/****** Object:  Schema [df]    Script Date: 12/24/2023 9:38:28 PM ******/
+CREATE SCHEMA [df]
+GO
+/****** Object:  Schema [test2_loginu]    Script Date: 12/24/2023 9:38:28 PM ******/
+CREATE SCHEMA [test2_loginu]
+GO
+/****** Object:  Table [dbo].[Categories]    Script Date: 12/24/2023 9:38:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -88,7 +100,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Comment_Likes]    Script Date: 12/11/2023 5:12:43 PM ******/
+/****** Object:  Table [dbo].[Comment_Likes]    Script Date: 12/24/2023 9:38:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -103,14 +115,14 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Comments]    Script Date: 12/11/2023 5:12:43 PM ******/
+/****** Object:  Table [dbo].[Comments]    Script Date: 12/24/2023 9:38:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Comments](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Text] [nvarchar](500) NOT NULL,
+	[Text] [nvarchar](1000) NOT NULL,
 	[Date_Created] [datetime] NOT NULL,
 	[User_Id] [int] NOT NULL,
 	[Post_Id] [int] NOT NULL,
@@ -121,7 +133,7 @@ CREATE TABLE [dbo].[Comments](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Post_Category]    Script Date: 12/11/2023 5:12:43 PM ******/
+/****** Object:  Table [dbo].[Post_Category]    Script Date: 12/24/2023 9:38:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -136,7 +148,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Post_Likes]    Script Date: 12/11/2023 5:12:43 PM ******/
+/****** Object:  Table [dbo].[Post_Likes]    Script Date: 12/24/2023 9:38:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -151,7 +163,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Posts]    Script Date: 12/11/2023 5:12:43 PM ******/
+/****** Object:  Table [dbo].[Posts]    Script Date: 12/24/2023 9:38:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -159,7 +171,7 @@ GO
 CREATE TABLE [dbo].[Posts](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[Title] [nvarchar](100) NOT NULL,
-	[Text] [nvarchar](500) NULL,
+	[Text] [nvarchar](2000) NULL,
 	[Date_Created] [datetime] NOT NULL,
 	[User_Id] [int] NOT NULL,
 	[Date_Edited] [datetime] NULL,
@@ -169,26 +181,26 @@ CREATE TABLE [dbo].[Posts](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Refresh_tokens]    Script Date: 12/11/2023 5:12:43 PM ******/
+/****** Object:  Table [dbo].[Refresh_tokens]    Script Date: 12/24/2023 9:38:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Refresh_tokens](
 	[User_Id] [int] NOT NULL,
-	[Value] [varchar](max) NULL,
-	[Issued_at] [datetime] NULL,
-	[Expires_at] [datetime] NULL
+	[Value] [varchar](max) NOT NULL,
+	[Issued_at] [datetime] NOT NULL,
+	[Expires_at] [datetime] NOT NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Replies]    Script Date: 12/11/2023 5:12:43 PM ******/
+/****** Object:  Table [dbo].[Replies]    Script Date: 12/24/2023 9:38:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Replies](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Text] [varchar](500) NOT NULL,
+	[Text] [nvarchar](1000) NOT NULL,
 	[Date_Created] [datetime] NOT NULL,
 	[User_Id] [int] NOT NULL,
 	[Reply_User_Id] [int] NULL,
@@ -200,7 +212,7 @@ CREATE TABLE [dbo].[Replies](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Reply_Likes]    Script Date: 12/11/2023 5:12:43 PM ******/
+/****** Object:  Table [dbo].[Reply_Likes]    Script Date: 12/24/2023 9:38:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -215,7 +227,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Roles]    Script Date: 12/11/2023 5:12:43 PM ******/
+/****** Object:  Table [dbo].[Roles]    Script Date: 12/24/2023 9:38:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -229,7 +241,7 @@ PRIMARY KEY CLUSTERED
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Users]    Script Date: 12/11/2023 5:12:43 PM ******/
+/****** Object:  Table [dbo].[Users]    Script Date: 12/24/2023 9:38:28 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -237,10 +249,10 @@ GO
 CREATE TABLE [dbo].[Users](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[Username] [varchar](50) NOT NULL,
-	[Email] [varchar](50) NOT NULL,
+	[Email] [varchar](255) NOT NULL,
 	[Bio] [nvarchar](100) NULL,
 	[Registered_At] [datetime] NOT NULL,
-	[Password] [varchar](50) NOT NULL,
+	[Password] [nvarchar](50) NOT NULL,
 	[Salt] [varchar](100) NOT NULL,
 	[Role_Id] [int] NULL,
  CONSTRAINT [PK__Users__3214EC07DB1D5427] PRIMARY KEY CLUSTERED 
@@ -275,7 +287,6 @@ ALTER TABLE [dbo].[Comment_Likes] CHECK CONSTRAINT [FK__Comment_L__Comme__29221C
 GO
 ALTER TABLE [dbo].[Comment_Likes]  WITH CHECK ADD  CONSTRAINT [FK_Comment_Likes_Users] FOREIGN KEY([User_Id])
 REFERENCES [dbo].[Users] ([Id])
-ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Comment_Likes] CHECK CONSTRAINT [FK_Comment_Likes_Users]
 GO
@@ -285,6 +296,11 @@ ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Comments] CHECK CONSTRAINT [FK__Comments__Post_I__123EB7A3]
 GO
+ALTER TABLE [dbo].[Comments]  WITH CHECK ADD  CONSTRAINT [FK_Comments_Users] FOREIGN KEY([User_Id])
+REFERENCES [dbo].[Users] ([Id])
+GO
+ALTER TABLE [dbo].[Comments] CHECK CONSTRAINT [FK_Comments_Users]
+GO
 ALTER TABLE [dbo].[Post_Category]  WITH CHECK ADD  CONSTRAINT [FK__Post_Cate__Post___0C85DE4D] FOREIGN KEY([Post_Id])
 REFERENCES [dbo].[Posts] ([Id])
 ON DELETE CASCADE
@@ -293,6 +309,7 @@ ALTER TABLE [dbo].[Post_Category] CHECK CONSTRAINT [FK__Post_Cate__Post___0C85DE
 GO
 ALTER TABLE [dbo].[Post_Category]  WITH CHECK ADD  CONSTRAINT [FK_Post_Category_Categories] FOREIGN KEY([Category_Id])
 REFERENCES [dbo].[Categories] ([Id])
+ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Post_Category] CHECK CONSTRAINT [FK_Post_Category_Categories]
 GO
@@ -304,7 +321,6 @@ ALTER TABLE [dbo].[Post_Likes] CHECK CONSTRAINT [FK__Post_Like__Post___02FC7413]
 GO
 ALTER TABLE [dbo].[Post_Likes]  WITH CHECK ADD  CONSTRAINT [FK_Post_Likes_Users] FOREIGN KEY([User_Id])
 REFERENCES [dbo].[Users] ([Id])
-ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Post_Likes] CHECK CONSTRAINT [FK_Post_Likes_Users]
 GO
@@ -326,6 +342,7 @@ ALTER TABLE [dbo].[Replies] CHECK CONSTRAINT [FK_Replies_Users]
 GO
 ALTER TABLE [dbo].[Replies]  WITH CHECK ADD  CONSTRAINT [FK_Replies_Users1] FOREIGN KEY([Reply_User_Id])
 REFERENCES [dbo].[Users] ([Id])
+ON DELETE SET NULL
 GO
 ALTER TABLE [dbo].[Replies] CHECK CONSTRAINT [FK_Replies_Users1]
 GO
@@ -337,7 +354,6 @@ ALTER TABLE [dbo].[Reply_Likes] CHECK CONSTRAINT [FK__Reply_Lik__Reply__06CD04F7
 GO
 ALTER TABLE [dbo].[Reply_Likes]  WITH CHECK ADD  CONSTRAINT [FK_Reply_Likes_Users] FOREIGN KEY([User_Id])
 REFERENCES [dbo].[Users] ([Id])
-ON DELETE CASCADE
 GO
 ALTER TABLE [dbo].[Reply_Likes] CHECK CONSTRAINT [FK_Reply_Likes_Users]
 GO
@@ -346,7 +362,63 @@ REFERENCES [dbo].[Roles] ([Id])
 GO
 ALTER TABLE [dbo].[Users] CHECK CONSTRAINT [FK__Users__Role_Id__4A8310C6]
 GO
+/****** Object:  StoredProcedure [dbo].[proc_monthly_posts]    Script Date: 12/24/2023 9:38:28 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[proc_monthly_posts] @Year int
+AS
+
+WITH AllMonths AS (
+    SELECT
+        month
+    FROM
+        (VALUES (1), (2), (3), (4), (5), (6), (7), (8), (9), (10), (11), (12)) AS Months(month)
+)
+
+SELECT
+    COUNT(p.id) AS posts
+FROM
+    AllMonths m
+LEFT JOIN
+    posts p ON m.month = MONTH(p.date_created) AND YEAR(p.date_created) = @Year
+GROUP BY
+    m.month, YEAR(p.date_created)
+ORDER BY
+    month;
+GO
+/****** Object:  StoredProcedure [dbo].[proc_monthly_users]    Script Date: 12/24/2023 9:38:29 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[proc_monthly_users] @Year int
+AS
+
+WITH AllMonths AS (
+    SELECT
+        month
+    FROM
+        (VALUES (1), (2), (3), (4), (5), (6), (7), (8), (9), (10), (11), (12)) AS Months(month)
+)
+
+SELECT
+    COUNT(u.id) AS users
+FROM
+    AllMonths m
+LEFT JOIN
+    Users u ON m.month = MONTH(u.Registered_At) AND YEAR(u.Registered_At) = @Year
+GROUP BY
+    m.month, YEAR(u.Registered_At)
+ORDER BY
+    month;
+GO
 USE [master]
 GO
 ALTER DATABASE [Forum] SET  READ_WRITE 
 GO
+
+INSERT INTO Roles
+VALUES('Moderator'),
+('Admin')
