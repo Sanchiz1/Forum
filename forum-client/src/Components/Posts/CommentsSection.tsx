@@ -23,14 +23,6 @@ import { setGlobalError, setLogInError } from '../../Redux/Reducers/AccountReduc
 import { User } from '../../Types/User';
 import CommentInputElement from '../UtilComponents/CommentInputElement';
 
-const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-}));
-
 interface CommentsSectionProps {
     Post: Post
 }
@@ -46,6 +38,10 @@ export default function CommentsSection(Props: CommentsSectionProps) {
     const [offset, setOffset] = useState(0);
     const [order, setOrder] = useState("Date_Created");
 
+    const [fetching, setFetching] = useState(false);
+
+
+
     let { PostId } = useParams();
     const { state } = useLocation();
     const dispatch = useDispatch();
@@ -55,6 +51,7 @@ export default function CommentsSection(Props: CommentsSectionProps) {
 
 
     const refetchComments = () => {
+        setFetching(false);
         setHasMore(true)
         setComments([]);
         setUserTimestamp(new Date())
@@ -65,13 +62,17 @@ export default function CommentsSection(Props: CommentsSectionProps) {
         requestComments(parseInt(PostId!), offset, next, order, userTimestamp).subscribe({
             next(value) {
                 if (value.length == 0) {
+                    setFetching(false);
                     setHasMore(false);
                     return;
                 }
                 setComments([...comments, ...value]);
+                setFetching(false);
                 if (document.documentElement.offsetHeight - window.innerHeight < 100) {
                     setOffset(offset + next);
                 }
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
             },
             error(err) {
                 dispatch(setGlobalError(err.message));
@@ -80,9 +81,10 @@ export default function CommentsSection(Props: CommentsSectionProps) {
     }
 
     useEffect(() => {
-        fetchComments()
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
+        if (!fetching && hasMore) {
+            setFetching(true);
+            fetchComments()
+        }
     }, [offset, userTimestamp])
 
     useEffect(() => {
@@ -90,7 +92,7 @@ export default function CommentsSection(Props: CommentsSectionProps) {
     }, [order])
 
     function handleScroll() {
-        if (window.innerHeight + document.documentElement.scrollTop <= document.documentElement.scrollHeight - 10 || !hasMore) return;
+        if (window.innerHeight + document.documentElement.scrollTop <= document.documentElement.scrollHeight - 10 || !hasMore || fetching) return;
         setOffset(offset + next);
     }
 

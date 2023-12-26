@@ -25,6 +25,7 @@ export default function Main() {
   const [categories, setCategories] = useState<number[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
   const [hasMore, setHasMore] = useState(true);
+  const [fetching, setFetching] = useState(false);
 
   const elementRef = useRef(null);
 
@@ -35,6 +36,7 @@ export default function Main() {
   const Account: User = useSelector((state: RootState) => state.account.Account);
 
   useEffect(() => {
+    setFetching(false);
     setHasMore(true);
     setPosts([]);
     setUserTimestamp(new Date());
@@ -46,12 +48,16 @@ export default function Main() {
       next(value) {
         if (value.length == 0) {
           setHasMore(false);
+          setFetching(false);
           return;
         }
         setPosts([...posts, ...value])
+        setFetching(false);
         if (document.documentElement.offsetHeight - window.innerHeight < 100) {
           setOffset(offset + next);
         }
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
       },
       error(err) {
         setHasMore(false);
@@ -60,13 +66,14 @@ export default function Main() {
     })
   }
   useEffect(() => {
-    fetchposts();
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    if (!fetching && hasMore) {
+      setFetching(true);
+      fetchposts();
+    }
   }, [offset, userTimestamp]);
 
   function handleScroll() {
-    if (window.innerHeight + document.documentElement.scrollTop <= document.documentElement.scrollHeight - 10 || !hasMore) return;
+    if (window.innerHeight + document.documentElement.scrollTop <= document.documentElement.scrollHeight - 10 || !hasMore || fetching) return;
     setOffset(offset + next);
   }
 
@@ -110,7 +117,7 @@ export default function Main() {
                   </Select>
                 </Typography>
                 <CategoriesFilter Categories={categories} SetCategories={setCategories}></CategoriesFilter>
-                <ButtonWithCheck sx={{ml: 'auto'}} variant='text' ActionWithCheck={() => { navigator('/CreatePost'); }}>Create Post</ButtonWithCheck>
+                <ButtonWithCheck sx={{ ml: 'auto' }} variant='text' ActionWithCheck={() => { navigator('/CreatePost'); }}>Create Post</ButtonWithCheck>
               </Paper>
             </Grid>
             {

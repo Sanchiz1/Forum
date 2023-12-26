@@ -127,8 +127,11 @@ export default function UserPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [hasMore, setHasMore] = useState(true);
   const [refresh, setRefresh] = useState(true);
+  const [fetching, setFetching] = useState(false);
 
   const refetchposts = () => {
+    setFetching(false);
+    setHasMore(true);
     setPosts([]);
     setUserTimestamp(new Date());
     setOffset(0);
@@ -139,29 +142,38 @@ export default function UserPage() {
     refetchposts()
   }, [order]);
 
-  useEffect(() => {
+
+  const fetchposts = () => {
     requestUserPosts(Username!, offset, next, order, userTimestamp).subscribe({
       next(value) {
         if (value.length == 0) {
           setHasMore(false);
+          setFetching(false);
           return;
         }
         setPosts([...posts, ...value])
+        setFetching(false);
         if (document.documentElement.offsetHeight - window.innerHeight < 100) {
           setOffset(offset + next);
         }
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
       },
       error(err) {
         setHasMore(false);
         dispatch(setGlobalError(err.message));
       },
     })
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+  }
+  useEffect(() => {
+    if (!fetching && hasMore) {
+      setFetching(true);
+      fetchposts();
+    }
   }, [offset, refresh]);
 
   function handleScroll() {
-    if (window.innerHeight + document.documentElement.scrollTop <= document.documentElement.scrollHeight - 10 || !hasMore) return;
+    if (window.innerHeight + document.documentElement.scrollTop <= document.documentElement.scrollHeight - 10 || !hasMore || fetching) return;
     setOffset(offset + next);
   }
 
@@ -380,7 +392,7 @@ export default function UserPage() {
                                       Submit
                                     </Button>
                                   </Box>
-                                  <Button color='error' sx={{ width: "100%" }} onClick={() => {setOpenDeleteAccount(true)}}>Delete user</Button>
+                                  <Button color='error' sx={{ width: "100%" }} onClick={() => { setOpenDeleteAccount(true) }}>Delete user</Button>
                                 </Collapse>
                               </>}
                           </Grid>

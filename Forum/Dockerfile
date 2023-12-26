@@ -17,6 +17,16 @@ RUN dotnet restore "./Forum/./Forum.csproj"
 COPY . .
 WORKDIR "/src/Forum"
 
+FROM mcr.microsoft.com/mssql/server
+
+ENV ACCEPT_EULA=Y
+ENV SA_PASSWORD=password123!
+
+COPY ./Forum /
+
+ENTRYPOINT [ "/bin/bash", "entrypoint.sh" ]
+CMD [ "/opt/mssql/bin/sqlservr" ]
+
 RUN dotnet build "./Forum.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
