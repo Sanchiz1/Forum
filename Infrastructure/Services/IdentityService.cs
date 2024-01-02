@@ -7,6 +7,7 @@ using Application.UseCases.Identity.Queries;
 using Application.UseCases.Users.Queries;
 using MediatR;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -39,7 +40,14 @@ namespace Infrastructure.Services
 
         public async Task<LoginResponse> Login(LoginQuery loginQuery)
         {
-            var user = (await _mediator.Send(new GetUserByCredentialsQuery { Username_Or_Email =  loginQuery.Username_Or_Email, Password = loginQuery.Password }));
+            var user = (await _mediator.Send(
+                new GetUserByCredentialsQuery 
+                { 
+                    Username_Or_Email =  loginQuery.Username_Or_Email, 
+                    Password = loginQuery.Password 
+                }
+                )).Match(res => res,
+                ex => throw new Exception()); ;
 
 
             if (user == null) throw new FailedLoginException();
@@ -66,7 +74,8 @@ namespace Infrastructure.Services
 
             int userId = int.Parse(_tokenValidator.ReadJwtToken(refreshTokenQuery.Token).Claims.First(c => c.Type == "UserId").Value);
 
-            var user = (await _mediator.Send(new GetUserByIdQuery { User_Id = userId }));
+            var user = (await _mediator.Send(new GetUserByIdQuery { User_Id = userId })).Match(res => res, 
+                ex => throw new Exception());
 
             var newAccessToken = _tokenFactory.GetAccessToken(user.User.Id, user.Role);
             var newRefreshToken = _tokenFactory.GetRefreshToken(user.User.Id);

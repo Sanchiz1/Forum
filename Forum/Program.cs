@@ -62,7 +62,6 @@ builder.Services.AddGraphQL(c => c.AddSystemTextJson()
                                   })
                                   .AddGraphTypes(typeof(MainShema).Assembly)
                                   .AddGraphTypes(typeof(IdentitySchema).Assembly)
-                                  .AddErrorInfoProvider(opt => opt.ExposeExceptionDetails = true)
                                   );
 
 

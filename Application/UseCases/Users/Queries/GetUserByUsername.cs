@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces.Repositories;
+using Application.Common.Models;
 using Application.Common.ViewModels;
 using Domain.Entities;
 using MediatR;
@@ -11,11 +12,11 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Users.Queries
 {
-    public class GetUserByUsernameQuery : IRequest<UserViewModel>
+    public class GetUserByUsernameQuery : IRequest<Result<UserViewModel>>
     {
         public string Username { get; set; }
     }
-    public class GetUserByUsernameQueryHandler : IRequestHandler<GetUserByUsernameQuery, UserViewModel>
+    public class GetUserByUsernameQueryHandler : IRequestHandler<GetUserByUsernameQuery, Result<UserViewModel>>
     {
         private readonly IUserRepository _context;
 
@@ -24,6 +25,6 @@ namespace Application.UseCases.Users.Queries
             _context = context;
         }
 
-        public async Task<UserViewModel> Handle(GetUserByUsernameQuery request, CancellationToken cancellationToken) => await _context.GetUserByUsernameAsync(request);
+        public async Task<Result<UserViewModel>> Handle(GetUserByUsernameQuery request, CancellationToken cancellationToken) => await _context.GetUserByUsernameAsync(request);
     }
 }

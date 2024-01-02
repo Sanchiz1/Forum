@@ -1,5 +1,6 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.Models;
 using Application.UseCases.Users.Queries;
 using FluentValidation;
 using MediatR;
@@ -12,14 +13,14 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Users.Commands
 {
-    public class UpdateUserCommand : IRequest
+    public class UpdateUserCommand : IRequest<Result<string>>
     {
         public int User_Id { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
         public string Bio { get; set; }
     }
-    public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand>
+    public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Result<string>>
     {
         private readonly IUserRepository _context;
 
@@ -28,13 +29,13 @@ namespace Application.UseCases.Users.Commands
             _context = context;
         }
 
-        public async Task Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
             var userCheck = (await _context.GetUserByIdAsync(new GetUserByIdQuery() { User_Id = request.User_Id }));
 
             if (userCheck.User.Id != request.User_Id)
             {
-                throw new PermissionException();
+                return new Exception("Permission denied");
             }
 
             var usernameCheck = (await _context.GetUserByUsernameAsync(new GetUserByUsernameQuery() { Username = request.Username }));
@@ -42,15 +43,17 @@ namespace Application.UseCases.Users.Commands
 
             if (!(usernameCheck?.User.Id == request.User_Id || usernameCheck == null))
             {
-                throw new UserAlreadyExistsException("User with this username already exists");
+                return new Exception("User with this username already exists");
             }
 
             if (!(emailCheck?.User.Id == request.User_Id || emailCheck == null))
             {
-                throw new UserAlreadyExistsException("User with this email already exists");
+                return new Exception("User with this email already exists");
             }
 
             await _context.UpdateUserAsync(request);
+
+            return "Account has been updated succesfully";
         }
     }
     public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>

@@ -1,15 +1,17 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.Models;
 using Application.UseCases.Categories.Commands;
 using Application.UseCases.Users.Queries;
 using FluentValidation;
 using MediatR;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Application.UseCases.Users.Commands
 {
-    public class CreateUserCommand : IRequest
+    public class CreateUserCommand : IRequest<Result<string>>
     {
         public string Username { get; set; }
         public string Email { get; set; }
@@ -17,7 +19,7 @@ namespace Application.UseCases.Users.Commands
         public string Password { get; set; }
         public string PasswordSalt { get; set; } = string.Empty;
     }
-    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand>
+    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result<string>>
     {
         private readonly IUserRepository _context;
 
@@ -26,19 +28,21 @@ namespace Application.UseCases.Users.Commands
             _context = context;
         }
 
-        public async Task Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            if (await _context.GetUserByUsernameAsync(new GetUserByUsernameQuery() { Username = request.Username}) != null)
+            if (await _context.GetUserByUsernameAsync(new GetUserByUsernameQuery() { Username = request.Username }) != null)
             {
-                throw new UserAlreadyExistsException("User with this username already exists");
+                return new Exception("User with this username already exists");
             }
 
             if (await _context.GetUserByEmailAsync(new GetUserByEmailQuery() { Email = request.Username }) != null)
             {
-                throw new UserAlreadyExistsException("User with this email already exists");
+                return new Exception("User with this email already exists");
             }
 
             await _context.CreateUserAsync(request);
+
+            return "Account has been created successfully";
         }
     }
     public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>

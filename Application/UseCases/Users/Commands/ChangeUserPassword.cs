@@ -1,6 +1,7 @@
 ﻿using Application.Common.Constants;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.Models;
 using FluentValidation;
 using MediatR;
 using System;
@@ -12,14 +13,14 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Users.Commands
 {
-    public class ChangeUserPasswordCommand : IRequest
+    public class ChangeUserPasswordCommand : IRequest<Result<string>>
     {
         public string Password { get; set; }
         public string New_Password { get; set; }
         public int User_Id { get; set; }
     }
 
-    public class ChangeUserPasswordCommandHandler : IRequestHandler<ChangeUserPasswordCommand>
+    public class ChangeUserPasswordCommandHandler : IRequestHandler<ChangeUserPasswordCommand, Result<string>>
     {
         private readonly IUserRepository _context;
 
@@ -28,13 +29,14 @@ namespace Application.UseCases.Users.Commands
             _context = context;
         }
 
-        public async Task Handle(ChangeUserPasswordCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(ChangeUserPasswordCommand request, CancellationToken cancellationToken)
         {
             if (!(await _context.CheckUserPasswordAsync(request.Password, request.User_Id)))
             {
-                throw new WrongPasswordException();
+                return new Exception("Wrong password");
             }
             await _context.ChangeUserPasswordAsync(request);
+            return "Password has been changed successfully";
         }
     }
     public class ChangeUserPasswordCommandValidator : AbstractValidator<ChangeUserPasswordCommand>
