@@ -1,5 +1,6 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.Models;
 using Application.UseCases.Comments.Commands;
 using FluentValidation;
 using MediatR;
@@ -12,14 +13,14 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Replies.Commands
 {
-    public class CreateReplyCommand : IRequest
+    public class CreateReplyCommand : IRequest<Result<string>>
     {
         public string Text { get; set; }
         public int Comment_Id { get; set; }
         public int? Reply_User_Id { get; set; }
         public int User_Id { get; set; }
     }
-    public class CreateReplyCommandHandler : IRequestHandler<CreateReplyCommand>
+    public class CreateReplyCommandHandler : IRequestHandler<CreateReplyCommand, Result<string>>
     {
         private readonly IReplyRepository _context;
 
@@ -28,13 +29,15 @@ namespace Application.UseCases.Replies.Commands
             _context = context;
         }
 
-        public async Task Handle(CreateReplyCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(CreateReplyCommand request, CancellationToken cancellationToken)
         {
             if (request.User_Id == 0)
             {
-                throw new PermissionException();
+                return new Exception("Permission denied");
             }
             await _context.CreateReplyAsync(request);
+
+            return "Reply created succesfully";
         }
     }
     public class CreateReplyCommandValidator : AbstractValidator<CreateReplyCommand>

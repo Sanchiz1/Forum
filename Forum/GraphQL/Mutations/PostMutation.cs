@@ -22,189 +22,96 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<CreatePostInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    CreatePostCommand createPostCommand = new CreatePostCommand()
+                    CreatePostCommand command = new CreatePostCommand()
                     {
                         Title = context.GetArgument<CreatePostCommand>("input").Title,
                         Text = context.GetArgument<CreatePostCommand>("input").Text,
                         User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
                     };
-                    try
-                    {
-                        await _mediator.Send(createPostCommand);
-                    }
-                    catch (PermissionException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
-                        return null;
-                    }
-                    catch (ValidationException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Invalid input"));
-                        return null;
-                    }
-                    catch (Exception ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
-                        return null;
-                    }
-                    return "Post created successfully";
+
+                    var result = await _mediator.Send(command);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
 
             Field<StringGraphType>("updatePost")
                 .Argument<NonNullGraphType<UpdatePostInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    UpdatePostCommand updatePostCommand = new UpdatePostCommand()
+                    UpdatePostCommand command = new UpdatePostCommand()
                     {
                         Id = context.GetArgument<UpdatePostCommand>("input").Id,
                         Text = context.GetArgument<UpdatePostCommand>("input").Text,
                         Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
                         Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
                     };
-                    try
-                    {
-                        await _mediator.Send(updatePostCommand);
-                    }
-                    catch (PermissionException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
-                        return null;
-                    }
-                    catch (ValidationException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Invalid input"));
-                        return null;
-                    }
-                    catch (Exception ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
-                        return null;
-                    }
-                    return "Post updated successfully";
+
+                    var result = await _mediator.Send(command);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
 
             Field<StringGraphType>("addPostCategory")
                 .Argument<NonNullGraphType<AddPostCategoryInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    AddPostCategoryCommand addPostCategoryCommand = new AddPostCategoryCommand()
+                    AddPostCategoryCommand command = new AddPostCategoryCommand()
                     {
                         Post_Id = context.GetArgument<AddPostCategoryCommand>("input").Post_Id,
                         Category_Id = context.GetArgument<AddPostCategoryCommand>("input").Category_Id,
                         Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
                         Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
                     };
-                    try
-                    {
-                        await _mediator.Send(addPostCategoryCommand);
-                    }
-                    catch (PermissionException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
-                        return null;
-                    }
-                    catch (ValidationException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Invalid input"));
-                        return null;
-                    }
-                    catch (Exception ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
-                        return null;
-                    }
-                    return "Post category added successfully";
+
+                    var result = await _mediator.Send(command);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
 
             Field<StringGraphType>("removePostCategory")
                 .Argument<NonNullGraphType<RemovePostCategoryInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    RemovePostCategoryCommand removePostCategoryCommand = new RemovePostCategoryCommand()
+                    RemovePostCategoryCommand command = new RemovePostCategoryCommand()
                     {
                         Post_Id = context.GetArgument<RemovePostCategoryCommand>("input").Post_Id,
                         Category_Id = context.GetArgument<RemovePostCategoryCommand>("input").Category_Id,
                         Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
                         Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
                     };
-                    try
-                    {
-                        await _mediator.Send(removePostCategoryCommand);
-                    }
-                    catch (PermissionException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
-                        return null;
-                    }
-                    catch (ValidationException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Invalid input"));
-                        return null;
-                    }
-                    catch (Exception ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
-                        return null;
-                    }
-                    return "Post category removed successfully";
+
+                    var result = await _mediator.Send(command);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
             Field<StringGraphType>("deletePost")
                 .Argument<NonNullGraphType<DeletePostInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    DeletePostCommand deletePostCommand = new DeletePostCommand()
+                    DeletePostCommand command = new DeletePostCommand()
                     {
                         Id = context.GetArgument<DeletePostCommand>("input").Id,
                         Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
                         Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
                     };
-                    try
-                    {
-                        await _mediator.Send(deletePostCommand);
-                    }
-                    catch (PermissionException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
-                        return null;
-                    }
-                    catch (ValidationException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Invalid input"));
-                        return null;
-                    }
-                    catch (Exception ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
-                        return null;
-                    }
 
-                    return "Post deleted successfully";
+                    var result = await _mediator.Send(command);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
             Field<StringGraphType>("likePost")
                 .Argument<NonNullGraphType<LikePostInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    LikePostCommand likePostCommand = new LikePostCommand()
+                    LikePostCommand command = new LikePostCommand()
                     {
                         Post_Id = context.GetArgument<LikePostCommand>("input").Post_Id,
                         User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
                     };
-                    try
-                    {
-                        await _mediator.Send(likePostCommand);
-                    }
-                    catch (ValidationException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Invalid input"));
-                        return null;
-                    }
-                    catch (Exception ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
-                        return null;
-                    }
 
-                    return "Post liked successfully";
+                    var result = await _mediator.Send(command);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
         }
     }

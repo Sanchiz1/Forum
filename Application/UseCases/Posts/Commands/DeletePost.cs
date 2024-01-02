@@ -5,16 +5,19 @@ using Application.Common.Interfaces.Repositories;
 using FluentValidation;
 using Application.Common.Exceptions;
 using Application.UseCases.Posts.Queries;
+using Application.Common.Models;
+using Application.Common.Constants;
+using System;
 
 namespace Application.UseCases.Posts.Commands
 {
-    public class DeletePostCommand : IRequest
+    public class DeletePostCommand : IRequest<Result<string>>
     {
         public int Id {  get; set; }
         public int Account_Id { get; set; } = 0;
         public string Account_Role { get; set; } = "";
     }
-    public class DeletePostCommandHandler : IRequestHandler<DeletePostCommand>
+    public class DeletePostCommandHandler : IRequestHandler<DeletePostCommand, Result<string>>
     {
         private readonly IPostRepository _context;
 
@@ -23,9 +26,9 @@ namespace Application.UseCases.Posts.Commands
             _context = context;
         }
 
-        public async Task Handle(DeletePostCommand request, CancellationToken cancellationToken) 
+        public async Task<Result<string>> Handle(DeletePostCommand request, CancellationToken cancellationToken) 
         {
-            if (request.Account_Role == "Admin" || request.Account_Role == "Moderator")
+            if (request.Account_Role == Role.Admin || request.Account_Role == Role.Moderator)
             {
                 await _context.DeletePostAsync(request);
             }
@@ -35,11 +38,13 @@ namespace Application.UseCases.Posts.Commands
 
                 if (post.Post.User_Id != request.Account_Id)
                 {
-                    throw new PermissionException();
+                    return new Exception("Permission denied");
                 }
 
                 await _context.DeletePostAsync(request);
             }
+
+            return "Post deleted successfully";
         }
     }
     public class DeletePostCommandValidator : AbstractValidator<DeletePostCommand>

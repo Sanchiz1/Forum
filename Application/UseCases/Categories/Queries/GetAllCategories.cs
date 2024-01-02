@@ -1,5 +1,6 @@
 ﻿using Application.Common.DTOs;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.Models;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Categories.Queries
 {
-    public class GetAllCategoriesQuery : IRequest<List<CategoryDto>>
+    public class GetAllCategoriesQuery : IRequest<Result<List<CategoryDto>>>
     {
     }
-    public class GetAllCategoriesQueryHandler : IRequestHandler<GetAllCategoriesQuery, List<CategoryDto>>
+    public class GetAllCategoriesQueryHandler : IRequestHandler<GetAllCategoriesQuery, Result<List<CategoryDto>>>
     {
         private readonly ICategoryRepository _context;
 
@@ -22,6 +23,6 @@ namespace Application.UseCases.Categories.Queries
             _context = context;
         }
 
-        public async Task<List<CategoryDto>> Handle(GetAllCategoriesQuery request, CancellationToken cancellationToken) => await _context.GetAllCategoriesAsync(request);
+        public async Task<Result<List<CategoryDto>>> Handle(GetAllCategoriesQuery request, CancellationToken cancellationToken) => await _context.GetAllCategoriesAsync(request);
     }
 }

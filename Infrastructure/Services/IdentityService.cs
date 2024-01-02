@@ -47,7 +47,7 @@ namespace Infrastructure.Services
                     Password = loginQuery.Password 
                 }
                 )).Match(res => res,
-                ex => throw new Exception()); ;
+                ex => throw new Exception());
 
 
             if (user == null) throw new FailedLoginException();

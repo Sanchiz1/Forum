@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces.Repositories;
+using Application.Common.Models;
 using FluentValidation;
 using MediatR;
 using System;
@@ -10,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Replies.Commands
 {
-    public class LikeReplyCommand : IRequest
+    public class LikeReplyCommand : IRequest<Result<string>>
     {
         public int Reply_Id { get; set; }
         public int User_Id { get; set; }
     }
-    public class LikeReplyCommandHandler : IRequestHandler<LikeReplyCommand>
+    public class LikeReplyCommandHandler : IRequestHandler<LikeReplyCommand, Result<string>>
     {
         private readonly IReplyRepository _context;
 
@@ -24,7 +25,12 @@ namespace Application.UseCases.Replies.Commands
             _context = context;
         }
 
-        public async Task Handle(LikeReplyCommand request, CancellationToken cancellationToken) => await _context.LikeReplyAsync(request);
+        public async Task<Result<string>> Handle(LikeReplyCommand request, CancellationToken cancellationToken)
+        {
+            await _context.LikeReplyAsync(request);
+
+            return "Reply liked succesfully";
+        }
     }
     public class LikeReplyCommandValidator : AbstractValidator<LikeReplyCommand>
     {

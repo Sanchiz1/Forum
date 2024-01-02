@@ -22,34 +22,22 @@ namespace Forum.GraphQL.Queries
                 .Argument<NonNullGraphType<GetMonthlyPostsInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    GetMonthlyPostsQuery getMonthlyPostsInputGraphType = context.GetArgument<GetMonthlyPostsQuery>("input");
-                    try
-                    {
-                    return await _mediator.Send(getMonthlyPostsInputGraphType);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Getting searched posts");
-                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
-                        return null;
-                    }
+                    GetMonthlyPostsQuery query = context.GetArgument<GetMonthlyPostsQuery>("input");
+
+                    var result = await _mediator.Send(query);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
 
             Field<ListGraphType<IntGraphType>>("getMonthlyUsers")
                 .Argument<NonNullGraphType<GetMonthlyUsersInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    GetMonthlyUsersQuery getMonthlyUsersQuery = context.GetArgument<GetMonthlyUsersQuery>("input");
-                    try
-                    {
-                        return await _mediator.Send(getMonthlyUsersQuery);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Getting searched posts");
-                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
-                        return null;
-                    }
+                    GetMonthlyUsersQuery query = context.GetArgument<GetMonthlyUsersQuery>("input");
+
+                    var result = await _mediator.Send(query);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
         }
     }

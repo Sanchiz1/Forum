@@ -1,5 +1,6 @@
 ﻿using Application.Common.DTOs;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.Models;
 using Application.Common.ViewModels;
 using Domain.Entities;
 using MediatR;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Posts.Queries
 {
-    public class GetPostsQuery : IRequest<List<PostViewModel>>
+    public class GetPostsQuery : IRequest<Result<List<PostViewModel>>>
     {
         public int Next { get; set; }
         public int Offset { get; set; }
@@ -21,7 +22,7 @@ namespace Application.UseCases.Posts.Queries
         public string Order { get; set; } = "Date";
         public int[] Categories { get; set; } = [];
     }
-    public class GetPostsQueryHandler : IRequestHandler<GetPostsQuery, List<PostViewModel>>
+    public class GetPostsQueryHandler : IRequestHandler<GetPostsQuery, Result<List<PostViewModel>>>
     {
         private readonly IPostRepository _context;
 
@@ -30,6 +31,6 @@ namespace Application.UseCases.Posts.Queries
             _context = context;
         }
 
-        public async Task<List<PostViewModel>> Handle(GetPostsQuery request, CancellationToken cancellationToken) => await _context.GetPostsAsync(request);
+        public async Task<Result<List<PostViewModel>>> Handle(GetPostsQuery request, CancellationToken cancellationToken) => await _context.GetPostsAsync(request);
     }
 }

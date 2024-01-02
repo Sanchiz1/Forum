@@ -22,128 +22,63 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<CreateCommentInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    CreateCommentCommand createCommentCommand = new CreateCommentCommand()
+                    CreateCommentCommand command = new CreateCommentCommand()
                     {
                         Text = context.GetArgument<CreateCommentCommand>("input").Text,
                         Post_Id = context.GetArgument<CreateCommentCommand>("input").Post_Id,
                         User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
                     };
-                    try
-                    {
-                        await _mediator.Send(createCommentCommand);
-                    }
-                    catch (PermissionException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
-                        return null;
-                    }
-                    catch (ValidationException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Invalid input"));
-                        return null;
-                    }
-                    catch (Exception ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
-                        return null;
-                    }
-                    return "Comment created successfully";
+
+                    var result = await _mediator.Send(command);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
 
             Field<StringGraphType>("updateComment")
                 .Argument<NonNullGraphType<UpdateCommentInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    UpdateCommentCommand updateCommentCommand = new UpdateCommentCommand()
+                    UpdateCommentCommand command = new UpdateCommentCommand()
                     {
                         Id = context.GetArgument<UpdateCommentCommand>("input").Id,
                         Text = context.GetArgument<UpdateCommentCommand>("input").Text,
                         Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
                         Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
                     };
-                    try
-                    {
-                        await _mediator.Send(updateCommentCommand);
-                    }
-                    catch (PermissionException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
-                        return null;
-                    }
-                    catch (ValidationException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Invalid input"));
-                        return null;
-                    }
-                    catch (Exception ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
-                        return null;
-                    }
-                    return "Comment updated successfully";
+
+                    var result = await _mediator.Send(command);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
 
             Field<StringGraphType>("deleteComment")
                 .Argument<NonNullGraphType<DeleteCommentInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    DeleteCommentCommand deleteCommentCommand = new DeleteCommentCommand()
+                    DeleteCommentCommand command = new DeleteCommentCommand()
                     {
                         Id = context.GetArgument<DeleteCommentCommand>("input").Id,
                         Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
                         Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
                     };
-                    try
-                    {
-                        await _mediator.Send(deleteCommentCommand);
-                    }
-                    catch (PermissionException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
-                        return null;
-                    }
-                    catch (ValidationException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Invalid input"));
-                        return null;
-                    }
-                    catch (Exception ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
-                        return null;
-                    }
-                    return "Comment deleted successfully";
+
+                    var result = await _mediator.Send(command);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
             Field<StringGraphType>("likeComment")
                 .Argument<NonNullGraphType<LikeCommentInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    LikeCommentCommand likeCommentCommand = new LikeCommentCommand()
+                    LikeCommentCommand command = new LikeCommentCommand()
                     {
                         Comment_Id = context.GetArgument<LikeCommentCommand>("input").Comment_Id,
                         User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
-                    }; 
-                    try
-                    {
-                        await _mediator.Send(likeCommentCommand);
-                    }
-                    catch (PermissionException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("You don`t have permissions for that action"));
-                        return null;
-                    }
-                    catch (ValidationException ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Invalid input"));
-                        return null;
-                    }
-                    catch (Exception ex)
-                    {
-                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
-                        return null;
-                    }
+                    };
 
-                    return "Comment liked successfully";
+                    var result = await _mediator.Send(command);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
         }
     }

@@ -27,7 +27,6 @@ namespace Application.Common.Behaviors
         {
             try
             {
-                Console.WriteLine("Check");
                 return await next();
             }
             catch (Exception ex)

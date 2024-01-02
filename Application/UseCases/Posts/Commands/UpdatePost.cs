@@ -5,17 +5,19 @@ using Application.Common.Interfaces.Repositories;
 using FluentValidation;
 using Application.Common.Exceptions;
 using Application.UseCases.Posts.Queries;
+using Application.Common.Models;
+using System;
 
 namespace Application.UseCases.Posts.Commands
 {
-    public class UpdatePostCommand : IRequest
+    public class UpdatePostCommand : IRequest<Result<string>>
     {
         public int Id { get; set; }
         public string Text { get; set; }
         public int Account_Id { get; set; } = 0;
         public string Account_Role { get; set; } = "";
     }
-    public class UpdatePostCommandHandler : IRequestHandler<UpdatePostCommand>
+    public class UpdatePostCommandHandler : IRequestHandler<UpdatePostCommand, Result<string>>
     {
         private readonly IPostRepository _context;
 
@@ -24,16 +26,18 @@ namespace Application.UseCases.Posts.Commands
             _context = context;
         }
 
-        public async Task Handle(UpdatePostCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(UpdatePostCommand request, CancellationToken cancellationToken)
         {
             var post = await _context.GetPostByIdAsync(new GetPostByIdQuery() { Id = request.Id });
 
             if (post.Post.User_Id != request.Account_Id)
             {
-                throw new PermissionException();
+                return new Exception("Permission denied");
             }
 
             await _context.UpdatePostAsync(request);
+
+            return "Post updated successfully";
         }
     }
     public class UpdatePostCommandValidator : AbstractValidator<UpdatePostCommand>

@@ -1,5 +1,7 @@
-﻿using Application.Common.Exceptions;
+﻿using Application.Common.Constants;
+using Application.Common.Exceptions;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.Models;
 using Application.UseCases.Posts.Queries;
 using FluentValidation;
 using MediatR;
@@ -12,14 +14,14 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Posts.Commands
 {
-    public class RemovePostCategoryCommand : IRequest
+    public class RemovePostCategoryCommand : IRequest<Result<string>>
     {
         public int Post_Id { get; set; }
         public int Category_Id { get; set; }
         public int Account_Id { get; set; } = 0;
         public string Account_Role { get; set; } = "";
     }
-    public class RemovePostCategoryCommandHandler : IRequestHandler<RemovePostCategoryCommand>
+    public class RemovePostCategoryCommandHandler : IRequestHandler<RemovePostCategoryCommand, Result<string>>
     {
         private readonly IPostRepository _context;
 
@@ -28,9 +30,9 @@ namespace Application.UseCases.Posts.Commands
             _context = context;
         }
 
-        public async Task Handle(RemovePostCategoryCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(RemovePostCategoryCommand request, CancellationToken cancellationToken)
         {
-            if (request.Account_Role == "Admin" || request.Account_Role == "Moderator")
+            if (request.Account_Role == Role.Admin || request.Account_Role == Role.Moderator)
             {
                 await _context.RemovePostCategoryAsync(request);
             }
@@ -40,11 +42,13 @@ namespace Application.UseCases.Posts.Commands
 
                 if (post.Post.User_Id != request.Account_Id)
                 {
-                    throw new PermissionException();
+                    return new Exception("Permission denied");
                 }
 
                 await _context.RemovePostCategoryAsync(request);
             }
+
+            return "Category removed successfully";
         }
     }
     public class RemovePostCategoryCommandValidator : AbstractValidator<RemovePostCategoryCommand>

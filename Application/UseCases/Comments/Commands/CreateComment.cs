@@ -5,16 +5,18 @@ using Application.Common.Interfaces.Repositories;
 using Application.UseCases.Posts.Commands;
 using FluentValidation;
 using Application.Common.Exceptions;
+using Application.Common.Models;
+using System;
 
 namespace Application.UseCases.Comments.Commands
 {
-    public class CreateCommentCommand : IRequest
+    public class CreateCommentCommand : IRequest<Result<string>>
     {
         public string Text { get; set; }
         public int Post_Id { get; set; }
         public int User_Id { get; set; }
     }
-    public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand>
+    public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand, Result<string>>
     {
         private readonly ICommentRepository _context;
 
@@ -23,13 +25,15 @@ namespace Application.UseCases.Comments.Commands
             _context = context;
         }
 
-        public async Task Handle(CreateCommentCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(CreateCommentCommand request, CancellationToken cancellationToken)
         {
             if (request.User_Id == 0)
             {
-                throw new PermissionException();
+                return new Exception("Permission denied");
             }
             await _context.CreateCommentAsync(request);
+
+            return "Comment created successfully";
         }
     }
     public class CreateCommentCommandValidator : AbstractValidator<CreateCommentCommand>

@@ -1,5 +1,7 @@
-﻿using Application.Common.Exceptions;
+﻿using Application.Common.Constants;
+using Application.Common.Exceptions;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.Models;
 using FluentValidation;
 using MediatR;
 using System;
@@ -11,13 +13,13 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Replies.Commands
 {
-    public class DeleteReplyCommand : IRequest
+    public class DeleteReplyCommand : IRequest<Result<string>>
     {
         public int Id { get; set; }
         public int Account_Id { get; set; } = 0;
         public string Account_Role { get; set; } = "";
     }
-    public class DeleteReplyCommandHandler : IRequestHandler<DeleteReplyCommand>
+    public class DeleteReplyCommandHandler : IRequestHandler<DeleteReplyCommand, Result<string>>
     {
         private readonly IReplyRepository _context;
 
@@ -26,9 +28,9 @@ namespace Application.UseCases.Replies.Commands
             _context = context;
         }
 
-        public async Task Handle(DeleteReplyCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(DeleteReplyCommand request, CancellationToken cancellationToken)
         {
-            if (request.Account_Role == "Admin" || request.Account_Role == "Moderator")
+            if (request.Account_Role == Role.Admin || request.Account_Role == Role.Moderator)
             {
                 await _context.DeleteReplyAsync(request);
             }
@@ -38,11 +40,13 @@ namespace Application.UseCases.Replies.Commands
 
                 if (post.Reply.User_Id != request.Account_Id)
                 {
-                    throw new PermissionException();
+                    return new Exception("Permission denied");
                 }
 
                 await _context.DeleteReplyAsync(request);
             }
+
+            return "Reply deleted successfully";
         }
     }
     public class DeleteReplyCommandValidator : AbstractValidator<DeleteReplyCommand>

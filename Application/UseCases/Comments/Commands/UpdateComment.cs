@@ -1,6 +1,7 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.Models;
 using Application.UseCases.Posts.Queries;
 using FluentValidation;
 using MediatR;
@@ -13,14 +14,14 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Comments.Commands
 {
-    public class UpdateCommentCommand : IRequest
+    public class UpdateCommentCommand : IRequest<Result<string>>
     {
         public int Id { get; set; }
         public string Text { get; set; }
         public int Account_Id { get; set; } = 0;
         public string Account_Role { get; set; } = "";
     }
-    public class UpdateCommentCommandHandler : IRequestHandler<UpdateCommentCommand>
+    public class UpdateCommentCommandHandler : IRequestHandler<UpdateCommentCommand, Result<string>>
     {
         private readonly ICommentRepository _context;
 
@@ -29,16 +30,18 @@ namespace Application.UseCases.Comments.Commands
             _context = context;
         }
 
-        public async Task Handle(UpdateCommentCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(UpdateCommentCommand request, CancellationToken cancellationToken)
         {
             var post = await _context.GetCommentByIdAsync(new Queries.GetCommentByIdQuery() { Id = request.Id });
 
             if (post.Comment.User_Id != request.Account_Id)
             {
-                throw new PermissionException();
+                return new Exception("Permission denied");
             }
 
             await _context.UpdateCommentAsync(request);
+
+            return "Comment updated successfully";
         }
     }
     public class UpdateCommentCommandValidator : AbstractValidator<UpdateCommentCommand>

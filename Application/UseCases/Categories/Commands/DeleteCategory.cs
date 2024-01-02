@@ -1,5 +1,7 @@
-﻿using Application.Common.Exceptions;
+﻿using Application.Common.Constants;
+using Application.Common.Exceptions;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.Models;
 using FluentValidation;
 using MediatR;
 using System;
@@ -11,12 +13,12 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Categories.Commands
 {
-    public class DeleteCategoryCommand : IRequest
+    public class DeleteCategoryCommand : IRequest<Result<string>>
     {
         public int Id { get; set; }
         public string Account_Role { get; set; }
     }
-    public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand>
+    public class DeleteCategoryCommandHandler : IRequestHandler<DeleteCategoryCommand, Result<string>>
     {
         private readonly ICategoryRepository _context;
 
@@ -25,13 +27,15 @@ namespace Application.UseCases.Categories.Commands
             _context = context;
         }
 
-        public async Task Handle(DeleteCategoryCommand request, CancellationToken cancellationToken) 
+        public async Task<Result<string>> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken) 
         {
-            if (request.Account_Role != "Admin")
+            if (request.Account_Role != Role.Admin)
             {
-                throw new PermissionException();
+                return new Exception("Permission denied");
             }
-            await _context.DeleteCategoryAsync(request); 
+            await _context.DeleteCategoryAsync(request);
+
+            return "Category deleted successfully";
         }
     }
     public class DeleteCategoryCommandValidator : AbstractValidator<DeleteCategoryCommand>

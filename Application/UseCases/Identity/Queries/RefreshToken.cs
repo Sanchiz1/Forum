@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Identity.Queries
 {
-    public class RefreshTokenQuery : IRequest<LoginResponse>
+    public class RefreshTokenQuery : IRequest<Result<LoginResponse>>
     {
         public string Token { get; set; }
     }
-    public class RefreshTokenQueryHandler : IRequestHandler<RefreshTokenQuery, LoginResponse>
+    public class RefreshTokenQueryHandler : IRequestHandler<RefreshTokenQuery, Result<LoginResponse>>
     {
         private readonly IIdentityService _context;
 
@@ -23,6 +23,6 @@ namespace Application.UseCases.Identity.Queries
             _context = context;
         }
 
-        public async Task<LoginResponse> Handle(RefreshTokenQuery request, CancellationToken cancellationToken) => await _context.RefreshToken(request);
+        public async Task<Result<LoginResponse>> Handle(RefreshTokenQuery request, CancellationToken cancellationToken) => await _context.RefreshToken(request);
     }
 }

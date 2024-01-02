@@ -22,7 +22,7 @@ namespace Forum.GraphQL.Queries
                 .Argument<NonNullGraphType<GetCommentsInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    GetCommentsQuery getCommentsQuery = new GetCommentsQuery()
+                    GetCommentsQuery query = new GetCommentsQuery()
                     {
                         Post_Id = context.GetArgument<GetCommentsQuery>("input").Post_Id,
                         Next = context.GetArgument<GetCommentsQuery>("input").Next,
@@ -31,29 +31,24 @@ namespace Forum.GraphQL.Queries
                         User_Timestamp = context.GetArgument<GetCommentsQuery>("input").User_Timestamp,
                         User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
                     };
-                    return await _mediator.Send(getCommentsQuery);
+
+                    var result = await _mediator.Send(query);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
             Field<CommentGraphType>("comment")
                 .Argument<NonNullGraphType<GetCommentByIdInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    GetCommentByIdQuery getCommentByIdQuery = new GetCommentByIdQuery()
+                    GetCommentByIdQuery query = new GetCommentByIdQuery()
                     {
                         Id = context.GetArgument<GetCommentByIdQuery>("input").Id,
                         User_id = AccountHelper.GetUserIdFromClaims(context.User!)
                     };
 
-                    try
-                    {
-                        return await _mediator.Send(getCommentByIdQuery);
+                    var result = await _mediator.Send(query);
 
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Logging in");
-                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
-                        return null;
-                    }
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
         }
     }

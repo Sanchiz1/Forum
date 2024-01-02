@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces.Repositories;
+using Application.Common.Models;
 using Application.Common.ViewModels;
 using MediatR;
 using System;
@@ -10,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Statistics.Queries
 {
-    public class GetMonthlyPostsQuery : IRequest<int[]>
+    public class GetMonthlyPostsQuery : IRequest<Result<int[]>>
     {
         public int Year { get; set; }
     }
-    public class GetMonthlyPostsQueryHandler : IRequestHandler<GetMonthlyPostsQuery, int[]>
+    public class GetMonthlyPostsQueryHandler : IRequestHandler<GetMonthlyPostsQuery, Result<int[]>>
     {
         private readonly IStatisticsRepository _context;
 
@@ -23,6 +24,6 @@ namespace Application.UseCases.Statistics.Queries
             _context = context;
         }
 
-        public async Task<int[]> Handle(GetMonthlyPostsQuery request, CancellationToken cancellationToken) => await _context.GetMonthlyPostsAsync(request);
+        public async Task<Result<int[]>> Handle(GetMonthlyPostsQuery request, CancellationToken cancellationToken) => await _context.GetMonthlyPostsAsync(request);
     }
 }

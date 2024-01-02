@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces.Repositories;
+using Application.Common.Models;
 using Application.Common.ViewModels;
 using Domain.Entities;
 using MediatR;
@@ -11,12 +12,12 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Replies.Queries
 {
-    public class GetReplyByIdQuery : IRequest<ReplyViewModel>
+    public class GetReplyByIdQuery : IRequest<Result<ReplyViewModel>>
     {
         public int Id { get; set; }
         public int User_Id { get; set; } = 0;
     }
-    public class GetReplyByIdQueryHandler : IRequestHandler<GetReplyByIdQuery, ReplyViewModel>
+    public class GetReplyByIdQueryHandler : IRequestHandler<GetReplyByIdQuery, Result<ReplyViewModel>>
     {
         private readonly IReplyRepository _context;
 
@@ -25,6 +26,6 @@ namespace Application.UseCases.Replies.Queries
             _context = context;
         }
 
-        public async Task<ReplyViewModel> Handle(GetReplyByIdQuery request, CancellationToken cancellationToken) => await _context.GetReplyByIdAsync(request);
+        public async Task<Result<ReplyViewModel>> Handle(GetReplyByIdQuery request, CancellationToken cancellationToken) => await _context.GetReplyByIdAsync(request);
     }
 }

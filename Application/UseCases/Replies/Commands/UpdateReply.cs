@@ -1,5 +1,6 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.Models;
 using FluentValidation;
 using MediatR;
 using System;
@@ -11,14 +12,14 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Replies.Commands
 {
-    public class UpdateReplyCommand : IRequest
+    public class UpdateReplyCommand : IRequest<Result<string>>
     {
         public int Id { get; set; }
         public string Text { get; set; }
         public int Account_Id { get; set; } = 0;
         public string Account_Role { get; set; } = "";
     }
-    public class UpdateReplyCommandHandler : IRequestHandler<UpdateReplyCommand>
+    public class UpdateReplyCommandHandler : IRequestHandler<UpdateReplyCommand, Result<string>>
     {
         private readonly IReplyRepository _context;
 
@@ -27,16 +28,18 @@ namespace Application.UseCases.Replies.Commands
             _context = context;
         }
 
-        public async Task Handle(UpdateReplyCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(UpdateReplyCommand request, CancellationToken cancellationToken)
         {
             var post = await _context.GetReplyByIdAsync(new Queries.GetReplyByIdQuery() { Id = request.Id });
 
             if (post.Reply.User_Id != request.Account_Id)
             {
-                throw new PermissionException();
+                return new Exception("Permission denied");
             }
 
             await _context.UpdateReplyAsync(request);
+
+            return "Reply updated succesfully";
         }
     }
     public class UpdateReplyCommandValidator : AbstractValidator<UpdateReplyCommand>

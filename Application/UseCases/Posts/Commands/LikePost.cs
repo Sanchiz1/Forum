@@ -3,15 +3,16 @@ using System.Threading.Tasks;
 using System.Threading;
 using Application.Common.Interfaces.Repositories;
 using FluentValidation;
+using Application.Common.Models;
 
 namespace Application.UseCases.Posts.Commands
 {
-    public class LikePostCommand : IRequest
+    public class LikePostCommand : IRequest<Result<string>>
     {
         public int Post_Id { get; set; }
         public int User_Id { get; set; }
     }
-    public class LikePostCommandHandler : IRequestHandler<LikePostCommand>
+    public class LikePostCommandHandler : IRequestHandler<LikePostCommand, Result<string>>
     {
         private readonly IPostRepository _context;
 
@@ -20,7 +21,12 @@ namespace Application.UseCases.Posts.Commands
             _context = context;
         }
 
-        public async Task Handle(LikePostCommand request, CancellationToken cancellationToken) => await _context.LikePostAsync(request);
+        public async Task<Result<string>> Handle(LikePostCommand request, CancellationToken cancellationToken) 
+        { 
+            await _context.LikePostAsync(request);
+
+            return "Post liked successfully";
+        }
     }
     public class LikePostCommandValidator : AbstractValidator<LikePostCommand>
     {

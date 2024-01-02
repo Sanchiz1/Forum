@@ -1,5 +1,7 @@
-﻿using Application.Common.Exceptions;
+﻿using Application.Common.Constants;
+using Application.Common.Exceptions;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.Models;
 using Application.UseCases.Comments.Commands;
 using Application.UseCases.Replies.Commands;
 using FluentValidation;
@@ -13,12 +15,12 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Categories.Commands
 {
-    public class CreateCategoryCommand : IRequest
+    public class CreateCategoryCommand : IRequest<Result<string>>
     {
         public string Title { get; set; }
         public string Account_Role { get; set; }
     }
-    public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand>
+    public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, Result<string>>
     {
         private readonly ICategoryRepository _context;
 
@@ -27,13 +29,15 @@ namespace Application.UseCases.Categories.Commands
             _context = context;
         }
 
-        public async Task Handle(CreateCategoryCommand request, CancellationToken cancellationToken) 
+        public async Task<Result<string>> Handle(CreateCategoryCommand request, CancellationToken cancellationToken) 
         {
-            if(request.Account_Role != "Admin")
+            if(request.Account_Role != Role.Admin)
             {
-                throw new PermissionException();
+                return new Exception("Permission denied");
             }
-            await _context.CreateCategoryAsync(request); 
+            await _context.CreateCategoryAsync(request);
+
+            return "Category created succesfully";
         }
     }
     public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCommand>

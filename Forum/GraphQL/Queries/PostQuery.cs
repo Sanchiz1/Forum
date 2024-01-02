@@ -15,105 +15,80 @@ namespace Forum.GraphQL.Queries
     public class PostQuery : ObjectGraphType
     {
         private readonly IMediator _mediator;
-        private readonly ILogger _logger;
-        public PostQuery(IMediator mediator, ILogger logger)
+        public PostQuery(IMediator mediator)
         {
             _mediator = mediator;
-            _logger = logger;
 
             Field<ListGraphType<PostGraphType>>("searchedPosts")
                 .Argument<NonNullGraphType<GetSearchedPostsInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    try
+                    GetSearchedPostsQuery query = new GetSearchedPostsQuery()
                     {
-                        GetSearchedPostsQuery getSearchedPostsQuery = new GetSearchedPostsQuery()
-                        {
-                            Next = context.GetArgument<GetSearchedPostsQuery>("input").Next,
-                            Offset = context.GetArgument<GetSearchedPostsQuery>("input").Offset,
-                            User_Id = AccountHelper.GetUserIdFromClaims(context.User!),
-                            User_Timestamp = context.GetArgument<GetSearchedPostsQuery>("input").User_Timestamp,
-                            Search = context.GetArgument<GetSearchedPostsQuery>("input").Search
-                        };
-                        return await _mediator.Send(getSearchedPostsQuery);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Getting searched posts");
-                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
-                        return null;
-                    }
+                        Next = context.GetArgument<GetSearchedPostsQuery>("input").Next,
+                        Offset = context.GetArgument<GetSearchedPostsQuery>("input").Offset,
+                        User_Id = AccountHelper.GetUserIdFromClaims(context.User!),
+                        User_Timestamp = context.GetArgument<GetSearchedPostsQuery>("input").User_Timestamp,
+                        Search = context.GetArgument<GetSearchedPostsQuery>("input").Search
+                    };
+
+
+                    var result = await _mediator.Send(query);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
 
             Field<ListGraphType<PostGraphType>>("posts")
                 .Argument<NonNullGraphType<GetPostsInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    try
+                    GetPostsQuery query = new GetPostsQuery()
                     {
-                        GetPostsQuery getPostsQuery = new GetPostsQuery()
-                        {
-                            Next = context.GetArgument<GetPostsQuery>("input").Next,
-                            Offset = context.GetArgument<GetPostsQuery>("input").Offset,
-                            Order = context.GetArgument<GetPostsQuery>("input").Order,
-                            User_Id = AccountHelper.GetUserIdFromClaims(context.User!),
-                            User_Timestamp = context.GetArgument<GetPostsQuery>("input").User_Timestamp,
-                            Categories = context.GetArgument<GetPostsQuery>("input").Categories,
-                        };
-                        return await _mediator.Send(getPostsQuery);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Getting posts");
-                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
-                        return null;
-                    }
+                        Next = context.GetArgument<GetPostsQuery>("input").Next,
+                        Offset = context.GetArgument<GetPostsQuery>("input").Offset,
+                        Order = context.GetArgument<GetPostsQuery>("input").Order,
+                        User_Id = AccountHelper.GetUserIdFromClaims(context.User!),
+                        User_Timestamp = context.GetArgument<GetPostsQuery>("input").User_Timestamp,
+                        Categories = context.GetArgument<GetPostsQuery>("input").Categories,
+                    };
+
+                    var result = await _mediator.Send(query);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
 
             Field<ListGraphType<PostGraphType>>("userPosts")
                 .Argument<NonNullGraphType<GetUserPostsInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    try
+                    GetUserPostsQuery query = new GetUserPostsQuery()
                     {
-                        GetUserPostsQuery getUserPostsQuery = new GetUserPostsQuery()
-                        {
-                            Author_Username = context.GetArgument<GetUserPostsQuery>("input").Author_Username,
-                            Next = context.GetArgument<GetUserPostsQuery>("input").Next,
-                            Offset = context.GetArgument<GetUserPostsQuery>("input").Offset,
-                            Order = context.GetArgument<GetUserPostsQuery>("input").Order,
-                            User_Id = AccountHelper.GetUserIdFromClaims(context.User!),
-                            User_Timestamp = context.GetArgument<GetUserPostsQuery>("input").User_Timestamp,
-                        };
-                        return await _mediator.Send(getUserPostsQuery);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Getting user posts");
-                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
-                        return null;
-                    }
+                        Author_Username = context.GetArgument<GetUserPostsQuery>("input").Author_Username,
+                        Next = context.GetArgument<GetUserPostsQuery>("input").Next,
+                        Offset = context.GetArgument<GetUserPostsQuery>("input").Offset,
+                        Order = context.GetArgument<GetUserPostsQuery>("input").Order,
+                        User_Id = AccountHelper.GetUserIdFromClaims(context.User!),
+                        User_Timestamp = context.GetArgument<GetUserPostsQuery>("input").User_Timestamp,
+                    };
+
+                    var result = await _mediator.Send(query);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
 
             Field<PostGraphType>("post")
                 .Argument<NonNullGraphType<GetPostByIdInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    GetPostByIdQuery getPostByIdQuery = new GetPostByIdQuery()
+                    GetPostByIdQuery query = new GetPostByIdQuery()
                     {
                         Id = context.GetArgument<GetPostByIdQuery>("input").Id,
                         User_id = AccountHelper.GetUserIdFromClaims(context.User!)
                     };
-                    try
-                    {
-                        return await _mediator.Send(getPostByIdQuery);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Getting user posts");
-                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
-                        return null;
-                    }
+
+                    var result = await _mediator.Send(query);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
         }
     }

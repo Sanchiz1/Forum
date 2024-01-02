@@ -20,40 +20,39 @@ namespace Forum.GraphQL.Queries
                 .Argument<NonNullGraphType<GetCategoriesInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    GetCategoriesQuery getCategoriesQuery = new GetCategoriesQuery()
+                    GetCategoriesQuery query = new GetCategoriesQuery()
                     {
                         Next = context.GetArgument<GetCategoriesQuery>("input").Next,
                         Offset = context.GetArgument<GetCategoriesQuery>("input").Offset,
                     };
-                    return await _mediator.Send(getCategoriesQuery);
+
+                    var result = await _mediator.Send(query);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
 
             Field<ListGraphType<CategoryGraphType>>("allCategories")
                 .ResolveAsync(async context =>
                 {
-                    GetAllCategoriesQuery getAllCategoriesQuery = new GetAllCategoriesQuery();
-                    return await _mediator.Send(getAllCategoriesQuery);
+                    GetAllCategoriesQuery query = new GetAllCategoriesQuery();
+
+                    var result = await _mediator.Send(query);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
 
             Field<CategoryGraphType>("category")
                 .Argument<NonNullGraphType<GetCategoryByIdInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    GetCategoryByIdQuery getCategoryByIdQuery = new GetCategoryByIdQuery()
+                    GetCategoryByIdQuery query = new GetCategoryByIdQuery()
                     {
                         Id = context.GetArgument<GetCategoryByIdQuery>("input").Id
                     };
 
-                    try
-                    {
-                        return await _mediator.Send(getCategoryByIdQuery);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Logging in");
-                        context.Errors.Add(new ExecutionError("Sorry, internal error occurred"));
-                        return null;
-                    }
+                    var result = await _mediator.Send(query);
+
+                    return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
         }
     }
