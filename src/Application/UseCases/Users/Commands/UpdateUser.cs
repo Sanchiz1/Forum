@@ -31,13 +31,6 @@ namespace Application.UseCases.Users.Commands
 
         public async Task<Result<string>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            var userCheck = (await _context.GetUserByIdAsync(new GetUserByIdQuery() { User_Id = request.User_Id }));
-
-            if (userCheck.User.Id != request.User_Id)
-            {
-                return new Exception("Permission denied");
-            }
-
             var usernameCheck = (await _context.GetUserByUsernameAsync(new GetUserByUsernameQuery() { Username = request.Username }));
             var emailCheck = (await _context.GetUserByEmailAsync(new GetUserByEmailQuery() { Email = request.Email }));
 

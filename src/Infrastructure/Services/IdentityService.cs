@@ -2,9 +2,11 @@
 using Application.Common.Interfaces.Repositories;
 using Application.Common.Interfaces.Services;
 using Application.Common.Models;
+using Application.Common.ViewModels;
 using Application.UseCases.Comments.Queries;
 using Application.UseCases.Identity.Queries;
 using Application.UseCases.Users.Queries;
+using Azure.Core;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -21,6 +23,7 @@ namespace Infrastructure.Services
         private readonly ITokenRepository _tokenRepository;
         private readonly ITokenFactory _tokenFactory;
         private readonly ITokenValidator _tokenValidator;
+        private readonly IHashingService _hasher;
 
 
         public IdentityService(IConfiguration configuration, 
@@ -28,7 +31,8 @@ namespace Infrastructure.Services
             IUserRepository userRepository,
             ITokenRepository tokenRepository,
             ITokenFactory tokenFactory,
-            ITokenValidator tokenValidator)
+            ITokenValidator tokenValidator,
+            IHashingService hasher)
         {
             _configuration = configuration;
             _mediator = mediator;
@@ -36,21 +40,24 @@ namespace Infrastructure.Services
             _tokenRepository = tokenRepository;
             _tokenFactory = tokenFactory;
             _tokenValidator = tokenValidator;
+            _hasher = hasher;
         }
 
-        public async Task<LoginResponse> Login(LoginQuery loginQuery)
+        public async Task<Result<LoginResponse>> Login(LoginQuery loginQuery)
         {
-            var user = (await _mediator.Send(
-                new GetUserByCredentialsQuery 
-                { 
-                    Username_Or_Email =  loginQuery.Username_Or_Email, 
-                    Password = loginQuery.Password 
-                }
-                )).Match(res => res,
-                ex => throw new Exception());
+            var user = await _userRepository.GetUserByUsernameOrEmailAsync(loginQuery.Username_Or_Email);
 
+            if (user == null)
+            {
+                return new Exception("Wrong username or email");
+            }
+            string userSalt = await _userRepository.GetUserSaltAsync(user.User.Id);
+            string userPassword = _hasher.ComputeHash(loginQuery.Password, userSalt);
 
-            if (user == null) throw new FailedLoginException();
+            if (userPassword != await _userRepository.GetUserPasswordAsync(user.User.Id))
+            {
+                return new Exception("Wrong username or email");
+            }
 
             var encodedJwt = _tokenFactory.GetAccessToken(user.User.Id, user.Role);
 
@@ -65,17 +72,16 @@ namespace Infrastructure.Services
                 Refresh_Token = refreshToken,
             };
         }
-        public async Task<LoginResponse> RefreshToken(RefreshTokenQuery refreshTokenQuery)
+        public async Task<Result<LoginResponse>> RefreshToken(RefreshTokenQuery refreshTokenQuery)
         {
             if (refreshTokenQuery.Token == null || !(await _tokenValidator.ValidateRefreshTokenAsync(refreshTokenQuery.Token)))
             {
-                throw new InvalidTokenException();
+                return new Exception("Invalid token");
             }
 
             int userId = int.Parse(_tokenValidator.ReadJwtToken(refreshTokenQuery.Token).Claims.First(c => c.Type == "UserId").Value);
 
-            var user = (await _mediator.Send(new GetUserByIdQuery { User_Id = userId })).Match(res => res, 
-                ex => throw new Exception());
+            var user = await _userRepository.GetUserByIdAsync(userId);
 
             var newAccessToken = _tokenFactory.GetAccessToken(user.User.Id, user.Role);
             var newRefreshToken = _tokenFactory.GetRefreshToken(user.User.Id);

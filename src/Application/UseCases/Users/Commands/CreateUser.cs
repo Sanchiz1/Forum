@@ -1,11 +1,13 @@
 ﻿using Application.Common.Exceptions;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.Interfaces.Services;
 using Application.Common.Models;
 using Application.UseCases.Categories.Commands;
 using Application.UseCases.Users.Queries;
 using FluentValidation;
 using MediatR;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,15 +19,16 @@ namespace Application.UseCases.Users.Commands
         public string Email { get; set; }
         public string Bio { get; set; }
         public string Password { get; set; }
-        public string PasswordSalt { get; set; } = string.Empty;
     }
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result<string>>
     {
         private readonly IUserRepository _context;
+        private readonly IHashingService _hasher;
 
-        public CreateUserCommandHandler(IUserRepository context)
+        public CreateUserCommandHandler(IUserRepository context, IHashingService hasher)
         {
             _context = context;
+            _hasher = hasher;
         }
 
         public async Task<Result<string>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
@@ -40,7 +43,9 @@ namespace Application.UseCases.Users.Commands
                 return new Exception("User with this email already exists");
             }
 
-            await _context.CreateUserAsync(request);
+            string Salt = _hasher.GenerateSalt();
+            string Password = _hasher.ComputeHash(request.Password, Salt);
+            await _context.CreateUserAsync(request.Username, request.Email, request.Bio, Password, Salt);
 
             return "Account has been created successfully";
         }

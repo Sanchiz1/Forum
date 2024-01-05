@@ -1,6 +1,7 @@
 ﻿using Application.Common.Constants;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.Interfaces.Services;
 using Application.Common.Models;
 using FluentValidation;
 using MediatR;
@@ -23,10 +24,12 @@ namespace Application.UseCases.Users.Commands
     public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Result<string>>
     {
         private readonly IUserRepository _context;
+        private readonly IHashingService _hasher;
 
-        public DeleteUserCommandHandler(IUserRepository context)
+        public DeleteUserCommandHandler(IUserRepository context, IHashingService hasher)
         {
             _context = context;
+            _hasher = hasher;
         }
 
         public async Task<Result<string>> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
@@ -35,9 +38,13 @@ namespace Application.UseCases.Users.Commands
             {
                 return new Exception("You don`t have permissions for that action");
             }
-            if (!(await _context.CheckUserPasswordAsync(request.Password, request.Account_Id)))
+
+            string userSalt = await _context.GetUserSaltAsync(request.User_Id);
+            string userPassword = _hasher.ComputeHash(request.Password, userSalt);
+
+            if (userPassword != await _context.GetUserPasswordAsync(request.User_Id))
             {
-                throw new WrongPasswordException();
+                return new Exception("Wrong password");
             }
             await _context.DeleteUserAsync(request);
 

@@ -62,8 +62,7 @@ export default function SignIn() {
         navigator(state);
       },
       error(err) {
-        const message = ReturnErrorMessage(['Wrong username or password, try again'], err.message);
-        dispatch(setGlobalError(message));
+        dispatch(setGlobalError(err.message));
       },
     });
   };

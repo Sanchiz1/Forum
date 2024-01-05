@@ -37,7 +37,9 @@ namespace Application.Common.Behaviors
                     .GetMethod(nameof(Result<int>.GetFaulted), new[] { typeof(Exception) });
                 var requestName = typeof(TRequest).Name;
 
-                if(invalidMethod != null)
+                _logger.LogError(ex, "Unhandled exception");
+
+                if (invalidMethod != null)
                 {
                     return (TResponse)invalidMethod.Invoke(null, new object[] { new Exception("Internal error")});
                 }
