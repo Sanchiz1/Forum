@@ -10,14 +10,16 @@ namespace Application.Common.Interfaces.Repositories
     public interface IUserRepository
     {
         Task<List<UserViewModel>> GetSearchedUsersAsync(GetSearchedUsersQuery getSearchedUsersQuery);
-        Task<UserViewModel> GetUserByIdAsync(GetUserByIdQuery getUserByIdQuery);
+        Task<UserViewModel> GetUserByIdAsync(int User_Id);
         Task<UserViewModel> GetUserByUsernameAsync(GetUserByUsernameQuery getUserByUsernameQuery);
         Task<UserViewModel> GetUserByEmailAsync(GetUserByEmailQuery getUserByEmailQuery);
-        Task<UserViewModel> GetUserByCredentialsAsync(GetUserByCredentialsQuery getUserByCredentialsQuery);
-        Task<bool> CheckUserPasswordAsync(string password, int user_id);
-        Task CreateUserAsync(CreateUserCommand createUserCommand);
+        Task<UserViewModel> GetUserByUsernameOrEmailAsync(string Username_Or_Email);
+        Task<UserViewModel> GetUserByCredentialsAsync(string Username_Or_Email, string Password);
+        Task<string> GetUserSaltAsync(int user_id);
+        Task<string> GetUserPasswordAsync(int user_id);
+        Task CreateUserAsync(string Username, string Email, string Bio, string Password, string Salt);
         Task UpdateUserAsync(UpdateUserCommand updateUserCommand);
-        Task ChangeUserPasswordAsync(ChangeUserPasswordCommand changeUserPasswordCommand);
+        Task ChangeUserPasswordAsync(string Password, string Salt, int User_Id);
         Task UpdateUserRoleAsync(UpdateUserRoleCommand updateUserRoleCommand);
         Task DeleteUserAsync(DeleteUserCommand deleteUserCommand);
     }

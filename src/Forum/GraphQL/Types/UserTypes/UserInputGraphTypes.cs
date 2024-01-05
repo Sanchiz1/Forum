@@ -36,14 +36,6 @@ namespace Forum.GraphQL.Types.UserTypes
             Field(p => p.Email, type: typeof(StringGraphType));
         }
     }
-    public class GetUserByCredentialsInputGraphType : InputObjectGraphType<GetUserByCredentialsQuery>
-    {
-        public GetUserByCredentialsInputGraphType()
-        {
-            Field(p => p.Username_Or_Email, type: typeof(StringGraphType));
-            Field(p => p.Password, type: typeof(StringGraphType));
-        }
-    }
 
     public class CreateUserInputGraphType : InputObjectGraphType<CreateUserCommand>
     {

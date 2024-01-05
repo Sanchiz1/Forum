@@ -24,6 +24,7 @@ namespace Infrastructure
             services.AddSingleton<ITokenFactory, TokenFactory>();
             services.AddSingleton<ITokenValidator, TokenValidator>();
             services.AddSingleton<IIdentityService, IdentityService>();
+            services.AddSingleton<IHashingService, HashingService>();
 
             return services;
         }

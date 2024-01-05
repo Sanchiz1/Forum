@@ -25,6 +25,6 @@ namespace Application.UseCases.Users.Queries
             _context = context;
         }
 
-        public async Task<Result<UserViewModel>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken) => await _context.GetUserByIdAsync(request);
+        public async Task<Result<UserViewModel>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken) => await _context.GetUserByIdAsync(request.User_Id);
     }
 }

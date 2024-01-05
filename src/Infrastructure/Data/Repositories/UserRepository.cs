@@ -6,7 +6,6 @@ using Application.UseCases.Posts.Queries;
 using Application.UseCases.Users.Commands;
 using Application.UseCases.Users.Queries;
 using Dapper;
-using Infrastructure.Helpers;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -67,7 +66,7 @@ namespace Infrastructure.Data.Repositories
 
             return result;
         }
-        public async Task<UserViewModel> GetUserByIdAsync(GetUserByIdQuery getUserByIdQuery)
+        public async Task<UserViewModel> GetUserByIdAsync(int User_Id)
         {
             UserViewModel result = null;
 
@@ -92,7 +91,7 @@ namespace Infrastructure.Data.Repositories
                     userViewModel.User = user;
 
                     return userViewModel;
-                }, getUserByIdQuery, splitOn: "Id")).FirstOrDefault();
+                }, new { User_Id }, splitOn: "Id")).FirstOrDefault();
             }
             catch (SqlException ex)
             {
@@ -187,7 +186,44 @@ namespace Infrastructure.Data.Repositories
 
             return result;
         }
-        public async Task<UserViewModel> GetUserByCredentialsAsync(GetUserByCredentialsQuery getUserByCredentialsQuery)
+
+        public async Task<UserViewModel> GetUserByUsernameOrEmailAsync(string Username_Or_Email)
+        {
+            UserViewModel result = null;
+
+            string query = $@"SELECT
+                COALESCE(Roles.Name, 'User') AS Role,
+                COALESCE(Users.Role_Id, 0) AS Role_Id,
+                Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At
+                FROM Users
+                LEFT JOIN Roles ON Roles.Id = Users.Role_Id
+                WHERE Users.Username = @Username_Or_Email OR Users.Email = @Username_Or_Email";
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+
+                result = (await connection.QueryAsync<UserViewModel, UserDto, UserViewModel>(query, (userViewModel, user) =>
+                {
+                    userViewModel.User = user;
+
+                    return userViewModel;
+                }, new { Username_Or_Email }, splitOn: "Id")).FirstOrDefault();
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Getting user by credentials");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Getting comment by credentials");
+                throw;
+            }
+
+            return result;
+        }
+        public async Task<UserViewModel> GetUserByCredentialsAsync(string Username_Or_Email, string Password)
         {
             UserViewModel result = null;
 
@@ -203,19 +239,12 @@ namespace Infrastructure.Data.Repositories
             {
                 using var connection = _dapperContext.CreateConnection();
 
-                var salt = connection.Query<string>($"SELECT Salt FROM Users WHERE Username = @Username_Or_Email OR Email = @Password",
-                getUserByCredentialsQuery).FirstOrDefault();
-
-                if (salt == null) return null;
-
-                getUserByCredentialsQuery.Password = PasswordHashHelper.ComputeHash(getUserByCredentialsQuery.Password, salt);
-
                 result = (await connection.QueryAsync<UserViewModel, UserDto, UserViewModel>(query, (userViewModel, user) =>
                 {
                     userViewModel.User = user;
 
                     return userViewModel;
-                }, getUserByCredentialsQuery, splitOn: "Id")).FirstOrDefault();
+                }, new { Username_Or_Email, Password }, splitOn: "Id")).FirstOrDefault();
             }
             catch (SqlException ex)
             {
@@ -230,43 +259,62 @@ namespace Infrastructure.Data.Repositories
 
             return result;
         }
-        public async Task<bool> CheckUserPasswordAsync(string password, int user_id)
+        public async Task<string> GetUserSaltAsync(int user_id)
         {
-            bool result = false;
-            string query = $@"SELECT Password, Salt FROM Users WHERE Id = @user_id";
+            string result;
+            string query = $@"SELECT Salt FROM Users WHERE Id = @user_id";
 
             try
             {
                 using var connection = _dapperContext.CreateConnection();
 
-                HashedPassword hashedPassword = (await connection.QueryAsync<HashedPassword>(query, new { user_id })).FirstOrDefault();
-
-                result = hashedPassword.Password == PasswordHashHelper.ComputeHash(password, hashedPassword.Salt);
+                result = (await connection.QueryAsync<string>(query, new { user_id })).FirstOrDefault();
             }
             catch (SqlException ex)
             {
-                _logger.LogError(ex, "Getting checking user password");
+                _logger.LogError(ex, "Getting user password");
                 throw;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Getting checking user password");
+                _logger.LogError(ex, "Getting user password");
                 throw;
             }
 
             return result;
         }
-        public async Task CreateUserAsync(CreateUserCommand createUserCommand)
+        public async Task<string> GetUserPasswordAsync(int user_id)
         {
-            string salt = PasswordHashHelper.GenerateSalt();
-            createUserCommand.Password = PasswordHashHelper.ComputeHash(createUserCommand.Password, salt);
-            createUserCommand.PasswordSalt = salt;
-            string query = $@"INSERT INTO Users (Username, Email, Bio, Password, Salt) VALUES (@Username, @Email, @Bio, @Password, @PasswordSalt)";
+            string result;
+            string query = $@"SELECT Password FROM Users WHERE Id = @user_id";
 
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, createUserCommand);
+
+                result = (await connection.QueryAsync<string>(query, new { user_id })).FirstOrDefault();
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Getting user password");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Getting user password");
+                throw;
+            }
+
+            return result;
+        }
+        public async Task CreateUserAsync(string Username, string Email, string Bio, string Password, string Salt)
+        {
+            string query = $@"INSERT INTO Users (Username, Email, Bio, Password, Salt) VALUES (@Username, @Email, @Bio, @Password, @Salt)";
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+                await connection.ExecuteAsync(query, new { Username, Email, Bio, Password, Salt});
             }
             catch (SqlException ex)
             {
@@ -319,16 +367,14 @@ namespace Infrastructure.Data.Repositories
                 throw;
             }
         }
-        public async Task ChangeUserPasswordAsync(ChangeUserPasswordCommand changeUserPasswordCommand)
+        public async Task ChangeUserPasswordAsync(string Password, string Salt, int User_Id)
         {
             string query = $@"UPDATE Users SET Password = @Password, Salt = @Salt WHERE Id = @User_Id";
 
             try
             {
-                var Salt = PasswordHashHelper.GenerateSalt();
-                var Password = PasswordHashHelper.ComputeHash(changeUserPasswordCommand.New_Password, Salt);
                 using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, new { Salt, Password, changeUserPasswordCommand.User_Id});
+                await connection.ExecuteAsync(query, new { Salt, Password, User_Id});
             }
             catch (SqlException ex)
             {

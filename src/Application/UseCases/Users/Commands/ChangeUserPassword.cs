@@ -1,6 +1,7 @@
 ﻿using Application.Common.Constants;
 using Application.Common.Exceptions;
 using Application.Common.Interfaces.Repositories;
+using Application.Common.Interfaces.Services;
 using Application.Common.Models;
 using FluentValidation;
 using MediatR;
@@ -23,19 +24,28 @@ namespace Application.UseCases.Users.Commands
     public class ChangeUserPasswordCommandHandler : IRequestHandler<ChangeUserPasswordCommand, Result<string>>
     {
         private readonly IUserRepository _context;
+        private readonly IHashingService _hasher;
 
-        public ChangeUserPasswordCommandHandler(IUserRepository context)
+        public ChangeUserPasswordCommandHandler(IUserRepository context, IHashingService hasher)
         {
             _context = context;
+            _hasher = hasher;
         }
 
         public async Task<Result<string>> Handle(ChangeUserPasswordCommand request, CancellationToken cancellationToken)
         {
-            if (!(await _context.CheckUserPasswordAsync(request.Password, request.User_Id)))
+            string userSalt = await _context.GetUserSaltAsync(request.User_Id);
+            string userPassword = _hasher.ComputeHash(request.Password, userSalt);
+
+            if (userPassword != await _context.GetUserPasswordAsync(request.User_Id))
             {
                 return new Exception("Wrong password");
             }
-            await _context.ChangeUserPasswordAsync(request);
+
+
+            string Salt = _hasher.GenerateSalt();
+            string Password = _hasher.ComputeHash(request.New_Password, Salt);
+            await _context.ChangeUserPasswordAsync(Password, Salt, request.User_Id);
             return "Password has been changed successfully";
         }
     }

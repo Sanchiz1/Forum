@@ -11,8 +11,8 @@ namespace Application.Common.Interfaces.Services
 {
     public interface IIdentityService
     {
-        Task<LoginResponse> Login(LoginQuery loginQuery);
-        Task<LoginResponse> RefreshToken(RefreshTokenQuery refreshTokenQuery);
+        Task<Result<LoginResponse>> Login(LoginQuery loginQuery);
+        Task<Result<LoginResponse>> RefreshToken(RefreshTokenQuery refreshTokenQuery);
         Task Logout(LogoutQuery logoutQuery);
     }
 }
