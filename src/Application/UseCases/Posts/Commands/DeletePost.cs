@@ -11,10 +11,10 @@ using System;
 
 namespace Application.UseCases.Posts.Commands
 {
-    public class DeletePostCommand : IRequest<Result<string>>
+    public record DeletePostCommand : IRequest<Result<string>>
     {
-        public int Id {  get; set; }
-        public int Account_Id { get; set; } = 0;
+        public int Id { get; set; }
+        public int Account_Id { get; set; }
         public string Account_Role { get; set; } = "";
     }
     public class DeletePostCommandHandler : IRequestHandler<DeletePostCommand, Result<string>>
@@ -26,25 +26,18 @@ namespace Application.UseCases.Posts.Commands
             _context = context;
         }
 
-        public async Task<Result<string>> Handle(DeletePostCommand request, CancellationToken cancellationToken) 
+        public async Task<Result<string>> Handle(DeletePostCommand request, CancellationToken cancellationToken)
         {
-            if (request.Account_Role == Role.Admin || request.Account_Role == Role.Moderator)
-            {
-                await _context.DeletePostAsync(request);
-            }
-            else
+            if (request.Account_Role != Role.Admin && request.Account_Role != Role.Moderator)
             {
                 var post = await _context.GetPostByIdAsync(new GetPostByIdQuery() { Id = request.Id });
 
-                if (post.Post.User_Id != request.Account_Id)
-                {
-                    return new Exception("Permission denied");
-                }
-
-                await _context.DeletePostAsync(request);
+                if (post.Post.User_Id != request.Account_Id) return new Exception("Permission denied");
             }
 
-            return "Post deleted successfully";
+            await _context.DeletePostAsync(request);
+
+            return "Post has been created successfully";
         }
     }
     public class DeletePostCommandValidator : AbstractValidator<DeletePostCommand>
@@ -52,6 +45,8 @@ namespace Application.UseCases.Posts.Commands
         public DeletePostCommandValidator()
         {
             RuleFor(c => c.Id)
+                .NotEmpty();
+            RuleFor(c => c.Account_Id)
                 .NotEmpty();
         }
     }

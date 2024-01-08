@@ -26,7 +26,7 @@ namespace Forum.GraphQL.Mutations
                     {
                         Title = context.GetArgument<CreatePostCommand>("input").Title,
                         Text = context.GetArgument<CreatePostCommand>("input").Text,
-                        User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
+                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!)
                     };
 
                     var result = await _mediator.Send(command);
@@ -42,8 +42,7 @@ namespace Forum.GraphQL.Mutations
                     {
                         Id = context.GetArgument<UpdatePostCommand>("input").Id,
                         Text = context.GetArgument<UpdatePostCommand>("input").Text,
-                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
-                        Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
+                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!)
                     };
 
                     var result = await _mediator.Send(command);

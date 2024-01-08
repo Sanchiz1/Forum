@@ -10,12 +10,11 @@ using System;
 
 namespace Application.UseCases.Posts.Commands
 {
-    public class UpdatePostCommand : IRequest<Result<string>>
+    public record UpdatePostCommand : IRequest<Result<string>>
     {
         public int Id { get; set; }
         public string Text { get; set; }
-        public int Account_Id { get; set; } = 0;
-        public string Account_Role { get; set; } = "";
+        public int Account_Id { get; set; }
     }
     public class UpdatePostCommandHandler : IRequestHandler<UpdatePostCommand, Result<string>>
     {
@@ -37,7 +36,7 @@ namespace Application.UseCases.Posts.Commands
 
             await _context.UpdatePostAsync(request);
 
-            return "Post updated successfully";
+            return "Post has been updated successfully";
         }
     }
     public class UpdatePostCommandValidator : AbstractValidator<UpdatePostCommand>

@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Users.Commands
 {
-    public class ChangeUserPasswordCommand : IRequest<Result<string>>
+    public record ChangeUserPasswordCommand : IRequest<Result<string>>
     {
         public string Password { get; set; }
         public string New_Password { get; set; }

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Posts.Queries
 {
-    public class GetPostByIdQuery : IRequest<Result<PostViewModel>>
+    public record GetPostByIdQuery : IRequest<Result<PostViewModel>>
     {
         public int Id { get; set; }
         public int User_id { get; set; } = 0;

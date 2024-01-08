@@ -14,11 +14,11 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Posts.Commands
 {
-    public class RemovePostCategoryCommand : IRequest<Result<string>>
+    public record RemovePostCategoryCommand : IRequest<Result<string>>
     {
         public int Post_Id { get; set; }
         public int Category_Id { get; set; }
-        public int Account_Id { get; set; } = 0;
+        public int Account_Id { get; set; }
         public string Account_Role { get; set; } = "";
     }
     public class RemovePostCategoryCommandHandler : IRequestHandler<RemovePostCategoryCommand, Result<string>>
@@ -32,21 +32,14 @@ namespace Application.UseCases.Posts.Commands
 
         public async Task<Result<string>> Handle(RemovePostCategoryCommand request, CancellationToken cancellationToken)
         {
-            if (request.Account_Role == Role.Admin || request.Account_Role == Role.Moderator)
-            {
-                await _context.RemovePostCategoryAsync(request);
-            }
-            else
+            if (request.Account_Role != Role.Admin && request.Account_Role != Role.Moderator)
             {
                 var post = await _context.GetPostByIdAsync(new GetPostByIdQuery() { Id = request.Post_Id });
 
-                if (post.Post.User_Id != request.Account_Id)
-                {
-                    return new Exception("Permission denied");
-                }
-
-                await _context.RemovePostCategoryAsync(request);
+                if (post.Post.User_Id != request.Account_Id) return new Exception("Permission denied");
             }
+
+            await _context.RemovePostCategoryAsync(request);
 
             return "Category removed successfully";
         }

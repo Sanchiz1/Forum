@@ -14,11 +14,11 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Posts.Commands
 {
-    public class AddPostCategoryCommand : IRequest<Result<string>>
+    public record AddPostCategoryCommand : IRequest<Result<string>>
     {
         public int Post_Id { get; set; }
         public int Category_Id { get; set; }
-        public int Account_Id { get; set; } = 0;
+        public int Account_Id { get; set; }
         public string Account_Role { get; set; } = "";
     }
     public class AddPostCategoryCommandHandler : IRequestHandler<AddPostCategoryCommand, Result<string>>
@@ -32,21 +32,15 @@ namespace Application.UseCases.Posts.Commands
 
         public async Task<Result<string>> Handle(AddPostCategoryCommand request, CancellationToken cancellationToken)
         {
-            if (request.Account_Role == Role.Admin || request.Account_Role == Role.Moderator)
-            {
-                await _context.AddPostCategoryAsync(request);
-            }
-            else
+
+            if (request.Account_Role != Role.Admin && request.Account_Role != Role.Moderator)
             {
                 var post = await _context.GetPostByIdAsync(new GetPostByIdQuery() { Id = request.Post_Id });
 
-                if (post.Post.User_Id != request.Account_Id)
-                {
-                    return new Exception("Permission denied");
-                }
-
-                await _context.AddPostCategoryAsync(request);
+                if (post.Post.User_Id != request.Account_Id) return new Exception("Permission denied");
             }
+
+            await _context.AddPostCategoryAsync(request);
 
             return "Category added successfully";
         }
