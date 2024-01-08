@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Users.Commands
 {
-    public class UpdateUserRoleCommand : IRequest<Result<string>>
+    public record UpdateUserRoleCommand : IRequest<Result<string>>
     {
         public int User_Id { get; set; }
         public int? Role_Id { get; set; }

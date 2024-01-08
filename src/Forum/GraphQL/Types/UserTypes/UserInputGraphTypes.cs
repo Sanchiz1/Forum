@@ -51,7 +51,7 @@ namespace Forum.GraphQL.Types.UserTypes
     {
         public UpdateUserInputGraphType()
         {
-            Field(c => c.User_Id, type: typeof(IntGraphType));
+            Field(c => c.Account_Id, type: typeof(IntGraphType));
             Field(c => c.Username, type: typeof(StringGraphType));
             Field(c => c.Email, type: typeof(StringGraphType));
             Field(c => c.Bio, type: typeof(StringGraphType));
@@ -71,7 +71,7 @@ namespace Forum.GraphQL.Types.UserTypes
         {
             Field(c => c.Password, type: typeof(StringGraphType));
             Field(c => c.New_Password, type: typeof(StringGraphType));
-            Field(c => c.User_Id, type: typeof(IntGraphType));
+            Field(c => c.Account_Id, type: typeof(IntGraphType));
         }
     }
     public class DeleteUserInputGraphType : InputObjectGraphType<DeleteUserCommand>
