@@ -60,6 +60,20 @@ namespace Application.Common.Models
                 : Value;
 
         [Pure]
+        public Exception IfSucces(Func<A, Exception> f) =>
+            IsSuccess
+                ? f(Value)
+                : Exception;
+
+
+        [Pure]
+        public Exception IfSuccess(Exception defaultException) =>
+            IsSuccess
+                ? defaultException
+                : Exception;
+
+
+        [Pure]
         public async Task<Result<B>> Map<B>(Func<A, Task<B>> f) => this.IsFaulted ? new Result<B>(this.Exception) : new Result<B>(await f(this.Value));
 
         [Pure]

@@ -1,4 +1,5 @@
 ﻿using Application.Common.Interfaces.Repositories;
+using Application.Common.Interfaces.Services;
 using Application.Common.Models;
 using Application.UseCases.Users.Commands;
 using NSubstitute;
@@ -23,12 +24,14 @@ namespace Application.UnitTests.Users
 
         private readonly CreateUserCommandHandler _handler;
         private readonly IUserRepository _userRepositoryMock;
+        private readonly IHashingService _hashingServiceMock;
 
         public CreateUserCommandTests()
         {
             _userRepositoryMock = Substitute.For<IUserRepository>();
+            _hashingServiceMock = Substitute.For<IHashingService>();
 
-            _handler = new CreateUserCommandHandler(_userRepositoryMock);
+            _handler = new CreateUserCommandHandler(_userRepositoryMock, _hashingServiceMock);
         }
 
         [Fact]

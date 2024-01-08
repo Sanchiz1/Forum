@@ -18,7 +18,7 @@ namespace Application.UseCases.Users.Commands
     {
         public string Password { get; set; }
         public string New_Password { get; set; }
-        public int User_Id { get; set; }
+        public int Account_Id { get; set; }
     }
 
     public class ChangeUserPasswordCommandHandler : IRequestHandler<ChangeUserPasswordCommand, Result<string>>
@@ -34,10 +34,10 @@ namespace Application.UseCases.Users.Commands
 
         public async Task<Result<string>> Handle(ChangeUserPasswordCommand request, CancellationToken cancellationToken)
         {
-            string userSalt = await _context.GetUserSaltAsync(request.User_Id);
+            string userSalt = await _context.GetUserSaltAsync(request.Account_Id);
             string userPassword = _hasher.ComputeHash(request.Password, userSalt);
 
-            if (userPassword != await _context.GetUserPasswordAsync(request.User_Id))
+            if (userPassword != await _context.GetUserPasswordAsync(request.Account_Id))
             {
                 return new Exception("Wrong password");
             }
@@ -45,7 +45,7 @@ namespace Application.UseCases.Users.Commands
 
             string Salt = _hasher.GenerateSalt();
             string Password = _hasher.ComputeHash(request.New_Password, Salt);
-            await _context.ChangeUserPasswordAsync(Password, Salt, request.User_Id);
+            await _context.ChangeUserPasswordAsync(Password, Salt, request.Account_Id);
             return "Password has been changed successfully";
         }
     }
@@ -57,7 +57,7 @@ namespace Application.UseCases.Users.Commands
                 .MaximumLength(50)
                 .MinimumLength(8)
                 .NotEmpty();
-            RuleFor(c => c.User_Id)
+            RuleFor(c => c.Account_Id)
                 .NotEmpty();
         }
     }

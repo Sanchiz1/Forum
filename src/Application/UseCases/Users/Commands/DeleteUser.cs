@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Users.Commands
 {
-    public class DeleteUserCommand : IRequest<Result<string>>
+    public record DeleteUserCommand : IRequest<Result<string>>
     {
         public string Password { get; set; }
         public int User_Id { get; set; }
@@ -36,7 +36,7 @@ namespace Application.UseCases.Users.Commands
         {
             if (request.Account_Role != Role.Admin && request.User_Id != request.Account_Id)
             {
-                return new Exception("You don`t have permissions for that action");
+                return new Exception("Permission denied");
             }
 
             string userSalt = await _context.GetUserSaltAsync(request.User_Id);
@@ -48,7 +48,7 @@ namespace Application.UseCases.Users.Commands
             }
             await _context.DeleteUserAsync(request);
 
-            return "Account has been deleted succesfully";
+            return "Account has been deleted successfully";
         }
     }
     public class DeleteUserCommandValidator : AbstractValidator<DeleteUserCommand>

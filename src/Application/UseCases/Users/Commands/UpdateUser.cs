@@ -13,9 +13,9 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Users.Commands
 {
-    public class UpdateUserCommand : IRequest<Result<string>>
+    public record UpdateUserCommand : IRequest<Result<string>>
     {
-        public int User_Id { get; set; }
+        public int Account_Id { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
         public string Bio { get; set; }
@@ -34,26 +34,26 @@ namespace Application.UseCases.Users.Commands
             var usernameCheck = (await _context.GetUserByUsernameAsync(new GetUserByUsernameQuery() { Username = request.Username }));
             var emailCheck = (await _context.GetUserByEmailAsync(new GetUserByEmailQuery() { Email = request.Email }));
 
-            if (!(usernameCheck?.User.Id == request.User_Id || usernameCheck == null))
+            if (!(usernameCheck?.User.Id == request.Account_Id || usernameCheck == null))
             {
                 return new Exception("User with this username already exists");
             }
 
-            if (!(emailCheck?.User.Id == request.User_Id || emailCheck == null))
+            if (!(emailCheck?.User.Id == request.Account_Id || emailCheck == null))
             {
                 return new Exception("User with this email already exists");
             }
 
             await _context.UpdateUserAsync(request);
 
-            return "Account has been updated succesfully";
+            return "Account has been updated successfully";
         }
     }
     public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
     {
         public UpdateUserCommandValidator()
         {
-            RuleFor(c => c.User_Id)
+            RuleFor(c => c.Account_Id)
                 .NotEmpty();
             RuleFor(c => c.Username)
                 .Matches("[a-zA-Z0-9_.]+$")

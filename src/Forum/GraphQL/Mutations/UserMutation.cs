@@ -36,7 +36,7 @@ namespace Forum.GraphQL.Mutations
                 {
                     UpdateUserCommand command = new UpdateUserCommand()
                     {
-                        User_Id = AccountHelper.GetUserIdFromClaims(context.User!),
+                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
                         Username = context.GetArgument<UpdateUserCommand>("input").Username,
                         Email = context.GetArgument<UpdateUserCommand>("input").Email,
                         Bio = context.GetArgument<UpdateUserCommand>("input").Bio,
@@ -88,7 +88,7 @@ namespace Forum.GraphQL.Mutations
                 {
                     ChangeUserPasswordCommand command = new ChangeUserPasswordCommand()
                     {
-                        User_Id = AccountHelper.GetUserIdFromClaims(context.User!),
+                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
                         Password = context.GetArgument<ChangeUserPasswordCommand>("input").Password,
                         New_Password = context.GetArgument<ChangeUserPasswordCommand>("input").New_Password,
                     };
