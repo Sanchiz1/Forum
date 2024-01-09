@@ -3,8 +3,8 @@ using Application.Common.Interfaces.Repositories;
 using Application.Common.ViewModels;
 using Application.UseCases.Replies.Commands;
 using Application.UseCases.Replies.Queries;
-using Application.UseCases.Users.Queries;
 using Dapper;
+using Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -43,7 +43,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<ReplyViewModel, ReplyDto, ReplyViewModel>(query, (replyViewModel, reply) =>
+                result = (await connection.QueryAsync<ReplyViewModel, Reply, ReplyViewModel>(query, (replyViewModel, reply) =>
                 {
                     replyViewModel.Reply = reply;
 
@@ -82,7 +82,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<ReplyViewModel, ReplyDto, ReplyViewModel>(query, (replyViewModel, reply) =>
+                result = (await connection.QueryAsync<ReplyViewModel, Reply, ReplyViewModel>(query, (replyViewModel, reply) =>
                 {
                     replyViewModel.Reply = reply;
 

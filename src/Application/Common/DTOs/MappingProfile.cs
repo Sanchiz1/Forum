@@ -1,10 +1,7 @@
-﻿using AutoMapper;
+﻿using Application.Common.DTOs.ViewModels;
+using Application.Common.ViewModels;
+using AutoMapper;
 using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Common.DTOs
 {
@@ -13,10 +10,14 @@ namespace Application.Common.DTOs
         public MappingProfile()
         {
             CreateMap<Post, PostDto>();
+            CreateMap<PostViewModel, PostViewModelDto>();
             CreateMap<Comment, CommentDto>();
+            CreateMap<CommentViewModel, CommentViewModelDto>();
             CreateMap<Reply, ReplyDto>();
-            CreateMap<Category, CategoryDto>();
+            CreateMap<ReplyViewModel, ReplyViewModelDto>();
             CreateMap<User, UserDto>();
+            CreateMap<UserViewModel, UserViewModelDto>();
+            CreateMap<Category, CategoryDto>();
         }
     }
 }

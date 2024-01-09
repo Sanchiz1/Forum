@@ -2,9 +2,7 @@
 using System.Threading.Tasks;
 using System.Threading;
 using Application.Common.Interfaces.Repositories;
-using Application.UseCases.Posts.Commands;
 using FluentValidation;
-using Application.Common.Exceptions;
 using Application.Common.Models;
 using System;
 

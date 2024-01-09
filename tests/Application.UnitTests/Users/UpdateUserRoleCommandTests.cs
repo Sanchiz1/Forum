@@ -1,15 +1,7 @@
 ﻿using Application.Common.Constants;
 using Application.Common.Interfaces.Repositories;
-using Application.Common.Interfaces.Services;
-using Application.Common.Models;
 using Application.UseCases.Users.Commands;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.UnitTests.Users
 {

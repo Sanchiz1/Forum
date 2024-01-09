@@ -1,11 +1,8 @@
-﻿using Application.Common.DTOs;
-using Domain.Entities;
-
-namespace Application.Common.ViewModels
+﻿namespace Application.Common.DTOs.ViewModels
 {
-    public class CommentViewModel
+    public class CommentViewModelDto
     {
-        public Comment Comment {  get; set; }
+        public CommentDto Comment {  get; set; }
         public string User_Username { get; set; }
         public int Likes { get; set; }
         public int Replies { get; set; }

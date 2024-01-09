@@ -5,7 +5,6 @@ using System;
 using Application.Common.Interfaces.Repositories;
 using FluentValidation;
 using Application.Common.Models;
-using Application.Common.Exceptions;
 
 namespace Application.UseCases.Posts.Commands
 {

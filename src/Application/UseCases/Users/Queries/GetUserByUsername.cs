@@ -1,30 +1,29 @@
 ﻿using Application.Common.Interfaces.Repositories;
 using Application.Common.Models;
 using Application.Common.ViewModels;
-using Domain.Entities;
+using AutoMapper;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Application.UseCases.Users.Queries
 {
-    public class GetUserByUsernameQuery : IRequest<Result<UserViewModel>>
+    public class GetUserByUsernameQuery : IRequest<Result<UserViewModelDto>>
     {
         public string Username { get; set; }
     }
-    public class GetUserByUsernameQueryHandler : IRequestHandler<GetUserByUsernameQuery, Result<UserViewModel>>
+    public class GetUserByUsernameQueryHandler : IRequestHandler<GetUserByUsernameQuery, Result<UserViewModelDto>>
     {
         private readonly IUserRepository _context;
+        private readonly IMapper _mapper;
 
-        public GetUserByUsernameQueryHandler(IUserRepository context)
+        public GetUserByUsernameQueryHandler(IUserRepository context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<Result<UserViewModel>> Handle(GetUserByUsernameQuery request, CancellationToken cancellationToken) => await _context.GetUserByUsernameAsync(request);
+        public async Task<Result<UserViewModelDto>> Handle(GetUserByUsernameQuery request, CancellationToken cancellationToken)
+            => _mapper.Map<UserViewModelDto>(await _context.GetUserByUsernameAsync(request));
     }
 }

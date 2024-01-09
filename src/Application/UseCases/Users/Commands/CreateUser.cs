@@ -1,13 +1,10 @@
-﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces.Repositories;
+﻿using Application.Common.Interfaces.Repositories;
 using Application.Common.Interfaces.Services;
 using Application.Common.Models;
-using Application.UseCases.Categories.Commands;
 using Application.UseCases.Users.Queries;
 using FluentValidation;
 using MediatR;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 

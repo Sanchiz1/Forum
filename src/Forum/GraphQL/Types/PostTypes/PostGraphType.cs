@@ -1,5 +1,4 @@
 ﻿using Application.Common.ViewModels;
-using Domain.Entities;
 using Forum.GraphQL.Types.CategoryTypes;
 using GraphQL.Types;
 

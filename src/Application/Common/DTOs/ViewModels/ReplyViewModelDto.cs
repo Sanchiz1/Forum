@@ -1,11 +1,10 @@
 ﻿using Application.Common.DTOs;
-using Domain.Entities;
 
-namespace Application.Common.ViewModels
+namespace Application.Common.DTOs.ViewModels
 {
-    public class ReplyViewModel
+    public class ReplyViewModelDto
     {
-        public Reply Reply { get; set; }
+        public ReplyDto Reply { get; set; }
         public string User_Username { get; set; }
         public string Reply_Username { get; set; }
         public int Likes { get; set; }

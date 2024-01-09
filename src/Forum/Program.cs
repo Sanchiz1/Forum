@@ -1,19 +1,11 @@
 using Application;
-using Application.Common.Constants;
-using Application.UseCases.Posts.Commands;
-using FluentValidation.AspNetCore;
-using Forum;
 using GraphQL;
 using GraphQL.Instrumentation;
 using Infrastructure;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.CodeAnalysis;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
-using System.Text;
 using Forum.GraphQL.Schemas;
 
 var builder = WebApplication.CreateBuilder(args);

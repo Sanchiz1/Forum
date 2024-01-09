@@ -1,5 +1,4 @@
 ﻿using Application.Common.ViewModels;
-using Domain.Entities;
 using GraphQL.Types;
 
 namespace Forum.GraphQL.Types.CommentTypes

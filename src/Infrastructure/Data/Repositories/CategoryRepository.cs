@@ -2,7 +2,6 @@
 using Application.Common.Interfaces.Repositories;
 using Application.UseCases.Categories.Commands;
 using Application.UseCases.Categories.Queries;
-using Application.UseCases.Comments.Commands;
 using Dapper;
 using Microsoft.Extensions.Logging;
 using System;

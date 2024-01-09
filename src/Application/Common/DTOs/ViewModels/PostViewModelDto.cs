@@ -1,12 +1,10 @@
-﻿using Application.Common.DTOs;
-using Domain.Entities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Application.Common.ViewModels
+namespace Application.Common.DTOs.ViewModels
 {
-    public class PostViewModel
+    public class PostViewModelDto
     {
-        public Post Post { get; set; }
+        public PostDto Post { get; set; }
         public List<CategoryDto> Categories { get; set; }
         public string User_Username { get; set; }
         public int Likes { get; set; }

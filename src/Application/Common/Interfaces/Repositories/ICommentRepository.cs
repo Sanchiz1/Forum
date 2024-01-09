@@ -1,13 +1,6 @@
-﻿using Application;
-using Application.Common;
-using Application.Common.Interfaces;
-using Application.Common.Interfaces.Repositories;
-using Application.Common.ViewModels;
+﻿using Application.Common.ViewModels;
 using Application.UseCases.Comments.Commands;
 using Application.UseCases.Comments.Queries;
-using Application.UseCases.Posts.Commands;
-using Domain.Entities;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
