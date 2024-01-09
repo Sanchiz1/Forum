@@ -32,6 +32,6 @@ namespace Application.UseCases.Replies.Queries
         }
 
         public async Task<Result<List<ReplyViewModelDto>>> Handle(GetRepliesQuery request, CancellationToken cancellationToken) 
-            => _mapper.Map<List<UserViewModelDto>>(await _context.GetRepliesAsync(request));
+            => _mapper.Map<List<ReplyViewModelDto>>(await _context.GetRepliesAsync(request));
     }
 }
