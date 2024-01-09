@@ -1,9 +1,9 @@
-﻿using Application.Common.ViewModels;
+﻿using Application.Common.DTOs.ViewModels;
 using GraphQL.Types;
 
 namespace Forum.GraphQL.Types.CommentTypes
 {
-    public class CommentGraphType : ObjectGraphType<CommentViewModel>
+    public class CommentGraphType : ObjectGraphType<CommentViewModelDto>
     {
         public CommentGraphType()
         {

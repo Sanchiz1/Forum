@@ -1,6 +1,4 @@
-﻿using Application.Common.DTOs;
-
-namespace Application.Common.DTOs.ViewModels
+﻿namespace Application.Common.DTOs.ViewModels
 {
     public class ReplyViewModelDto
     {

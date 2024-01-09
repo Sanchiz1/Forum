@@ -3,7 +3,6 @@ using Application.Common.Models;
 using Application.Common.ViewModels;
 using AutoMapper;
 using MediatR;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 

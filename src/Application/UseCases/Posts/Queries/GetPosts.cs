@@ -1,6 +1,7 @@
-﻿using Application.Common.Interfaces.Repositories;
+﻿using Application.Common.DTOs.ViewModels;
+using Application.Common.Interfaces.Repositories;
 using Application.Common.Models;
-using Application.Common.ViewModels;
+using AutoMapper;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.UseCases.Posts.Queries
 {
-    public class GetPostsQuery : IRequest<Result<List<PostViewModel>>>
+    public class GetPostsQuery : IRequest<Result<List<PostViewModelDto>>>
     {
         public int Next { get; set; }
         public int Offset { get; set; }
@@ -18,15 +19,18 @@ namespace Application.UseCases.Posts.Queries
         public string Order { get; set; } = "Date";
         public int[] Categories { get; set; } = [];
     }
-    public class GetPostsQueryHandler : IRequestHandler<GetPostsQuery, Result<List<PostViewModel>>>
+    public class GetPostsQueryHandler : IRequestHandler<GetPostsQuery, Result<List<PostViewModelDto>>>
     {
         private readonly IPostRepository _context;
+        private readonly IMapper _mapper;
 
-        public GetPostsQueryHandler(IPostRepository context)
+        public GetPostsQueryHandler(IPostRepository context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<Result<List<PostViewModel>>> Handle(GetPostsQuery request, CancellationToken cancellationToken) => await _context.GetPostsAsync(request);
+        public async Task<Result<List<PostViewModelDto>>> Handle(GetPostsQuery request, CancellationToken cancellationToken) 
+            => _mapper.Map<List<PostViewModelDto>>(await _context.GetPostsAsync(request));
     }
 }

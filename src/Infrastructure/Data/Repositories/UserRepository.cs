@@ -1,5 +1,4 @@
-﻿using Application.Common.DTOs;
-using Application.Common.Interfaces.Repositories;
+﻿using Application.Common.Interfaces.Repositories;
 using Application.Common.ViewModels;
 using Application.UseCases.Users.Commands;
 using Application.UseCases.Users.Queries;
