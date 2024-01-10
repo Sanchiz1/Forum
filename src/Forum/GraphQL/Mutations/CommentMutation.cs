@@ -1,7 +1,4 @@
-﻿using Application.Common.Exceptions;
-using Application.UseCases.Comments.Commands;
-using Application.UseCases.Posts.Commands;
-using FluentValidation;
+﻿using Application.UseCases.Comments.Commands;
 using Forum.GraphQL.Types.CommentTypes;
 using Forum.Helpers;
 using GraphQL;

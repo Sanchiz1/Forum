@@ -1,6 +1,5 @@
 ﻿using Forum.GraphQL.Mutations;
 using Forum.GraphQL.Queries;
-using GraphQL;
 using GraphQL.Types;
 
 namespace Forum.GraphQL.Schemas

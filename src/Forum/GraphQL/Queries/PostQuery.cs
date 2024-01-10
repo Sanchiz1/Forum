@@ -1,14 +1,10 @@
 ﻿using Application.UseCases.Posts.Queries;
-using Domain.Entities;
 using Forum.GraphQL.Types.PostTypes;
 using Forum.GraphQL.Types.UserTypes;
 using Forum.Helpers;
 using GraphQL;
 using GraphQL.Types;
 using MediatR;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using System.Security.Claims;
 
 namespace Forum.GraphQL.Queries
 {

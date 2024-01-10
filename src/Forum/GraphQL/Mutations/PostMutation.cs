@@ -1,7 +1,4 @@
-﻿using Application.Common.Exceptions;
-using Application.UseCases.Categories.Commands;
-using Application.UseCases.Posts.Commands;
-using FluentValidation;
+﻿using Application.UseCases.Posts.Commands;
 using Forum.GraphQL.Types.PostTypes;
 using Forum.Helpers;
 using GraphQL;

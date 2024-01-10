@@ -268,7 +268,7 @@ export function changeUserPasswordRequest(user_id: number, password: string, new
           }`,
         {
             "Input": {
-                "user_Id": user_id,
+                "account_Id": user_id,
                 "password": password,
                 "new_Password": new_password,
             }

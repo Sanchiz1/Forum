@@ -4,7 +4,6 @@ using GraphQL;
 using MediatR;
 using Forum.Helpers;
 using Application.UseCases.Users.Queries;
-using Application.Common.ViewModels;
 
 namespace Forum.GraphQL.Queries
 {

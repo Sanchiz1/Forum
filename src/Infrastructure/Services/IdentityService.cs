@@ -1,12 +1,8 @@
-﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces.Repositories;
+﻿using Application.Common.Interfaces.Repositories;
 using Application.Common.Interfaces.Services;
 using Application.Common.Models;
-using Application.Common.ViewModels;
 using Application.UseCases.Comments.Queries;
 using Application.UseCases.Identity.Queries;
-using Application.UseCases.Users.Queries;
-using Azure.Core;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using System;

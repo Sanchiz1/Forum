@@ -1,7 +1,4 @@
-﻿using Application.Common.Constants;
-using Application.Common.Interfaces.Repositories;
-using Application.Common.Interfaces.Services;
-using Application.Common.Models;
+﻿using Application.Common.Interfaces.Repositories;
 using Application.UseCases.Users.Commands;
 using NSubstitute;
 

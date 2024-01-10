@@ -3,10 +3,8 @@ using GraphQL.Types;
 using GraphQL;
 using Forum.GraphQL.Types.ReplyTypes;
 using MediatR;
-using Application.UseCases.Posts.Queries;
 using Forum.Helpers;
 using Application.UseCases.Replies.Queries;
-using Application.Common.Models;
 
 namespace Forum.GraphQL.Queries
 {

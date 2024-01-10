@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application;
-using Application.Common;
-using Application.Common.Interfaces;
-using Application.Common.Interfaces.Services;
+﻿using System.Data;
 
 namespace Application.Common.Interfaces.Services
 {

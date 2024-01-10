@@ -1,9 +1,5 @@
-﻿using Application.Common.Exceptions;
-using Application.UseCases.Categories.Commands;
-using Application.UseCases.Comments.Commands;
-using FluentValidation;
+﻿using Application.UseCases.Categories.Commands;
 using Forum.GraphQL.Types.CategoryTypes;
-using Forum.GraphQL.Types.CommentTypes;
 using Forum.Helpers;
 using GraphQL;
 using GraphQL.Types;

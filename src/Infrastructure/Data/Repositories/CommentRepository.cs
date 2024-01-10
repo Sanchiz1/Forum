@@ -1,10 +1,9 @@
-﻿using Application.Common.DTOs;
-using Application.Common.Interfaces.Repositories;
+﻿using Application.Common.Interfaces.Repositories;
 using Application.Common.ViewModels;
 using Application.UseCases.Comments.Commands;
 using Application.UseCases.Comments.Queries;
-using Application.UseCases.Users.Queries;
 using Dapper;
+using Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -43,7 +42,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<CommentViewModel, CommentDto, CommentViewModel>(query, (commentViewModel, comment) =>
+                result = (await connection.QueryAsync<CommentViewModel, Comment, CommentViewModel>(query, (commentViewModel, comment) =>
                 {
                     commentViewModel.Comment = comment;
 
@@ -82,7 +81,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<CommentViewModel, CommentDto, CommentViewModel>(query, (commentViewModel, comment) =>
+                result = (await connection.QueryAsync<CommentViewModel, Comment, CommentViewModel>(query, (commentViewModel, comment) =>
                 {
                     commentViewModel.Comment = comment;
 

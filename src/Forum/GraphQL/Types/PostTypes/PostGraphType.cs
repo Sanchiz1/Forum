@@ -1,11 +1,10 @@
-﻿using Application.Common.ViewModels;
-using Domain.Entities;
+﻿using Application.Common.DTOs.ViewModels;
 using Forum.GraphQL.Types.CategoryTypes;
 using GraphQL.Types;
 
 namespace Forum.GraphQL.Types.UserTypes
 {
-    public class PostGraphType : ObjectGraphType<PostViewModel>
+    public class PostGraphType : ObjectGraphType<PostViewModelDto>
     {
         public PostGraphType()
         {

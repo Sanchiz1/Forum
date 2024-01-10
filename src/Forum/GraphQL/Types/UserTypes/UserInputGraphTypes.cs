@@ -1,5 +1,4 @@
-﻿using Application.UseCases.Replies.Commands;
-using Application.UseCases.Users.Commands;
+﻿using Application.UseCases.Users.Commands;
 using Application.UseCases.Users.Queries;
 using GraphQL.Types;
 

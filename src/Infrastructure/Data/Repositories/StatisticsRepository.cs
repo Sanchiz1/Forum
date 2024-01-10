@@ -1,16 +1,11 @@
-﻿using Application.Common.DTOs;
-using Application.Common.Interfaces.Repositories;
-using Application.Common.ViewModels;
+﻿using Application.Common.Interfaces.Repositories;
 using Application.UseCases.Statistics.Queries;
-using Application.UseCases.Users.Queries;
 using Dapper;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Infrastructure.Data.Repositories

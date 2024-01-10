@@ -1,5 +1,4 @@
-﻿using Application.Common.Exceptions;
-using Application.UseCases.Comments.Queries;
+﻿using Application.UseCases.Comments.Queries;
 using Application.UseCases.Identity.Queries;
 using Forum.GraphQL.Types.IdentityTypes;
 using GraphQL;

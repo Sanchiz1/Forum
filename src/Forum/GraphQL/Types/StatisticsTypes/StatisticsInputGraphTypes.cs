@@ -1,5 +1,4 @@
-﻿using Application.UseCases.Replies.Queries;
-using Application.UseCases.Statistics.Queries;
+﻿using Application.UseCases.Statistics.Queries;
 using GraphQL.Types;
 
 namespace Forum.GraphQL.Types.StatisticsTypes

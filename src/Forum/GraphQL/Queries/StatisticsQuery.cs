@@ -1,11 +1,8 @@
 ﻿using Application.UseCases.Statistics.Queries;
-using Application.UseCases.Users.Queries;
 using Forum.GraphQL.Types.StatisticsTypes;
-using Forum.GraphQL.Types.UserTypes;
 using GraphQL;
 using GraphQL.Types;
 using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace Forum.GraphQL.Queries
 {

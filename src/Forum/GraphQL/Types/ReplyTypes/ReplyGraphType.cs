@@ -1,10 +1,9 @@
-﻿using Application.Common.ViewModels;
-using Domain.Entities;
+﻿using Application.Common.DTOs.ViewModels;
 using GraphQL.Types;
 
 namespace Forum.GraphQL.Types.ReplyTypes
 {
-    public class ReplyGraphType : ObjectGraphType<ReplyViewModel>
+    public class ReplyGraphType : ObjectGraphType<ReplyViewModelDto>
     {
         public ReplyGraphType()
         {

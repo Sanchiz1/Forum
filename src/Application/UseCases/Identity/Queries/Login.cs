@@ -1,8 +1,6 @@
-﻿using Application.Common.Interfaces.Repositories;
-using Application.Common.Interfaces.Services;
+﻿using Application.Common.Interfaces.Services;
 using Application.Common.Models;
 using MediatR;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
