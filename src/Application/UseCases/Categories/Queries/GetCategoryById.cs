@@ -1,11 +1,8 @@
 ﻿using Application.Common.DTOs;
 using Application.Common.Interfaces.Repositories;
 using Application.Common.Models;
+using AutoMapper;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,12 +15,15 @@ namespace Application.UseCases.Categories.Queries
     public class GetCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery, Result<CategoryDto>>
     {
         private readonly ICategoryRepository _context;
+        private readonly IMapper _mapper;
 
-        public GetCategoryByIdQueryHandler(ICategoryRepository context)
+        public GetCategoryByIdQueryHandler(ICategoryRepository context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public async Task<Result<CategoryDto>> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken) => await _context.GetCategoryByIdAsync(request);
+        public async Task<Result<CategoryDto>> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken) 
+            => _mapper.Map<CategoryDto>(await _context.GetCategoryByIdAsync(request));
     }
 }

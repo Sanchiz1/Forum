@@ -1,9 +1,9 @@
-﻿using Application.Common.DTOs;
-using Application.Common.Interfaces.Repositories;
+﻿using Application.Common.Interfaces.Repositories;
 using Application.Common.ViewModels;
 using Application.UseCases.Posts.Commands;
 using Application.UseCases.Posts.Queries;
 using Dapper;
+using Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -45,7 +45,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<PostViewModel, PostDto, PostViewModel>(query, (postViewModel, post) =>
+                result = (await connection.QueryAsync<PostViewModel, Post, PostViewModel>(query, (postViewModel, post) =>
                 {
                     postViewModel.Post = post;
 
@@ -86,7 +86,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<PostViewModel, PostDto, PostViewModel>(query, (postViewModel, post) =>
+                result = (await connection.QueryAsync<PostViewModel, Post, PostViewModel>(query, (postViewModel, post) =>
                 {
                     postViewModel.Post = post;
 
@@ -127,7 +127,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<PostViewModel, PostDto, PostViewModel>(query, (postViewModel, post) =>
+                result = (await connection.QueryAsync<PostViewModel, Post, PostViewModel>(query, (postViewModel, post) =>
                 {
                     postViewModel.Post = post;
 
@@ -166,7 +166,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<PostViewModel, PostDto, PostViewModel>(query, (postViewModel, post) =>
+                result = (await connection.QueryAsync<PostViewModel, Post, PostViewModel>(query, (postViewModel, post) =>
                 {
                     postViewModel.Post = post;
 
@@ -188,7 +188,7 @@ namespace Infrastructure.Data.Repositories
         }
         public async Task CreatePostAsync(CreatePostCommand createPostCommand)
         {
-            string query = $@"INSERT INTO Posts (Title, Text, User_Id) VALUES (@Title, @Text, @User_Id)";
+            string query = $@"INSERT INTO Posts (Title, Text, User_Id) VALUES (@Title, @Text, @Account_Id)";
 
             try
             {

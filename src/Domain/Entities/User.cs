@@ -1,11 +1,11 @@
-﻿using Domain.Constants;
+﻿using Domain.Common;
+using Domain.Constants;
 using System;
 
 namespace Domain.Entities
 {
-    public class User
+    public class User : BaseEntity
     {
-        public int Id { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
         public string Bio { get; set; }
@@ -20,6 +20,17 @@ namespace Domain.Entities
             Email = email;
             Bio = bio;
             Registered_At = DateTime.Now;
+        }
+
+        public bool CanEdit(int Account_Id)
+        {
+            return this.Id == Account_Id;
+        }
+        public bool CanDelete(int Account_Id, string Account_Role)
+        {
+            return this.Id == Account_Id
+                || Account_Role == Roles.Moderator
+                || Account_Role == Roles.Admin;
         }
     }
 }

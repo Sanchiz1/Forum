@@ -1,11 +1,9 @@
-﻿using Application.Common.DTOs;
-using Application.Common.Interfaces.Repositories;
-using Application.Common.Models;
+﻿using Application.Common.Interfaces.Repositories;
 using Application.Common.ViewModels;
-using Application.UseCases.Posts.Queries;
 using Application.UseCases.Users.Commands;
 using Application.UseCases.Users.Queries;
 using Dapper;
+using Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -46,7 +44,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<UserViewModel, UserDto, UserViewModel>(query, (userViewModel, user) =>
+                result = (await connection.QueryAsync<UserViewModel, User, UserViewModel>(query, (userViewModel, user) =>
                 {
                     userViewModel.User = user;
 
@@ -86,7 +84,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<UserViewModel, UserDto, UserViewModel>(query, (userViewModel, user) =>
+                result = (await connection.QueryAsync<UserViewModel, User, UserViewModel>(query, (userViewModel, user) =>
                 {
                     userViewModel.User = user;
 
@@ -126,7 +124,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<UserViewModel, UserDto, UserViewModel>(query, (userViewModel, user) =>
+                result = (await connection.QueryAsync<UserViewModel, User, UserViewModel>(query, (userViewModel, user) =>
                 {
                     userViewModel.User = user;
 
@@ -166,7 +164,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<UserViewModel, UserDto, UserViewModel>(query, (userViewModel, user) =>
+                result = (await connection.QueryAsync<UserViewModel, User, UserViewModel>(query, (userViewModel, user) =>
                 {
                     userViewModel.User = user;
 
@@ -203,7 +201,7 @@ namespace Infrastructure.Data.Repositories
             {
                 using var connection = _dapperContext.CreateConnection();
 
-                result = (await connection.QueryAsync<UserViewModel, UserDto, UserViewModel>(query, (userViewModel, user) =>
+                result = (await connection.QueryAsync<UserViewModel, User, UserViewModel>(query, (userViewModel, user) =>
                 {
                     userViewModel.User = user;
 
@@ -239,7 +237,7 @@ namespace Infrastructure.Data.Repositories
             {
                 using var connection = _dapperContext.CreateConnection();
 
-                result = (await connection.QueryAsync<UserViewModel, UserDto, UserViewModel>(query, (userViewModel, user) =>
+                result = (await connection.QueryAsync<UserViewModel, User, UserViewModel>(query, (userViewModel, user) =>
                 {
                     userViewModel.User = user;
 
@@ -259,16 +257,16 @@ namespace Infrastructure.Data.Repositories
 
             return result;
         }
-        public async Task<string> GetUserSaltAsync(int user_id)
+        public async Task<string> GetUserSaltAsync(int User_id)
         {
             string result;
-            string query = $@"SELECT Salt FROM Users WHERE Id = @user_id";
+            string query = $@"SELECT Salt FROM Users WHERE Id = @User_id";
 
             try
             {
                 using var connection = _dapperContext.CreateConnection();
 
-                result = (await connection.QueryAsync<string>(query, new { user_id })).FirstOrDefault();
+                result = (await connection.QueryAsync<string>(query, new { User_id })).FirstOrDefault();
             }
             catch (SqlException ex)
             {
@@ -283,16 +281,16 @@ namespace Infrastructure.Data.Repositories
 
             return result;
         }
-        public async Task<string> GetUserPasswordAsync(int user_id)
+        public async Task<string> GetUserPasswordAsync(int User_id)
         {
             string result;
-            string query = $@"SELECT Password FROM Users WHERE Id = @user_id";
+            string query = $@"SELECT Password FROM Users WHERE Id = @User_id";
 
             try
             {
                 using var connection = _dapperContext.CreateConnection();
 
-                result = (await connection.QueryAsync<string>(query, new { user_id })).FirstOrDefault();
+                result = (await connection.QueryAsync<string>(query, new { User_id })).FirstOrDefault();
             }
             catch (SqlException ex)
             {
@@ -329,7 +327,7 @@ namespace Infrastructure.Data.Repositories
         }
         public async Task UpdateUserAsync(UpdateUserCommand updateUserCommand)
         {
-            string query = $@"UPDATE Users SET Username = @Username, Email = @Email, Bio = @Bio WHERE Id = @User_Id";
+            string query = $@"UPDATE Users SET Username = @Username, Email = @Email, Bio = @Bio WHERE Id = @Account_Id";
 
             try
             {

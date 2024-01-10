@@ -1,5 +1,4 @@
-﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces.Repositories;
+﻿using Application.Common.Interfaces.Repositories;
 using Application.Common.Models;
 using Domain.Constants;
 using FluentValidation;

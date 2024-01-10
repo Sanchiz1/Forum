@@ -1,11 +1,11 @@
-﻿using Domain.Constants;
+﻿using Domain.Common;
+using Domain.Constants;
 using System;
 
 namespace Domain.Entities
 {
-    public class Reply
+    public class Reply : BaseEntity
     {
-        public int Id { get; set; }
         public string Text { get; set; }
         public DateTime Date_Created { get; set; }
         public DateTime? Date_Edited { get; set; }
@@ -13,5 +13,16 @@ namespace Domain.Entities
         public int? Reply_User_Id { get; set; }
         public int User_Id { get; set; }
         public Reply() { }
+
+        public bool CanEdit(int Account_Id)
+        {
+            return this.User_Id == Account_Id;
+        }
+        public bool CanDelete(int Account_Id, string Account_Role)
+        {
+            return this.User_Id == Account_Id
+                || Account_Role == Roles.Moderator
+                || Account_Role == Roles.Admin;
+        }
     }
 }

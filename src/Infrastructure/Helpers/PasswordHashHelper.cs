@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System;
-using System.Diagnostics;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace Infrastructure.Helpers
 {

@@ -1,9 +1,8 @@
-﻿using Application.Common.DTOs;
-using Application.Common.Interfaces.Repositories;
+﻿using Application.Common.Interfaces.Repositories;
 using Application.UseCases.Categories.Commands;
 using Application.UseCases.Categories.Queries;
-using Application.UseCases.Comments.Commands;
 using Dapper;
+using Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -23,9 +22,9 @@ namespace Infrastructure.Data.Repositories
             _dapperContext = context;
             _logger = logger;
         }
-        public async Task<List<CategoryDto>> GetAllCategoriesAsync(GetAllCategoriesQuery getAllCategoriesQuery)
+        public async Task<List<Category>> GetAllCategoriesAsync(GetAllCategoriesQuery getAllCategoriesQuery)
         {
-            List<CategoryDto> result = null;
+            List<Category> result = null;
 
             string query = $@"SELECT * FROM Categories
                 ORDER BY Title";
@@ -33,7 +32,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<CategoryDto>(query, getAllCategoriesQuery)).ToList();
+                result = (await connection.QueryAsync<Category>(query, getAllCategoriesQuery)).ToList();
             }
             catch (SqlException ex)
             {
@@ -48,9 +47,9 @@ namespace Infrastructure.Data.Repositories
 
             return result;
         }
-        public async Task<List<CategoryDto>> GetCategoriesAsync(GetCategoriesQuery getCategoriesQuery)
+        public async Task<List<Category>> GetCategoriesAsync(GetCategoriesQuery getCategoriesQuery)
         {
-            List<CategoryDto> result = null;
+            List<Category> result = null;
 
             string query = $@"SELECT * FROM Categories
                 WHERE Title LIKE '{getCategoriesQuery.Search}'
@@ -60,7 +59,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<CategoryDto>(query, getCategoriesQuery)).ToList();
+                result = (await connection.QueryAsync<Category>(query, getCategoriesQuery)).ToList();
             }
             catch (SqlException ex)
             {
@@ -75,9 +74,9 @@ namespace Infrastructure.Data.Repositories
 
             return result;
         }
-        public async Task<List<CategoryDto>> GetPostCategoriesAsync(GetPostCategoriesQuery getPostCategoriesQuery)
+        public async Task<List<Category>> GetPostCategoriesAsync(GetPostCategoriesQuery getPostCategoriesQuery)
         {
-            List<CategoryDto> result = null;
+            List<Category> result = null;
 
             string query = $@"SELECT Categories.Id, Categories.Title FROM Post_Category
                 JOIN Categories ON Categories.Id = Post_Category.Category_Id
@@ -86,7 +85,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<CategoryDto>(query, getPostCategoriesQuery)).ToList();
+                result = (await connection.QueryAsync<Category>(query, getPostCategoriesQuery)).ToList();
             }
             catch (SqlException ex)
             {
@@ -102,16 +101,16 @@ namespace Infrastructure.Data.Repositories
             return result;
         }
 
-        public async Task<CategoryDto> GetCategoryByIdAsync(GetCategoryByIdQuery getCategoryByIdQuery)
+        public async Task<Category> GetCategoryByIdAsync(GetCategoryByIdQuery getCategoryByIdQuery)
         {
-            CategoryDto result = null;
+            Category result = null;
 
             string query = $@"SELECT * FROM Categories WHERE Id = @Id";
 
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<CategoryDto>(query, getCategoryByIdQuery)).FirstOrDefault();
+                result = (await connection.QueryAsync<Category>(query, getCategoryByIdQuery)).FirstOrDefault();
             }
             catch (SqlException ex)
             {

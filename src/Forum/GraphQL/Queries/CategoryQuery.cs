@@ -1,6 +1,5 @@
 ﻿using Application.UseCases.Categories.Queries;
 using Forum.GraphQL.Types.CategoryTypes;
-using Forum.GraphQL.Types.CommentTypes;
 using GraphQL;
 using GraphQL.Types;
 using MediatR;

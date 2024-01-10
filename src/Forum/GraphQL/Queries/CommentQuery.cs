@@ -1,7 +1,5 @@
 ﻿using Application.UseCases.Comments.Queries;
-using Application.UseCases.Posts.Queries;
 using Forum.GraphQL.Types.CommentTypes;
-using Forum.GraphQL.Types.UserTypes;
 using Forum.Helpers;
 using GraphQL;
 using GraphQL.Types;

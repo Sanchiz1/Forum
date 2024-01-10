@@ -1,14 +1,9 @@
-﻿using Application.Common.Models;
-using Application.UseCases.Posts.Commands;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace Application.Common.Behaviors
 {

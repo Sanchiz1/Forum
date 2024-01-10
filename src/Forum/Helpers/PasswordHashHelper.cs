@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using System.Diagnostics;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace Forum.Helpers
 {
