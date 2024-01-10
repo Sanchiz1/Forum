@@ -147,7 +147,7 @@ namespace Infrastructure.Data.Repositories
 
             return result;
         }
-        public async Task<PostViewModel> GetPostByIdAsync(GetPostByIdQuery getPostByIdQuery)
+        public async Task<PostViewModel> GetPostByIdAsync(int Id)
         {
             PostViewModel result = null;
             string query = $@"SELECT users.Username as User_Username,
@@ -171,7 +171,7 @@ namespace Infrastructure.Data.Repositories
                     postViewModel.Post = post;
 
                     return postViewModel;
-                }, getPostByIdQuery, splitOn: "Id")).FirstOrDefault();
+                }, new { Id }, splitOn: "Id")).FirstOrDefault();
             }
             catch (SqlException ex)
             {

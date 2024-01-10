@@ -11,7 +11,7 @@ namespace Application.Common.Interfaces.Repositories
         Task<List<PostViewModel>> GetSearchedPostsAsync(GetSearchedPostsQuery getSearchedPostsQuery);
         Task<List<PostViewModel>> GetPostsAsync(GetPostsQuery getPostsQuery);
         Task<List<PostViewModel>> GetUserPostsAsync(GetUserPostsQuery getUserPostsQuery);
-        Task<PostViewModel> GetPostByIdAsync(GetPostByIdQuery getPostByIdQuery);
+        Task<PostViewModel> GetPostByIdAsync(int Id);
         Task CreatePostAsync(CreatePostCommand createPostCommand);
         Task UpdatePostAsync(UpdatePostCommand updatePostCommand);
         Task AddPostCategoryAsync(AddPostCategoryCommand addPostCategoryCommand);

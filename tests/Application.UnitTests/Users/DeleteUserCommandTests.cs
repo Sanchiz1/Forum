@@ -64,8 +64,21 @@ namespace Application.UnitTests.Users
             };
             var result = await _handler.Handle(testCommand, default);
 
-            var res = result.IfSuccess(new Exception());
-            Assert.Equal(new Exception("Permission denied").Message, res.Message);
+            var res = result.IfSuccess(new Exception(""));
+            Assert.Equal("Permission denied", res.Message);
+        }
+
+        [Fact]
+        public async Task Handle_Create_Account_Fail_Wrong_Password()
+        {
+            _userRepositoryMock.GetUserSaltAsync(Command.Account_Id).Returns("");
+            _userRepositoryMock.GetUserPasswordAsync(Command.Account_Id).Returns("password");
+            _hashingServiceMock.ComputeHash(Command.Password, "").Returns("password2");
+
+            var result = await _handler.Handle(Command, default);
+
+            var res = result.IfSuccess(new Exception(""));
+            Assert.Equal("Wrong password", res.Message);
         }
     }
 }

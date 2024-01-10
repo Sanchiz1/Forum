@@ -26,7 +26,7 @@ namespace Application.UseCases.Posts.Commands
 
         public async Task<Result<string>> Handle(UpdatePostCommand request, CancellationToken cancellationToken)
         {
-            var post = await _context.GetPostByIdAsync(new GetPostByIdQuery() { Id = request.Id });
+            var post = await _context.GetPostByIdAsync(request.Id);
 
             if (post.Post.User_Id != request.Account_Id)
             {

@@ -1,5 +1,6 @@
 ﻿using Application.Common.Interfaces.Repositories;
 using Application.Common.Interfaces.Services;
+using Application.UseCases.Posts.Queries;
 using Application.UseCases.Users.Commands;
 using NSubstitute;
 
@@ -23,16 +24,33 @@ namespace Application.UnitTests.Users
             _userRepositoryMock = Substitute.For<IUserRepository>();
             _hashingServiceMock = Substitute.For<IHashingService>();
 
-            _handler = new ChangeUserPasswordCommandHandler(_userRepositoryMock, _hashingServiceMock);
+
+           _handler = new ChangeUserPasswordCommandHandler(_userRepositoryMock, _hashingServiceMock);
         }
 
         [Fact]
         public async Task Handle_Change_User_Password_Success()
         {
+            _userRepositoryMock.GetUserSaltAsync(Command.Account_Id).Returns("");
+            _userRepositoryMock.GetUserPasswordAsync(Command.Account_Id).Returns("password");
+            _hashingServiceMock.ComputeHash(Command.Password, "").Returns("password");
             var result = await _handler.Handle(Command, default);
 
             var res = result.IfFail("");
             Assert.Equal("Password has been changed successfully", res);
+        }
+
+        [Fact]
+        public async Task Handle_Change_User_Password_Fail_Wrong_Password()
+        {
+            _userRepositoryMock.GetUserSaltAsync(Command.Account_Id).Returns("");
+            _userRepositoryMock.GetUserPasswordAsync(Command.Account_Id).Returns("password");
+            _hashingServiceMock.ComputeHash(Command.Password, "").Returns("password2");
+
+            var result = await _handler.Handle(Command, default);
+
+            var res = result.IfSuccess(new Exception());
+            Assert.Equal(new Exception("Wrong password").Message, res.Message);
         }
     }
 }

@@ -24,6 +24,6 @@ namespace Application.UseCases.Users.Queries
         }
 
         public async Task<Result<UserViewModelDto>> Handle(GetUserByUsernameQuery request, CancellationToken cancellationToken)
-            => _mapper.Map<UserViewModelDto>(await _context.GetUserByUsernameAsync(request));
+            => _mapper.Map<UserViewModelDto>(await _context.GetUserByUsernameAsync(request.Username));
     }
 }

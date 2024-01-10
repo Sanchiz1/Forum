@@ -30,12 +30,12 @@ namespace Application.UseCases.Users.Commands
 
         public async Task<Result<string>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            if (await _context.GetUserByUsernameAsync(new GetUserByUsernameQuery() { Username = request.Username }) != null)
+            if (await _context.GetUserByUsernameAsync(request.Username) != null)
             {
                 return new Exception("User with this username already exists");
             }
 
-            if (await _context.GetUserByEmailAsync(new GetUserByEmailQuery() { Email = request.Username }) != null)
+            if (await _context.GetUserByEmailAsync(request.Email) != null)
             {
                 return new Exception("User with this email already exists");
             }

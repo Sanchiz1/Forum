@@ -104,7 +104,7 @@ namespace Infrastructure.Data.Repositories
 
             return result;
         }
-        public async Task<UserViewModel> GetUserByUsernameAsync(GetUserByUsernameQuery getUserByEmailQuery)
+        public async Task<UserViewModel> GetUserByUsernameAsync(string Username)
         {
             UserViewModel result = null;
 
@@ -129,7 +129,7 @@ namespace Infrastructure.Data.Repositories
                     userViewModel.User = user;
 
                     return userViewModel;
-                }, getUserByEmailQuery, splitOn: "Id")).FirstOrDefault();
+                }, new { Username }, splitOn: "Id")).FirstOrDefault();
             }
             catch (SqlException ex)
             {
@@ -144,7 +144,7 @@ namespace Infrastructure.Data.Repositories
 
             return result;
         }
-        public async Task<UserViewModel> GetUserByEmailAsync(GetUserByEmailQuery getUserByEmailQuery)
+        public async Task<UserViewModel> GetUserByEmailAsync(string Email)
         {
             UserViewModel result = null;
 
@@ -169,7 +169,7 @@ namespace Infrastructure.Data.Repositories
                     userViewModel.User = user;
 
                     return userViewModel;
-                }, getUserByEmailQuery, splitOn: "Id")).FirstOrDefault();
+                }, new { Email }, splitOn: "Id")).FirstOrDefault();
             }
             catch (SqlException ex)
             {
@@ -312,7 +312,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, new { Username, Email, Bio, Password, Salt});
+                await connection.ExecuteAsync(query, new { Username, Email, Bio, Password, Salt });
             }
             catch (SqlException ex)
             {
@@ -372,7 +372,7 @@ namespace Infrastructure.Data.Repositories
             try
             {
                 using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, new { Salt, Password, User_Id});
+                await connection.ExecuteAsync(query, new { Salt, Password, User_Id });
             }
             catch (SqlException ex)
             {

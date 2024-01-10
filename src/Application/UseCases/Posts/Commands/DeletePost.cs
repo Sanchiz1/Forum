@@ -29,7 +29,7 @@ namespace Application.UseCases.Posts.Commands
         {
             if (request.Account_Role != Role.Admin && request.Account_Role != Role.Moderator)
             {
-                var post = await _context.GetPostByIdAsync(new GetPostByIdQuery() { Id = request.Id });
+                var post = await _context.GetPostByIdAsync(request.Id);
 
                 if (post.Post.User_Id != request.Account_Id) return new Exception("Permission denied");
             }

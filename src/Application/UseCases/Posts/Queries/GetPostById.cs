@@ -28,7 +28,7 @@ namespace Application.UseCases.Posts.Queries
 
         public async Task<Result<PostViewModelDto>> Handle(GetPostByIdQuery request, CancellationToken cancellationToken)
         {
-            var post = await _postContext.GetPostByIdAsync(request);
+            var post = await _postContext.GetPostByIdAsync(request.Id);
             if (post != null)
             {
                 post.Categories = await _categoryContext.GetPostCategoriesAsync(new Categories.Queries.GetPostCategoriesQuery { Post_Id = post.Post.Id });

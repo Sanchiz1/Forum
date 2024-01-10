@@ -27,8 +27,8 @@ namespace Application.UseCases.Users.Commands
 
         public async Task<Result<string>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            var usernameCheck = (await _context.GetUserByUsernameAsync(new GetUserByUsernameQuery() { Username = request.Username }));
-            var emailCheck = (await _context.GetUserByEmailAsync(new GetUserByEmailQuery() { Email = request.Email }));
+            var usernameCheck = (await _context.GetUserByUsernameAsync(request.Username));
+            var emailCheck = (await _context.GetUserByEmailAsync(request.Email));
 
             if (!(usernameCheck?.User.Id == request.Account_Id || usernameCheck == null))
             {

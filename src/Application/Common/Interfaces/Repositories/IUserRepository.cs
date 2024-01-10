@@ -10,8 +10,8 @@ namespace Application.Common.Interfaces.Repositories
     {
         Task<List<UserViewModel>> GetSearchedUsersAsync(GetSearchedUsersQuery getSearchedUsersQuery);
         Task<UserViewModel> GetUserByIdAsync(int User_Id);
-        Task<UserViewModel> GetUserByUsernameAsync(GetUserByUsernameQuery getUserByUsernameQuery);
-        Task<UserViewModel> GetUserByEmailAsync(GetUserByEmailQuery getUserByEmailQuery);
+        Task<UserViewModel> GetUserByUsernameAsync(string Username);
+        Task<UserViewModel> GetUserByEmailAsync(string Email);
         Task<UserViewModel> GetUserByUsernameOrEmailAsync(string Username_Or_Email);
         Task<UserViewModel> GetUserByCredentialsAsync(string Username_Or_Email, string Password);
         Task<string> GetUserSaltAsync(int user_id);
