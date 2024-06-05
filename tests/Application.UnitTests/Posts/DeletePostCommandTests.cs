@@ -24,7 +24,7 @@ namespace Application.UnitTests.Posts
             _postRepositoryMock = Substitute.For<IPostRepository>();
             _postRepositoryMock.GetPostByIdAsync(new GetPostByIdQuery() { Id = 1 }).Returns(Task.FromResult(new PostViewModel()
             {
-                Post = new PostDto()
+                Post = new Domain.Entities.Post()
                 {
                     Id = 1,
                     Title = "testTitle",
