@@ -16,12 +16,10 @@ namespace Infrastructure.Data.Repositories
     public class UserRepository : IUserRepository
     {
         private readonly DapperContext _dapperContext;
-        private readonly ILogger _logger;
 
-        public UserRepository(DapperContext context, ILogger logger)
+        public UserRepository(DapperContext context)
         {
             _dapperContext = context;
-            _logger = logger;
         }
         public async Task<List<UserViewModel>> GetSearchedUsersAsync(GetSearchedUsersQuery getSearchedUsersQuery)
         {

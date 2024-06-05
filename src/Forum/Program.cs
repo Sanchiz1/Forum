@@ -11,13 +11,14 @@ using Forum.GraphQL.Schemas;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddSingleton<ILogger>(svc => svc.GetRequiredService<ILogger<ApplicationLogs>>());
+builder.Logging.AddConsole();
 
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddSingleton<InstrumentFieldsMiddleware>();
+
+builder.Services.AddAuthorization();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -55,7 +56,6 @@ builder.Services.AddGraphQL(c => c.AddSystemTextJson()
                                   .AddGraphTypes(typeof(MainShema).Assembly)
                                   .AddGraphTypes(typeof(IdentitySchema).Assembly)
                                   );
-
 
 var app = builder.Build();
 
@@ -96,11 +96,4 @@ app.UseGraphQL<IdentitySchema>("/graphql-login", (config) =>
 
 app.UseGraphQLAltair("/");
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
 app.Run();
-public class ApplicationLogs
-{
-}

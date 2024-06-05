@@ -16,12 +16,10 @@ namespace Infrastructure.Data.Repositories
     public class ReplyRepository : IReplyRepository
     {
         private readonly DapperContext _dapperContext;
-        private readonly ILogger _logger;
-
-        public ReplyRepository(DapperContext context, ILogger logger)
+        
+        public ReplyRepository(DapperContext context)
         {
             _dapperContext = context;
-            _logger = logger;
         }
         public async Task<List<ReplyViewModel>> GetRepliesAsync(GetRepliesQuery getRepliesQuery)
         {

@@ -10,11 +10,9 @@ namespace Forum.GraphQL.Queries
     public class CommentQuery : ObjectGraphType
     {
         private readonly IMediator _mediator;
-        private readonly ILogger _logger;
-        public CommentQuery(IMediator mediator, ILogger logger)
+        public CommentQuery(IMediator mediator)
         {
             _mediator = mediator;
-            _logger = logger;
 
             Field<ListGraphType<CommentGraphType>>("comments")
                 .Argument<NonNullGraphType<GetCommentsInputGraphType>>("input")

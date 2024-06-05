@@ -13,12 +13,10 @@ namespace Infrastructure.Data.Repositories
     public class StatisticsRepository : IStatisticsRepository
     {
         private readonly DapperContext _dapperContext;
-        private readonly ILogger _logger;
 
-        public StatisticsRepository(DapperContext context, ILogger logger)
+        public StatisticsRepository(DapperContext context)
         {
             _dapperContext = context;
-            _logger = logger;
         }
 
         public async Task<int[]> GetMonthlyPostsAsync(GetMonthlyPostsQuery getMonthlyPostsQuery)

@@ -16,12 +16,10 @@ namespace Infrastructure.Data.Repositories
     public class PostRepository : IPostRepository
     {
         private readonly DapperContext _dapperContext;
-        private readonly ILogger _logger;
 
-        public PostRepository(DapperContext context, ILogger logger)
+        public PostRepository(DapperContext context)
         {
             _dapperContext = context;
-            _logger = logger;
         }
 
         public async Task<List<PostViewModel>> GetPostsAsync(GetPostsQuery getPostsQuery)

@@ -9,11 +9,9 @@ namespace Forum.GraphQL.Queries
     public class StatisticsQuery : ObjectGraphType
     {
         private readonly IMediator _mediator;
-        private readonly ILogger _logger;
-        public StatisticsQuery(IMediator mediator, ILogger logger)
+        public StatisticsQuery(IMediator mediator)
         {
             _mediator = mediator;
-            _logger = logger;
 
             Field<ListGraphType<IntGraphType>>("getMonthlyPosts")
                 .Argument<NonNullGraphType<GetMonthlyPostsInputGraphType>>("input")

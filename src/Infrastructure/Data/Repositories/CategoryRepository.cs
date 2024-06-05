@@ -15,12 +15,10 @@ namespace Infrastructure.Data.Repositories
     public class CategoryRepository : ICategoryRepository
     {
         private readonly DapperContext _dapperContext;
-        private readonly ILogger _logger;
 
-        public CategoryRepository(DapperContext context, ILogger logger)
+        public CategoryRepository(DapperContext context)
         {
             _dapperContext = context;
-            _logger = logger;
         }
         public async Task<List<Category>> GetAllCategoriesAsync(GetAllCategoriesQuery getAllCategoriesQuery)
         {

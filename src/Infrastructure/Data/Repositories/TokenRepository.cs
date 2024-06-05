@@ -1,8 +1,11 @@
 ﻿using Application.Common.Interfaces.Repositories;
 using Application.Common.Models;
+using Application.UseCases.Categories.Queries;
 using Dapper;
+using Domain.Entities;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,18 +15,19 @@ namespace Infrastructure.Data.Repositories
     public class TokenRepository : ITokenRepository
     {
         private readonly DapperContext _dapperContext;
-        private readonly ILogger _logger;
 
-        public TokenRepository(DapperContext context, ILogger logger)
+        public TokenRepository(DapperContext context)
         {
             _dapperContext = context;
-            _logger = logger;
         }
         public async Task<Token> GetRefreshTokenAsync(string refreshToken)
         {
             Token result = null;
 
             string query = "SELECT * FROM Refresh_Tokens WHERE Value = @refreshToken";
+
+            using var connection = _dapperContext.CreateConnection();
+            result = (await connection.QueryAsync<Token>(query, new { refreshToken })).FirstOrDefault();
 
             return result;
         }

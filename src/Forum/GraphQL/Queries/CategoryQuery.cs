@@ -9,11 +9,9 @@ namespace Forum.GraphQL.Queries
     public class CategoryQuery : ObjectGraphType
     {
         private readonly IMediator _mediator;
-        private readonly ILogger _logger;
-        public CategoryQuery(IMediator mediator, ILogger logger)
+        public CategoryQuery(IMediator mediator)
         {
             _mediator = mediator;
-            _logger = logger;
 
             Field<ListGraphType<CategoryGraphType>>("categories")
                 .Argument<NonNullGraphType<GetCategoriesInputGraphType>>("input")

@@ -16,12 +16,10 @@ namespace Infrastructure.Data.Repositories
     public class CommentRepository : ICommentRepository
     {
         private readonly DapperContext _dapperContext;
-        private readonly ILogger _logger;
 
-        public CommentRepository(DapperContext context, ILogger logger)
+        public CommentRepository(DapperContext context)
         {
             _dapperContext = context;
-            _logger = logger;
         }
         public async Task<List<CommentViewModel>> GetCommentsAsync(GetCommentsQuery getCommentsQuery)
         {

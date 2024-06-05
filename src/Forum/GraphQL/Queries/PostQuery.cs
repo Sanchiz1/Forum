@@ -19,15 +19,9 @@ namespace Forum.GraphQL.Queries
                 .Argument<NonNullGraphType<GetSearchedPostsInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    GetSearchedPostsQuery query = new GetSearchedPostsQuery()
-                    {
-                        Next = context.GetArgument<GetSearchedPostsQuery>("input").Next,
-                        Offset = context.GetArgument<GetSearchedPostsQuery>("input").Offset,
-                        User_Id = AccountHelper.GetUserIdFromClaims(context.User!),
-                        User_Timestamp = context.GetArgument<GetSearchedPostsQuery>("input").User_Timestamp,
-                        Search = context.GetArgument<GetSearchedPostsQuery>("input").Search
-                    };
+                    GetSearchedPostsQuery query = context.GetArgument<GetSearchedPostsQuery>("input");
 
+                    query.User_Id = AccountHelper.GetUserIdFromClaims(context.User!);
 
                     var result = await _mediator.Send(query);
 
@@ -38,15 +32,9 @@ namespace Forum.GraphQL.Queries
                 .Argument<NonNullGraphType<GetPostsInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    GetPostsQuery query = new GetPostsQuery()
-                    {
-                        Next = context.GetArgument<GetPostsQuery>("input").Next,
-                        Offset = context.GetArgument<GetPostsQuery>("input").Offset,
-                        Order = context.GetArgument<GetPostsQuery>("input").Order,
-                        User_Id = AccountHelper.GetUserIdFromClaims(context.User!),
-                        User_Timestamp = context.GetArgument<GetPostsQuery>("input").User_Timestamp,
-                        Categories = context.GetArgument<GetPostsQuery>("input").Categories,
-                    };
+                    GetPostsQuery query = context.GetArgument<GetPostsQuery>("input");
+
+                    query.User_Id = AccountHelper.GetUserIdFromClaims(context.User!);
 
                     var result = await _mediator.Send(query);
 
@@ -57,15 +45,9 @@ namespace Forum.GraphQL.Queries
                 .Argument<NonNullGraphType<GetUserPostsInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    GetUserPostsQuery query = new GetUserPostsQuery()
-                    {
-                        Author_Username = context.GetArgument<GetUserPostsQuery>("input").Author_Username,
-                        Next = context.GetArgument<GetUserPostsQuery>("input").Next,
-                        Offset = context.GetArgument<GetUserPostsQuery>("input").Offset,
-                        Order = context.GetArgument<GetUserPostsQuery>("input").Order,
-                        User_Id = AccountHelper.GetUserIdFromClaims(context.User!),
-                        User_Timestamp = context.GetArgument<GetUserPostsQuery>("input").User_Timestamp,
-                    };
+                    GetUserPostsQuery query = context.GetArgument<GetUserPostsQuery>("input");
+
+                    query.User_Id = AccountHelper.GetUserIdFromClaims(context.User!);
 
                     var result = await _mediator.Send(query);
 
@@ -76,11 +58,9 @@ namespace Forum.GraphQL.Queries
                 .Argument<NonNullGraphType<GetPostByIdInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    GetPostByIdQuery query = new GetPostByIdQuery()
-                    {
-                        Id = context.GetArgument<GetPostByIdQuery>("input").Id,
-                        User_id = AccountHelper.GetUserIdFromClaims(context.User!)
-                    };
+                    GetPostByIdQuery query = context.GetArgument<GetPostByIdQuery>("input");
+
+                    query.User_id = AccountHelper.GetUserIdFromClaims(context.User!);
 
                     var result = await _mediator.Send(query);
 
