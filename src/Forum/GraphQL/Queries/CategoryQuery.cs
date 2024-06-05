@@ -17,11 +17,7 @@ namespace Forum.GraphQL.Queries
                 .Argument<NonNullGraphType<GetCategoriesInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    GetCategoriesQuery query = new GetCategoriesQuery()
-                    {
-                        Next = context.GetArgument<GetCategoriesQuery>("input").Next,
-                        Offset = context.GetArgument<GetCategoriesQuery>("input").Offset,
-                    };
+                    GetCategoriesQuery query = context.GetArgument<GetCategoriesQuery>("input");
 
                     var result = await _mediator.Send(query);
 
@@ -42,10 +38,7 @@ namespace Forum.GraphQL.Queries
                 .Argument<NonNullGraphType<GetCategoryByIdInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    GetCategoryByIdQuery query = new GetCategoryByIdQuery()
-                    {
-                        Id = context.GetArgument<GetCategoryByIdQuery>("input").Id
-                    };
+                    GetCategoryByIdQuery query = context.GetArgument<GetCategoryByIdQuery>("input");
 
                     var result = await _mediator.Send(query);
 

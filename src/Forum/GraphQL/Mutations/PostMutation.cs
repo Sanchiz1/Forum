@@ -1,4 +1,5 @@
-﻿using Application.UseCases.Posts.Commands;
+﻿using Application.UseCases.Comments.Commands;
+using Application.UseCases.Posts.Commands;
 using Forum.GraphQL.Types.PostTypes;
 using Forum.Helpers;
 using GraphQL;
@@ -19,12 +20,9 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<CreatePostInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    CreatePostCommand command = new CreatePostCommand()
-                    {
-                        Title = context.GetArgument<CreatePostCommand>("input").Title,
-                        Text = context.GetArgument<CreatePostCommand>("input").Text,
-                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!)
-                    };
+                    CreatePostCommand command = context.GetArgument<CreatePostCommand>("input");
+
+                    command.Account_Id = AccountHelper.GetUserIdFromClaims(context.User!);
 
                     var result = await _mediator.Send(command);
 
@@ -35,12 +33,9 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<UpdatePostInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    UpdatePostCommand command = new UpdatePostCommand()
-                    {
-                        Id = context.GetArgument<UpdatePostCommand>("input").Id,
-                        Text = context.GetArgument<UpdatePostCommand>("input").Text,
-                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!)
-                    };
+                    UpdatePostCommand command = context.GetArgument<UpdatePostCommand>("input");
+
+                    command.Account_Id = AccountHelper.GetUserIdFromClaims(context.User!);
 
                     var result = await _mediator.Send(command);
 
@@ -51,13 +46,10 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<AddPostCategoryInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    AddPostCategoryCommand command = new AddPostCategoryCommand()
-                    {
-                        Post_Id = context.GetArgument<AddPostCategoryCommand>("input").Post_Id,
-                        Category_Id = context.GetArgument<AddPostCategoryCommand>("input").Category_Id,
-                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
-                        Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
-                    };
+                    AddPostCategoryCommand command = context.GetArgument<AddPostCategoryCommand>("input");
+
+                    command.Account_Id = AccountHelper.GetUserIdFromClaims(context.User!);
+                    command.Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!);
 
                     var result = await _mediator.Send(command);
 
@@ -68,42 +60,37 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<RemovePostCategoryInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    RemovePostCategoryCommand command = new RemovePostCategoryCommand()
-                    {
-                        Post_Id = context.GetArgument<RemovePostCategoryCommand>("input").Post_Id,
-                        Category_Id = context.GetArgument<RemovePostCategoryCommand>("input").Category_Id,
-                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
-                        Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
-                    };
+                    RemovePostCategoryCommand command = context.GetArgument<RemovePostCategoryCommand>("input");
+
+                    command.Account_Id = AccountHelper.GetUserIdFromClaims(context.User!);
+                    command.Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!);
 
                     var result = await _mediator.Send(command);
 
                     return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
+
             Field<StringGraphType>("deletePost")
                 .Argument<NonNullGraphType<DeletePostInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    DeletePostCommand command = new DeletePostCommand()
-                    {
-                        Id = context.GetArgument<DeletePostCommand>("input").Id,
-                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
-                        Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
-                    };
+                    DeletePostCommand command = context.GetArgument<DeletePostCommand>("input");
+
+                    command.Account_Id = AccountHelper.GetUserIdFromClaims(context.User!);
+                    command.Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!);
 
                     var result = await _mediator.Send(command);
 
                     return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
                 });
+
             Field<StringGraphType>("likePost")
                 .Argument<NonNullGraphType<LikePostInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    LikePostCommand command = new LikePostCommand()
-                    {
-                        Post_Id = context.GetArgument<LikePostCommand>("input").Post_Id,
-                        User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
-                    };
+                    LikePostCommand command = context.GetArgument<LikePostCommand>("input");
+
+                    command.User_Id = AccountHelper.GetUserIdFromClaims(context.User!);
 
                     var result = await _mediator.Send(command);
 

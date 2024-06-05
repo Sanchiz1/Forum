@@ -19,6 +19,7 @@ namespace Forum.GraphQL.Queries
                 .ResolveAsync(async context =>
                 {
                     GetSearchedUsersQuery query = context.GetArgument<GetSearchedUsersQuery>("input");
+
                     var result = await _mediator.Send(query);
 
                     return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
@@ -29,6 +30,7 @@ namespace Forum.GraphQL.Queries
                 .ResolveAsync(async context =>
                 {
                     GetUserByIdQuery query = context.GetArgument<GetUserByIdQuery>("input");
+
                     var result = await _mediator.Send(query);
 
                     return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
@@ -39,6 +41,7 @@ namespace Forum.GraphQL.Queries
                 .ResolveAsync(async context =>
                 {
                     GetUserByUsernameQuery query = context.GetArgument<GetUserByUsernameQuery>("input");
+
                     var result = await _mediator.Send(query);
 
                     return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));
@@ -51,6 +54,7 @@ namespace Forum.GraphQL.Queries
                     {
                         User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
                     };
+
                     var result = await _mediator.Send(query);
 
                     return result.Match((res) => res, (ex) => throw new ExecutionError(ex.Message.ToString()));

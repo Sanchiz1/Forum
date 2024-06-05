@@ -1,4 +1,5 @@
-﻿using Application.UseCases.Replies.Commands;
+﻿using Application.UseCases.Posts.Commands;
+using Application.UseCases.Replies.Commands;
 using Forum.GraphQL.Types.ReplyTypes;
 using Forum.Helpers;
 using GraphQL;
@@ -19,13 +20,9 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<CreateReplyInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    CreateReplyCommand command = new CreateReplyCommand()
-                    {
-                        Text = context.GetArgument<CreateReplyCommand>("input").Text,
-                        Comment_Id = context.GetArgument<CreateReplyCommand>("input").Comment_Id,
-                        Reply_User_Id = context.GetArgument<CreateReplyCommand>("input").Reply_User_Id,
-                        User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
-                    };
+                    CreateReplyCommand command = context.GetArgument<CreateReplyCommand>("input");
+
+                    command.User_Id = AccountHelper.GetUserIdFromClaims(context.User!);
 
                     var result = await _mediator.Send(command);
 
@@ -36,13 +33,10 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<UpdateReplyInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    UpdateReplyCommand command = new UpdateReplyCommand()
-                    {
-                        Id = context.GetArgument<UpdateReplyCommand>("input").Id,
-                        Text = context.GetArgument<UpdateReplyCommand>("input").Text,
-                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
-                        Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
-                    };
+                    UpdateReplyCommand command = context.GetArgument<UpdateReplyCommand>("input");
+
+                    command.Account_Id = AccountHelper.GetUserIdFromClaims(context.User!);
+                    command.Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!);
 
                     var result = await _mediator.Send(command);
 
@@ -53,12 +47,10 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<DeleteReplyInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    DeleteReplyCommand command = new DeleteReplyCommand()
-                    {
-                        Id = context.GetArgument<DeleteReplyCommand>("input").Id,
-                        Account_Id = AccountHelper.GetUserIdFromClaims(context.User!),
-                        Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!)
-                    };
+                    DeleteReplyCommand command = context.GetArgument<DeleteReplyCommand>("input");
+
+                    command.Account_Id = AccountHelper.GetUserIdFromClaims(context.User!);
+                    command.Account_Role = AccountHelper.GetUserRoleFromClaims(context.User!);
 
                     var result = await _mediator.Send(command);
 
@@ -69,11 +61,9 @@ namespace Forum.GraphQL.Mutations
                 .Argument<NonNullGraphType<LikeReplyInputGraphType>>("input")
                 .ResolveAsync(async context =>
                 {
-                    LikeReplyCommand command = new LikeReplyCommand()
-                    {
-                        Reply_Id = context.GetArgument<LikeReplyCommand>("input").Reply_Id,
-                        User_Id = AccountHelper.GetUserIdFromClaims(context.User!)
-                    };
+                    LikeReplyCommand command = context.GetArgument<LikeReplyCommand>("input");
+
+                    command.User_Id = AccountHelper.GetUserIdFromClaims(context.User!);
 
                     var result = await _mediator.Send(command);
 
