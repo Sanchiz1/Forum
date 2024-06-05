@@ -41,26 +41,13 @@ namespace Infrastructure.Data.Repositories
                 GROUP BY Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, Roles.Name, Role_Id
                 ORDER BY Users.Username DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
 
-            try
+            using var connection = _dapperContext.CreateConnection();
+            result = (await connection.QueryAsync<UserViewModel, User, UserViewModel>(query, (userViewModel, user) =>
             {
-                using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<UserViewModel, User, UserViewModel>(query, (userViewModel, user) =>
-                {
-                    userViewModel.User = user;
+                userViewModel.User = user;
 
-                    return userViewModel;
-                }, getSearchedUsersQuery, splitOn: "Id")).ToList();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting searched users");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting searched users");
-                throw;
-            }
+                return userViewModel;
+            }, getSearchedUsersQuery, splitOn: "Id")).ToList();
 
             return result;
         }
@@ -81,26 +68,13 @@ namespace Infrastructure.Data.Repositories
                 WHERE Users.Id = @User_Id
                 GROUP BY Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, Roles.Name, Role_Id ";
 
-            try
+            using var connection = _dapperContext.CreateConnection();
+            result = (await connection.QueryAsync<UserViewModel, User, UserViewModel>(query, (userViewModel, user) =>
             {
-                using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<UserViewModel, User, UserViewModel>(query, (userViewModel, user) =>
-                {
-                    userViewModel.User = user;
+                userViewModel.User = user;
 
-                    return userViewModel;
-                }, new { User_Id }, splitOn: "Id")).FirstOrDefault();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting user by id");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting user by id");
-                throw;
-            }
+                return userViewModel;
+            }, new { User_Id }, splitOn: "Id")).FirstOrDefault();
 
             return result;
         }
@@ -121,26 +95,13 @@ namespace Infrastructure.Data.Repositories
                 WHERE Users.Username = @Username
                 GROUP BY Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, Roles.Name, Role_Id";
 
-            try
+            using var connection = _dapperContext.CreateConnection();
+            result = (await connection.QueryAsync<UserViewModel, User, UserViewModel>(query, (userViewModel, user) =>
             {
-                using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<UserViewModel, User, UserViewModel>(query, (userViewModel, user) =>
-                {
-                    userViewModel.User = user;
+                userViewModel.User = user;
 
-                    return userViewModel;
-                }, getUserByEmailQuery, splitOn: "Id")).FirstOrDefault();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting user by username");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting user by username");
-                throw;
-            }
+                return userViewModel;
+            }, getUserByEmailQuery, splitOn: "Id")).FirstOrDefault();
 
             return result;
         }
@@ -161,26 +122,13 @@ namespace Infrastructure.Data.Repositories
                 WHERE Users.Email = @Email
                 GROUP BY Users.Id, Users.Username, Users.Email, Users.Bio, Users.Registered_At, Roles.Name, Role_Id ";
 
-            try
+            using var connection = _dapperContext.CreateConnection();
+            result = (await connection.QueryAsync<UserViewModel, User, UserViewModel>(query, (userViewModel, user) =>
             {
-                using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<UserViewModel, User, UserViewModel>(query, (userViewModel, user) =>
-                {
-                    userViewModel.User = user;
+                userViewModel.User = user;
 
-                    return userViewModel;
-                }, getUserByEmailQuery, splitOn: "Id")).FirstOrDefault();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting user by email");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting user by email");
-                throw;
-            }
+                return userViewModel;
+            }, getUserByEmailQuery, splitOn: "Id")).FirstOrDefault();
 
             return result;
         }
@@ -197,27 +145,14 @@ namespace Infrastructure.Data.Repositories
                 LEFT JOIN Roles ON Roles.Id = Users.Role_Id
                 WHERE Users.Username = @Username_Or_Email OR Users.Email = @Username_Or_Email";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
+            using var connection = _dapperContext.CreateConnection();
 
-                result = (await connection.QueryAsync<UserViewModel, User, UserViewModel>(query, (userViewModel, user) =>
-                {
-                    userViewModel.User = user;
+            result = (await connection.QueryAsync<UserViewModel, User, UserViewModel>(query, (userViewModel, user) =>
+            {
+                userViewModel.User = user;
 
-                    return userViewModel;
-                }, new { Username_Or_Email }, splitOn: "Id")).FirstOrDefault();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting user by credentials");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting comment by credentials");
-                throw;
-            }
+                return userViewModel;
+            }, new { Username_Or_Email }, splitOn: "Id")).FirstOrDefault();
 
             return result;
         }
@@ -233,27 +168,14 @@ namespace Infrastructure.Data.Repositories
                 LEFT JOIN Roles ON Roles.Id = Users.Role_Id
                 WHERE (Users.Username = @Username_Or_Email OR Users.Email = @Username_Or_Email) AND Users.Password = @Password";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
+            using var connection = _dapperContext.CreateConnection();
 
-                result = (await connection.QueryAsync<UserViewModel, User, UserViewModel>(query, (userViewModel, user) =>
-                {
-                    userViewModel.User = user;
+            result = (await connection.QueryAsync<UserViewModel, User, UserViewModel>(query, (userViewModel, user) =>
+            {
+                userViewModel.User = user;
 
-                    return userViewModel;
-                }, new { Username_Or_Email, Password }, splitOn: "Id")).FirstOrDefault();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting user by credentials");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting comment by credentials");
-                throw;
-            }
+                return userViewModel;
+            }, new { Username_Or_Email, Password }, splitOn: "Id")).FirstOrDefault();
 
             return result;
         }
@@ -262,22 +184,9 @@ namespace Infrastructure.Data.Repositories
             string result;
             string query = $@"SELECT Salt FROM Users WHERE Id = @User_id";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
+            using var connection = _dapperContext.CreateConnection();
 
-                result = (await connection.QueryAsync<string>(query, new { User_id })).FirstOrDefault();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting user password");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting user password");
-                throw;
-            }
+            result = (await connection.QueryAsync<string>(query, new { User_id })).FirstOrDefault();
 
             return result;
         }
@@ -286,22 +195,9 @@ namespace Infrastructure.Data.Repositories
             string result;
             string query = $@"SELECT Password FROM Users WHERE Id = @User_id";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
+            using var connection = _dapperContext.CreateConnection();
 
-                result = (await connection.QueryAsync<string>(query, new { User_id })).FirstOrDefault();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting user password");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting user password");
-                throw;
-            }
+            result = (await connection.QueryAsync<string>(query, new { User_id })).FirstOrDefault();
 
             return result;
         }
@@ -309,101 +205,37 @@ namespace Infrastructure.Data.Repositories
         {
             string query = $@"INSERT INTO Users (Username, Email, Bio, Password, Salt) VALUES (@Username, @Email, @Bio, @Password, @Salt)";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, new { Username, Email, Bio, Password, Salt});
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Creating user");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Creating user");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, new { Username, Email, Bio, Password, Salt });
         }
         public async Task UpdateUserAsync(UpdateUserCommand updateUserCommand)
         {
             string query = $@"UPDATE Users SET Username = @Username, Email = @Email, Bio = @Bio WHERE Id = @Account_Id";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, updateUserCommand);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Updating user");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Updating user");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, updateUserCommand);
         }
         public async Task UpdateUserRoleAsync(UpdateUserRoleCommand updateUserRoleCommand)
         {
             string query = $@"UPDATE Users SET Role_Id = @Role_Id WHERE Id = @User_Id";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, updateUserRoleCommand);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Adding user role");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Adding user role");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, updateUserRoleCommand);
         }
+
         public async Task ChangeUserPasswordAsync(string Password, string Salt, int User_Id)
         {
             string query = $@"UPDATE Users SET Password = @Password, Salt = @Salt WHERE Id = @User_Id";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, new { Salt, Password, User_Id});
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Changing user password");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Changing user password");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, new { Salt, Password, User_Id });
         }
         public async Task DeleteUserAsync(DeleteUserCommand deleteUserCommand)
         {
             string query = $@"DELETE FROM Users WHERE Id = @User_Id";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, deleteUserCommand);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Deleting user");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Deleting user");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, deleteUserCommand);
         }
     }
 }

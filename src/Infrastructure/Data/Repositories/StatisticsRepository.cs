@@ -25,23 +25,10 @@ namespace Infrastructure.Data.Repositories
         {
             int[] result = null;
 
-            try
-            {
-                DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("Year", getMonthlyPostsQuery.Year);
-                using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<int>("proc_monthly_posts", parameters, commandType: CommandType.StoredProcedure)).ToArray();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting monthly posts");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting monthly posts");
-                throw;
-            }
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("Year", getMonthlyPostsQuery.Year);
+            using var connection = _dapperContext.CreateConnection();
+            result = (await connection.QueryAsync<int>("proc_monthly_posts", parameters, commandType: CommandType.StoredProcedure)).ToArray();
 
             return result;
         }
@@ -51,23 +38,10 @@ namespace Infrastructure.Data.Repositories
 
             int[] result = null;
 
-            try
-            {
-                DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("Year", getMonthlyUsersQuery.Year);
-                using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<int>("proc_monthly_users", parameters, commandType: CommandType.StoredProcedure)).ToArray();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting monthly users");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting monthly users");
-                throw;
-            }
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("Year", getMonthlyUsersQuery.Year);
+            using var connection = _dapperContext.CreateConnection();
+            result = (await connection.QueryAsync<int>("proc_monthly_users", parameters, commandType: CommandType.StoredProcedure)).ToArray();
 
             return result;
         }

@@ -42,26 +42,13 @@ namespace Infrastructure.Data.Repositories
                     GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id, users.Username
                     ORDER BY {getPostsQuery.Order} DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
 
-            try
+            using var connection = _dapperContext.CreateConnection();
+            result = (await connection.QueryAsync<PostViewModel, Post, PostViewModel>(query, (postViewModel, post) =>
             {
-                using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<PostViewModel, Post, PostViewModel>(query, (postViewModel, post) =>
-                {
-                    postViewModel.Post = post;
+                postViewModel.Post = post;
 
-                    return postViewModel;
-                }, getPostsQuery, splitOn: "Id")).ToList();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting posts");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting posts");
-                throw;
-            }
+                return postViewModel;
+            }, getPostsQuery, splitOn: "Id")).ToList();
 
             return result;
         }
@@ -83,26 +70,13 @@ namespace Infrastructure.Data.Repositories
                     GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id, users.Username
                     ORDER BY {getSearchedPostsQuery.Order} DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
 
-            try
+            using var connection = _dapperContext.CreateConnection();
+            result = (await connection.QueryAsync<PostViewModel, Post, PostViewModel>(query, (postViewModel, post) =>
             {
-                using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<PostViewModel, Post, PostViewModel>(query, (postViewModel, post) =>
-                {
-                    postViewModel.Post = post;
+                postViewModel.Post = post;
 
-                    return postViewModel;
-                }, getSearchedPostsQuery, splitOn: "Id")).ToList();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting posts");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting posts");
-                throw;
-            }
+                return postViewModel;
+            }, getSearchedPostsQuery, splitOn: "Id")).ToList();
 
             return result;
         }
@@ -124,26 +98,13 @@ namespace Infrastructure.Data.Repositories
                     GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id, users.Username
                     ORDER BY {getUserPostsQuery.Order} DESC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
 
-            try
+            using var connection = _dapperContext.CreateConnection();
+            result = (await connection.QueryAsync<PostViewModel, Post, PostViewModel>(query, (postViewModel, post) =>
             {
-                using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<PostViewModel, Post, PostViewModel>(query, (postViewModel, post) =>
-                {
-                    postViewModel.Post = post;
+                postViewModel.Post = post;
 
-                    return postViewModel;
-                }, getUserPostsQuery, splitOn: "Id")).ToList();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting user posts");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting user posts");
-                throw;
-            }
+                return postViewModel;
+            }, getUserPostsQuery, splitOn: "Id")).ToList();
 
             return result;
         }
@@ -163,26 +124,13 @@ namespace Infrastructure.Data.Repositories
                     WHERE Posts.Id = @Id
                     GROUP BY Posts.Id, Posts.Title, Posts.Text, Posts.Date_Created, Posts.Date_Edited, Posts.User_Id, users.Username";
 
-            try
+            using var connection = _dapperContext.CreateConnection();
+            result = (await connection.QueryAsync<PostViewModel, Post, PostViewModel>(query, (postViewModel, post) =>
             {
-                using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<PostViewModel, Post, PostViewModel>(query, (postViewModel, post) =>
-                {
-                    postViewModel.Post = post;
+                postViewModel.Post = post;
 
-                    return postViewModel;
-                }, getPostByIdQuery, splitOn: "Id")).FirstOrDefault();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting post by id");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting post by id");
-                throw;
-            }
+                return postViewModel;
+            }, getPostByIdQuery, splitOn: "Id")).FirstOrDefault();
 
             return result;
         }
@@ -190,101 +138,36 @@ namespace Infrastructure.Data.Repositories
         {
             string query = $@"INSERT INTO Posts (Title, Text, User_Id) VALUES (@Title, @Text, @Account_Id)";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, createPostCommand);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Creating post");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Creating post");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, createPostCommand);
         }
         public async Task UpdatePostAsync(UpdatePostCommand updatePostCommand)
         {
             string query = $@"UPDATE Posts set Text = @Text WHERE Id = @Id";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, updatePostCommand);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Updating post");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Updating post");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, updatePostCommand);
         }
         public async Task AddPostCategoryAsync(AddPostCategoryCommand addPostCategoryCommand)
         {
             string query = $@"INSERT INTO Post_Category (Post_Id, Category_Id) VALUES (@Post_Id, @Category_Id)";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, addPostCategoryCommand);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Adding post category");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Adding post category");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, addPostCategoryCommand);
         }
         public async Task RemovePostCategoryAsync(RemovePostCategoryCommand removePostCategoryCommand)
         {
             string query = $@"DELETE FROM Post_Category WHERE Post_Id = @Post_Id AND Category_Id = @Category_Id";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, removePostCategoryCommand);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Removing post category");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Removing post category");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, removePostCategoryCommand);
         }
         public async Task DeletePostAsync(DeletePostCommand deletePostCommand)
         {
             string query = $@"Delete FROM Posts WHERE Id = @Id";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, deletePostCommand);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Deleting post");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Deleting post");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, deletePostCommand);
         }
         public async Task LikePostAsync(LikePostCommand likePostCommand)
         {
@@ -292,21 +175,8 @@ namespace Infrastructure.Data.Repositories
                 BEGIN DELETE FROM Post_Likes WHERE Post_Id = @Post_Id AND User_Id = @User_Id END
                 ELSE BEGIN INSERT INTO Post_Likes (Post_Id, User_Id) VALUES(@Post_Id, @User_Id) END";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, likePostCommand);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Liking post");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Liking post");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, likePostCommand);
         }
     }
 }

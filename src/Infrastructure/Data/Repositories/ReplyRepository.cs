@@ -26,6 +26,7 @@ namespace Infrastructure.Data.Repositories
         public async Task<List<ReplyViewModel>> GetRepliesAsync(GetRepliesQuery getRepliesQuery)
         {
             List<ReplyViewModel> result = null;
+
             string query = $@"SELECT Users.Username as User_Username, ReplyToUsers.Username as Reply_Username,
                     Count(DISTINCT Reply_Likes.User_Id) as Likes,
                     CAST(CASE WHEN EXISTS (SELECT * FROM Reply_Likes WHERE Reply_Likes.Reply_Id = Replies.Id AND User_Id = @User_Id) THEN 1 ELSE 0 END AS BIT) AS Liked,
@@ -39,26 +40,13 @@ namespace Infrastructure.Data.Repositories
                     ReplyToUsers.Username, Replies.Reply_User_Id, Replies.Reply_User_Id
                     ORDER BY Date_Created ASC OFFSET @Offset ROWS FETCH NEXT @Next ROWS ONLY";
 
-            try
+            using var connection = _dapperContext.CreateConnection();
+            result = (await connection.QueryAsync<ReplyViewModel, Reply, ReplyViewModel>(query, (replyViewModel, reply) =>
             {
-                using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<ReplyViewModel, Reply, ReplyViewModel>(query, (replyViewModel, reply) =>
-                {
-                    replyViewModel.Reply = reply;
+                replyViewModel.Reply = reply;
 
-                    return replyViewModel;
-                }, getRepliesQuery, splitOn: "Id")).ToList();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting replies");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting replies");
-                throw;
-            }
+                return replyViewModel;
+            }, getRepliesQuery, splitOn: "Id")).ToList();
 
             return result;
         }
@@ -78,26 +66,13 @@ namespace Infrastructure.Data.Repositories
                     GROUP BY Replies.Id, Replies.Text, Replies.Date_Created, Replies.Date_Edited, Replies.Comment_Id, Replies.User_Id, users.Username,
                     ReplyToUsers.Username, Replies.Reply_User_Id, Replies.Reply_User_Id ";
 
-            try
+            using var connection = _dapperContext.CreateConnection();
+            result = (await connection.QueryAsync<ReplyViewModel, Reply, ReplyViewModel>(query, (replyViewModel, reply) =>
             {
-                using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<ReplyViewModel, Reply, ReplyViewModel>(query, (replyViewModel, reply) =>
-                {
-                    replyViewModel.Reply = reply;
+                replyViewModel.Reply = reply;
 
-                    return replyViewModel;
-                }, getReplyByIdQuery, splitOn: "Id")).FirstOrDefault();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting replies");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting replies");
-                throw;
-            }
+                return replyViewModel;
+            }, getReplyByIdQuery, splitOn: "Id")).FirstOrDefault();
 
             return result;
         }
@@ -105,61 +80,22 @@ namespace Infrastructure.Data.Repositories
         {
             string query = $@"INSERT INTO Replies (Text, User_Id, Comment_Id, Reply_User_Id) VALUES(@Text, @User_Id, @Comment_Id, @Reply_User_Id)";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, createReplyCommand);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Creating reply");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Creating reply");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, createReplyCommand);
         }
         public async Task UpdateReplyAsync(UpdateReplyCommand updateReplyCommand)
         {
             string query = $@"UPDATE Replies SET Text = @Text WHERE Id = @Id";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, updateReplyCommand);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Updating reply");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Updating reply");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, updateReplyCommand);
         }
         public async Task DeleteReplyAsync(DeleteReplyCommand deleteReplyCommand)
         {
             string query = $@"DELETE FROM Replies WHERE Id = @Id";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, deleteReplyCommand);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Deleting reply");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Deleting reply");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, deleteReplyCommand);
         }
         public async Task LikeReplyAsync(LikeReplyCommand likeReplyCommand)
         {
@@ -167,21 +103,8 @@ namespace Infrastructure.Data.Repositories
                 BEGIN DELETE FROM Reply_Likes WHERE Reply_Id = @Reply_Id AND User_Id = @User_Id END
                 ELSE BEGIN INSERT INTO Reply_Likes (Reply_Id, User_Id) VALUES(@Reply_Id, @User_Id) END";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, likeReplyCommand);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Liking reply");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Liking reply");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, likeReplyCommand);
         }
     }
 }

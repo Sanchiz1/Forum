@@ -29,21 +29,8 @@ namespace Infrastructure.Data.Repositories
             string query = $@"SELECT * FROM Categories
                 ORDER BY Title";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<Category>(query, getAllCategoriesQuery)).ToList();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting categories");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting categories");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            result = (await connection.QueryAsync<Category>(query, getAllCategoriesQuery)).ToList();
 
             return result;
         }
@@ -56,21 +43,8 @@ namespace Infrastructure.Data.Repositories
                 ORDER BY Title
                 OFFSET @offset ROWS FETCH NEXT @next ROWS ONLY";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<Category>(query, getCategoriesQuery)).ToList();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting categories");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting categories");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            result = (await connection.QueryAsync<Category>(query, getCategoriesQuery)).ToList();
 
             return result;
         }
@@ -82,21 +56,8 @@ namespace Infrastructure.Data.Repositories
                 JOIN Categories ON Categories.Id = Post_Category.Category_Id
                 WHERE Post_Category.Post_Id = @Post_Id";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<Category>(query, getPostCategoriesQuery)).ToList();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting post categories");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting post categories");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            result = (await connection.QueryAsync<Category>(query, getPostCategoriesQuery)).ToList();
 
             return result;
         }
@@ -107,21 +68,8 @@ namespace Infrastructure.Data.Repositories
 
             string query = $@"SELECT * FROM Categories WHERE Id = @Id";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                result = (await connection.QueryAsync<Category>(query, getCategoryByIdQuery)).FirstOrDefault();
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Getting category by id");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Getting category by id");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            result = (await connection.QueryAsync<Category>(query, getCategoryByIdQuery)).FirstOrDefault();
 
             return result;
         }
@@ -130,62 +78,24 @@ namespace Infrastructure.Data.Repositories
         {
             string query = $@"INSERT INTO Categories (Title) VALUES(@Title)";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, createCategoryCommand);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Creating category");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Creating category");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, createCategoryCommand);
         }
 
         public async Task UpdateCategoryAsync(UpdateCategoryCommand updateCategoryCommand)
         {
             string query = $@"UPDATE Categories SET Title = @Title WHERE Id = @Id";
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, updateCategoryCommand);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Updating category");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Updating category");
-                throw;
-            }
+
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, updateCategoryCommand);
         }
 
         public async Task DeleteCategoryAsync(DeleteCategoryCommand deleteCategoryCommand)
         {
             string query = $@"DELETE FROM Categories WHERE Id = @Id";
 
-            try
-            {
-                using var connection = _dapperContext.CreateConnection();
-                await connection.ExecuteAsync(query, deleteCategoryCommand);
-            }
-            catch (SqlException ex)
-            {
-                _logger.LogError(ex, "Deleting category");
-                throw;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Deleting category");
-                throw;
-            }
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, deleteCategoryCommand);
         }
     }
 }
