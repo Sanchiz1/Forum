@@ -1,7 +1,6 @@
 ﻿using Application.Common.Interfaces.Repositories;
 using Application.Common.Interfaces.Services;
 using Application.Common.Models;
-using Application.UseCases.Comments.Queries;
 using Application.UseCases.Identity.Queries;
 using MediatR;
 using Microsoft.Extensions.Configuration;

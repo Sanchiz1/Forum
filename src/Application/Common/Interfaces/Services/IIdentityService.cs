@@ -1,5 +1,4 @@
 ﻿using Application.Common.Models;
-using Application.UseCases.Comments.Queries;
 using Application.UseCases.Identity.Queries;
 using System.Threading.Tasks;
 

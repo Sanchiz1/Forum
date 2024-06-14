@@ -1,6 +1,6 @@
-﻿using Application.Common.Interfaces.Repositories;
+﻿using Application.Common.DTOs.ViewModels;
+using Application.Common.Interfaces.Repositories;
 using Application.Common.Models;
-using Application.Common.ViewModels;
 using AutoMapper;
 using MediatR;
 using System.Threading;

@@ -4,7 +4,7 @@ using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Application.UseCases.Comments.Queries
+namespace Application.UseCases.Identity.Queries
 {
     public class LoginQuery : IRequest<Result<LoginResponse>>
     {

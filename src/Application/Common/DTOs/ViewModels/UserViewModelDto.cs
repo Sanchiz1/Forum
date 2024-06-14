@@ -1,6 +1,6 @@
 ﻿using Application.Common.DTOs;
 
-namespace Application.Common.ViewModels
+namespace Application.Common.DTOs.ViewModels
 {
     public class UserViewModelDto
     {
